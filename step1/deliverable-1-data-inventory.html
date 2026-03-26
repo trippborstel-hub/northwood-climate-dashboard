@@ -231,16 +231,24 @@
     table { font-size: 12px; }
     td, th { padding: 6px 8px; }
   }
+  nav { display: flex; gap: 4px; margin-bottom: 24px; padding: 8px; background: var(--surface); border-radius: 8px; border: 1px solid var(--border); font-size: 13px; font-weight: 600; flex-wrap: wrap; align-items: center; }
+  nav a { padding: 8px 16px; border-radius: 6px; text-decoration: none; white-space: nowrap; }
+  nav a.active { background: var(--accent); color: var(--bg); }
+  nav a.ready { color: var(--text-muted); border: 1px solid var(--border); }
+  nav a.ready:hover { background: var(--surface2); color: var(--text); }
+  nav a.proposal { color: var(--accent); border: 1px solid var(--accent); margin-right: 8px; }
+  nav a.proposal:hover { background: rgba(91,184,164,0.15); }
 </style>
 </head>
 <body>
 
-<nav style="display:flex;gap:4px;margin-bottom:24px;padding:8px;background:var(--surface);border-radius:8px;border:1px solid var(--border);font-size:13px;font-weight:600;">
-  <a href="deliverable-1-data-inventory.html" style="padding:8px 16px;border-radius:6px;background:var(--accent);color:var(--bg);text-decoration:none;">1 Data Inventory</a>
-  <a href="deliverable-2-data-quality.html" style="padding:8px 16px;border-radius:6px;color:var(--text-muted);text-decoration:none;border:1px solid var(--border);">2 Quality Assessment</a>
-  <a href="deliverable-3-error-log.html" style="padding:8px 16px;border-radius:6px;color:var(--text-muted);text-decoration:none;border:1px solid var(--border);">3 Error Log</a>
-  <a href="#" style="padding:8px 16px;border-radius:6px;color:var(--none);text-decoration:none;border:1px solid var(--border);border:1px solid var(--border);">4 Gap Analysis</a>
-  <a href="#" style="padding:8px 16px;border-radius:6px;color:var(--none);text-decoration:none;border:1px solid var(--border);border:1px solid var(--border);">5 Data Ask</a>
+<nav>
+  <a href="../index.html" class="proposal">&#8592; Proposal</a>
+  <a href="deliverable-1-data-inventory.html" class="active">1 Data Inventory</a>
+  <a href="deliverable-2-data-quality.html" class="ready">2 Quality Assessment</a>
+  <a href="deliverable-3-error-log.html" class="ready">3 Error Log</a>
+  <a href="deliverable-4-gap-analysis.html" class="ready">4 Gap Analysis</a>
+  <a href="deliverable-5-data-ask.html" class="ready">5 Data Ask</a>
   <a href="index.html" class="ready">Next Steps</a>
 </nav>
 

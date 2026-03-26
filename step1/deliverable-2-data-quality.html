@@ -37,18 +37,6 @@
   h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; color: #fff; }
   h1 span { color: var(--accent); }
   .subtitle { font-size: 15px; color: var(--text-muted); margin-bottom: 32px; }
-  nav {
-    display: flex; gap: 4px; margin-bottom: 24px; padding: 8px;
-    background: var(--surface); border-radius: 8px; border: 1px solid var(--border);
-    font-size: 13px; font-weight: 600;
-  }
-  nav a {
-    padding: 8px 16px; border-radius: 6px; text-decoration: none;
-  }
-  nav a.active { background: var(--accent); color: var(--bg); }
-  nav a.ready { color: var(--text-muted); border: 1px solid var(--border); }
-  nav a.ready:hover { background: var(--surface2); color: var(--text); }
-  nav a.disabled { color: var(--none); border: 1px solid var(--border); pointer-events: none; }
   .meta-bar {
     display: flex; gap: 32px; margin-bottom: 36px; padding: 16px 20px;
     background: var(--surface); border-radius: 8px; border: 1px solid var(--border); flex-wrap: wrap;
@@ -158,12 +146,19 @@
     body { padding: 16px; }
     .card-body { grid-template-columns: 1fr; }
   }
+  nav { display: flex; gap: 4px; margin-bottom: 24px; padding: 8px; background: var(--surface); border-radius: 8px; border: 1px solid var(--border); font-size: 13px; font-weight: 600; flex-wrap: wrap; align-items: center; }
+  nav a { padding: 8px 16px; border-radius: 6px; text-decoration: none; white-space: nowrap; }
+  nav a.active { background: var(--accent); color: var(--bg); }
+  nav a.ready { color: var(--text-muted); border: 1px solid var(--border); }
+  nav a.ready:hover { background: var(--surface2); color: var(--text); }
+  nav a.proposal { color: var(--accent); border: 1px solid var(--accent); margin-right: 8px; }
+  nav a.proposal:hover { background: rgba(91,184,164,0.15); }
 </style>
 </head>
 <body>
 
 <nav>
-  <a href="../index.html" class="ready" style="margin-right:8px;border-right:2px solid var(--border);padding-right:16px;">â Proposal</a>
+  <a href="../index.html" class="proposal">&#8592; Proposal</a>
   <a href="deliverable-1-data-inventory.html" class="ready">1 Data Inventory</a>
   <a href="deliverable-2-data-quality.html" class="active">2 Quality Assessment</a>
   <a href="deliverable-3-error-log.html" class="ready">3 Error Log</a>
