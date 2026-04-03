@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carbon Inventory — Northwood Capital</title>
+<style>
+  :root {
+    --bg: #0f1117; --surface: #1a1d27; --surface2: #232735; --border: #2e3345;
+    --text: #e2e4ea; --text-muted: #8b8fa3; --text-dim: #5a5e72;
+    --accent: #5bb8a4; --accent-dim: rgba(91,184,164,0.12); --white: #fff;
+    --green: #4caf50; --yellow: #e8a84c; --red: #e85d5d; --orange: #e8724c; --blue: #58a6ff;
+    --scope1: #e8724c; --scope2: #58a6ff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 40px 56px; line-height: 1.5; }
+
+  h1 { font-size: 28px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+  h1 span { color: var(--accent); }
+  .subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 8px; }
+  .meta { display: flex; gap: 20px; color: var(--text-dim); font-size: 12px; margin-bottom: 24px; }
+  h2 { font-size: 16px; font-weight: 700; color: var(--white); margin-bottom: 12px; }
+  h3 { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 4px; padding: 5px; background: var(--surface); border-radius: 8px; border: 1px solid var(--border); margin-bottom: 24px; }
+  .tab { padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; color: var(--text-muted); border: 1px solid transparent; cursor: pointer; transition: all 0.15s; white-space: nowrap; background: none; font-family: inherit; }
+  .tab:hover { background: var(--surface2); color: var(--text); }
+  .tab.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* Fund filter pills */
+  .fund-pills { display: flex; gap: 6px; margin-bottom: 20px; }
+  .pill { padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; color: var(--text-muted); border: 1px solid var(--border); cursor: pointer; background: none; font-family: inherit; transition: all 0.15s; }
+  .pill:hover { border-color: var(--text-muted); color: var(--text); }
+  .pill.active { background: var(--accent-dim); color: var(--accent); border-color: var(--accent); }
+
+  /* KPI strip */
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .kpi { background: var(--surface); border-radius: 10px; padding: 16px 20px; border: 1px solid var(--border); }
+  .kpi .label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .kpi .value { font-size: 22px; font-weight: 700; }
+  .kpi .value .unit { font-size: 12px; font-weight: 500; color: var(--text-muted); margin-left: 2px; }
+  .kpi .sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .kpi .scope1-color { color: var(--scope1); }
+  .kpi .scope2-color { color: var(--scope2); }
+
+  /* Panels */
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+  .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .panel-header h3 { margin-bottom: 0; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+
+  /* Bar chart */
+  .bar-chart { display: flex; flex-direction: column; gap: 8px; }
+  .bar-row { display: flex; align-items: center; gap: 10px; font-size: 12px; }
+  .bar-label { min-width: 140px; text-align: right; color: var(--text-muted); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+  .bar-label:hover { color: var(--accent); }
+  .bar-track { flex: 1; height: 22px; background: var(--surface2); border-radius: 4px; overflow: hidden; display: flex; position: relative; }
+  .bar-seg { height: 100%; transition: width 0.4s ease; min-width: 1px; }
+  .bar-seg.s1 { background: var(--scope1); }
+  .bar-seg.s2 { background: var(--scope2); }
+  .bar-value { min-width: 70px; font-size: 11px; color: var(--text-muted); text-align: right; }
+
+  /* Tables */
+  .tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .tbl th { padding: 8px 10px; text-align: left; font-weight: 600; color: var(--text-dim); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
+  .tbl th.r { text-align: right; }
+  .tbl td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
+  .tbl td.r { text-align: right; font-variant-numeric: tabular-nums; }
+  .tbl td.co { font-weight: 600; cursor: pointer; color: var(--text); }
+  .tbl td.co:hover { color: var(--accent); }
+  .tbl tr:hover td { background: rgba(91,184,164,0.04); }
+  .tbl td .sec { display: block; font-size: 10px; color: var(--text-dim); font-weight: 400; }
+  .tbl .fund-tag { font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 3px; }
+  .tbl .fund-i { background: rgba(88,166,255,0.12); color: var(--blue); }
+  .tbl .fund-ii { background: rgba(232,168,76,0.12); color: var(--yellow); }
+  .tbl .highlight-row td { background: rgba(232,93,93,0.06); }
+
+  /* Intensity bar inline */
+  .int-bar { display: flex; align-items: center; gap: 6px; justify-content: flex-end; }
+  .int-bar-track { width: 60px; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+  .int-bar-fill { height: 100%; border-radius: 3px; background: var(--accent); }
+
+  /* Carbon price scenario */
+  .scenario-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .scenario-card { background: var(--surface2); border-radius: 8px; padding: 16px; text-align: center; border: 1px solid var(--border); }
+  .scenario-card .price { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .scenario-card .cost { font-size: 20px; font-weight: 700; color: var(--white); }
+  .scenario-card .impact { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+  .scenario-card .bps { font-size: 13px; font-weight: 700; margin-top: 2px; }
+  .bps-low { color: var(--green); }
+  .bps-med { color: var(--yellow); }
+  .bps-high { color: var(--red); }
+
+  /* Data quality badge */
+  .dq { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 4px; font-weight: 700; font-size: 10px; }
+  .dq-a { background: rgba(76,175,80,0.15); color: var(--green); }
+  .dq-b { background: rgba(232,168,76,0.15); color: var(--yellow); }
+  .dq-c { background: rgba(232,93,93,0.15); color: var(--red); }
+
+  /* Scope 3 matrix */
+  .s3-matrix { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .s3-matrix th { padding: 6px 8px; text-align: center; font-weight: 600; color: var(--text-dim); font-size: 9px; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 1px solid var(--border); background: var(--bg); position: sticky; top: 0; writing-mode: horizontal-tb; }
+  .s3-matrix th.cat-col { text-align: left; min-width: 200px; font-size: 10px; }
+  .s3-matrix th.co-col { min-width: 42px; max-width: 52px; font-size: 8px; line-height: 1.2; }
+  .s3-matrix td { padding: 6px 8px; border-bottom: 1px solid var(--border); text-align: center; }
+  .s3-matrix td.cat-name { text-align: left; font-weight: 500; color: var(--text); font-size: 12px; }
+  .s3-matrix td.cat-name .cat-num { color: var(--text-dim); font-size: 10px; }
+  .s3-matrix tr:hover td { background: rgba(91,184,164,0.04); }
+  .mat-h { color: var(--red); font-weight: 700; }
+  .mat-m { color: var(--yellow); font-weight: 600; }
+  .mat-l { color: var(--text-dim); }
+  .mat-na { color: var(--border); }
+
+  /* Portco detail view */
+  .detail-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .detail-header .name { font-size: 20px; font-weight: 700; color: var(--white); }
+  .detail-header .meta-row { display: flex; gap: 16px; margin-top: 4px; font-size: 12px; color: var(--text-muted); }
+  .detail-header .meta-row .tag { padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 700; }
+  .detail-metrics { display: flex; gap: 24px; }
+  .detail-metric { text-align: right; }
+  .detail-metric .dm-val { font-size: 18px; font-weight: 700; color: var(--white); }
+  .detail-metric .dm-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.3px; }
+
+  .back-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; color: var(--accent); border: 1px solid var(--accent); cursor: pointer; background: none; font-family: inherit; margin-bottom: 16px; transition: all 0.15s; }
+  .back-btn:hover { background: var(--accent-dim); }
+
+  /* Source waterfall */
+  .waterfall { display: flex; flex-direction: column; gap: 6px; }
+  .wf-row { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+  .wf-label { min-width: 120px; color: var(--text-muted); text-align: right; }
+  .wf-bar { height: 20px; border-radius: 3px; min-width: 2px; transition: width 0.4s; }
+  .wf-val { font-size: 11px; color: var(--text-dim); min-width: 50px; }
+
+  /* Legend */
+  .legend-row { display: flex; gap: 16px; font-size: 11px; color: var(--text-muted); margin-bottom: 16px; }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-swatch { width: 12px; height: 12px; border-radius: 3px; }
+
+  /* Methodology note */
+  .meth-note { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; font-size: 11px; color: var(--text-dim); line-height: 1.6; margin-top: 20px; }
+  .meth-note strong { color: var(--text-muted); }
+
+  /* Scrollable table wrapper */
+  .tbl-wrap { overflow-x: auto; }
+
+  /* Intensity vs avg comparison */
+  .vs-avg { display: flex; align-items: center; gap: 8px; font-size: 11px; }
+  .vs-avg .marker { display: flex; align-items: center; gap: 4px; }
+  .vs-avg .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .vs-avg .dot-co { background: var(--accent); }
+  .vs-avg .dot-avg { background: var(--text-dim); border: 1px dashed var(--text-muted); }
+
+  /* Scope 3 estimation */
+  .s3e-company { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; }
+  .s3e-company-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+  .s3e-company-header .name { font-size: 16px; font-weight: 700; color: var(--white); }
+  .s3e-company-header .totals { display: flex; gap: 20px; align-items: center; }
+  .s3e-company-header .s3-total { font-size: 18px; font-weight: 700; color: var(--accent); }
+  .s3e-company-header .s3-total .unit { font-size: 11px; font-weight: 500; color: var(--text-muted); margin-left: 3px; }
+  .s3e-company-header .vs-s12 { font-size: 11px; color: var(--text-dim); }
+  .s3e-cat-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid rgba(46,51,69,0.5); font-size: 12px; }
+  .s3e-cat-row:last-child { border-bottom: none; }
+  .s3e-cat-num { min-width: 28px; font-size: 10px; color: var(--text-dim); text-align: right; }
+  .s3e-cat-name { min-width: 200px; color: var(--text-muted); font-weight: 500; }
+  .s3e-cat-val { min-width: 90px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .s3e-cat-method { flex: 1; font-size: 10px; color: var(--text-dim); }
+  .s3e-cat-bar-wrap { min-width: 120px; max-width: 120px; }
+  .s3e-cat-bar { height: 8px; border-radius: 4px; background: var(--accent); min-width: 1px; transition: width 0.3s; }
+  .s3e-empty { color: var(--text-dim); font-style: italic; font-size: 11px; }
+  .s3e-summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .s3e-summary-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; text-align: center; }
+  .s3e-summary-card .label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .s3e-summary-card .value { font-size: 22px; font-weight: 700; color: var(--accent); }
+  .s3e-summary-card .value .unit { font-size: 12px; font-weight: 500; color: var(--text-muted); margin-left: 2px; }
+  .s3e-summary-card .sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .s3e-confidence { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 9px; font-weight: 700; }
+  .s3e-conf-low { background: rgba(232,93,93,0.15); color: var(--red); }
+  .s3e-conf-med { background: rgba(232,168,76,0.15); color: var(--yellow); }
+  .s3e-conf-high { background: rgba(76,175,80,0.15); color: var(--green); }
+</style>
+</head>
+<body>
+
+<h1>Carbon <span>Inventory</span></h1>
+<p class="subtitle">Scope 1 + 2 emissions baseline with financial exposure analysis</p>
+<div class="meta">
+  <span>Reporting Year: 2025</span>
+  <span>Emission Factors: EPA 2023 / eGRID 2022</span>
+  <span>Methodology: GHG Protocol Corporate Standard</span>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <button class="tab active" data-view="fund">Fund Overview</button>
+  <button class="tab" data-view="portco">Portfolio Company Detail</button>
+  <button class="tab" data-view="scope3">Scope 3 Screening</button>
+  <button class="tab" data-view="scope3est">Scope 3 Estimates</button>
+</div>
+
+<!-- ═══ VIEW: FUND OVERVIEW ═══ -->
+<div class="view active" id="view-fund">
+  <div class="fund-pills" id="fund-pills"></div>
+  <div class="kpis" id="kpis-emissions"></div>
+  <div class="kpis" id="kpis-financial"></div>
+
+  <div class="legend-row">
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--scope1)"></div> Scope 1 — Direct (gas, fuel, fleet, refrigerants)</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--scope2)"></div> Scope 2 — Indirect (purchased electricity)</div>
+  </div>
+
+  <!-- Emissions bar chart -->
+  <div class="panel">
+    <div class="panel-header"><h3>Emissions by Portfolio Company</h3><div id="bar-sort-toggle" style="font-size:11px;color:var(--text-dim);cursor:pointer;">Sort: Absolute ▾</div></div>
+    <div class="bar-chart" id="portco-bars"></div>
+  </div>
+
+  <!-- Two-column: Carbon Price Exposure + Source Breakdown -->
+  <div class="two-col">
+    <div class="panel">
+      <h3>Carbon Cost Exposure</h3>
+      <p style="font-size:11px;color:var(--text-dim);margin-bottom:12px;">Hypothetical carbon price applied to Scope 1+2 emissions</p>
+      <div class="scenario-grid" id="carbon-scenarios"></div>
+    </div>
+    <div class="panel">
+      <h3>Emissions by Source</h3>
+      <div class="waterfall" id="source-waterfall"></div>
+    </div>
+  </div>
+
+  <!-- Intensity comparison table -->
+  <div class="panel">
+    <div class="panel-header"><h3>Carbon Intensity Comparison</h3></div>
+    <div class="tbl-wrap">
+      <table class="tbl" id="intensity-table"></table>
+    </div>
+  </div>
+
+  <!-- Data quality summary -->
+  <div class="panel">
+    <div class="panel-header"><h3>Data Quality Summary</h3></div>
+    <div class="tbl-wrap">
+      <table class="tbl" id="dq-table"></table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ VIEW: PORTCO DETAIL ═══ -->
+<div class="view" id="view-portco">
+  <div id="portco-selector" style="margin-bottom:16px;"></div>
+  <div id="portco-detail"></div>
+</div>
+
+<!-- ═══ VIEW: SCOPE 3 SCREENING ═══ -->
+<div class="view" id="view-scope3">
+  <div class="panel" style="margin-bottom:16px;">
+    <h3>Scope 3 Materiality Screening</h3>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">Assessment of the 15 GHG Protocol Scope 3 categories by likely materiality per portfolio company. Based on sector, business model, and available data.</p>
+    <p style="font-size:11px;color:var(--text-dim);">This is a qualitative screening, not a quantitative estimate. It identifies where to focus Scope 3 measurement efforts.</p>
+  </div>
+  <div class="panel">
+    <div class="tbl-wrap">
+      <table class="s3-matrix" id="scope3-matrix"></table>
+    </div>
+  </div>
+  <div class="panel" id="scope3-priorities"></div>
+  <div class="panel" id="scope3-data-avail"></div>
+</div>
+
+<!-- ═══ VIEW: SCOPE 3 ESTIMATES ═══ -->
+<div class="view" id="view-scope3est"></div>
+
+<!-- Methodology note -->
+<div class="meth-note" id="methodology"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════
+
+const FACILITIES = [
+  {id:"MBS-001",slug:"meridian-business-solutions",name:"Meridian Business Solutions",type:"Corporate HQ / Regional Office",city:"Chicago",state:"IL",elec:348500,gas:24800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:850,source:"utility_bill",notes:"Main office — 42000 sq ft across 3 floors"},
+  {id:"MBS-002",slug:"meridian-business-solutions",name:"Meridian Business Solutions",type:"Regional Office",city:"Minneapolis",state:"MN",elec:172000,gas:14200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:"Cold climate — high heating load"},
+  {id:"MBS-003",slug:"meridian-business-solutions",name:"Meridian Business Solutions",type:"Regional Office",city:"Detroit",state:"MI",elec:145000,gas:12800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:600,source:"utility_bill",notes:""},
+  {id:"MBS-004",slug:"meridian-business-solutions",name:"Meridian Business Solutions",type:"Regional Office",city:"St. Louis",state:"MO",elec:128000,gas:9600,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"MBS-005",slug:"meridian-business-solutions",name:"Meridian Business Solutions",type:"Regional Office",city:"New York",state:"NY",elec:165000,gas:11500,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"MBS-006",slug:"meridian-business-solutions",name:"Meridian Business Solutions",type:"Regional Office",city:"Boston",state:"MA",elec:152000,gas:13100,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"MBS-007",slug:"meridian-business-solutions",name:"Meridian Business Solutions",type:"Regional Office",city:"Philadelphia",state:"PA",elec:134000,gas:10400,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"accounting_export",notes:""},
+  {id:"MBS-008",slug:"meridian-business-solutions",name:"Meridian Business Solutions",type:"Regional Office",city:"Atlanta",state:"GA",elec:148000,gas:5200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:500,source:"utility_bill",notes:""},
+  {id:"MBS-009",slug:"meridian-business-solutions",name:"Meridian Business Solutions",type:"Regional Office",city:"Charlotte",state:"NC",elec:118000,gas:6800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"accounting_export",notes:""},
+  {id:"MBS-010",slug:"meridian-business-solutions",name:"Meridian Business Solutions",type:"Regional Office",city:"Miami",state:"FL",elec:168000,gas:0,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"MBS-011",slug:"meridian-business-solutions",name:"Meridian Business Solutions",type:"Regional Office",city:"Denver",state:"CO",elec:112000,gas:9200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"accounting_export",notes:""},
+  {id:"MBS-012",slug:"meridian-business-solutions",name:"Meridian Business Solutions",type:"Regional Office",city:"Phoenix",state:"AZ",elec:178000,gas:0,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"MBS-013",slug:"meridian-business-solutions",name:"Meridian Business Solutions",type:"Delivery Center",city:"Jacksonville",state:"FL",elec:238000,gas:0,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:750,source:"utility_bill",notes:""},
+  {id:"MBS-014",slug:"meridian-business-solutions",name:"Meridian Business Solutions",type:"Delivery Center",city:"San Antonio",state:"TX",elec:215000,gas:0,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"MBS-015",slug:"meridian-business-solutions",name:"Meridian Business Solutions",type:"Regional Office",city:"Dallas",state:"TX",elec:162000,gas:3800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:500,source:"utility_bill",notes:""},
+  {id:"MBS-016",slug:"meridian-business-solutions",name:"Meridian Business Solutions",type:"Regional Office",city:"Seattle",state:"WA",elec:98000,gas:8400,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"accounting_export",notes:""},
+  {id:"NC-001",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"HQ / Clinic",city:"Philadelphia",state:"PA",elec:248000,gas:17800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"NC-002",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"King of Prussia",state:"PA",elec:112000,gas:8200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"NC-003",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Allentown",state:"PA",elec:88000,gas:7400,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"NC-004",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Scranton",state:"PA",elec:72000,gas:8100,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"landlord_data",notes:""},
+  {id:"NC-005",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Harrisburg",state:"PA",elec:78000,gas:6900,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"NC-006",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Lancaster",state:"PA",elec:65000,gas:5800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"landlord_data",notes:""},
+  {id:"NC-007",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Cherry Hill",state:"NJ",elec:94000,gas:7200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"NC-008",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Princeton",state:"NJ",elec:82000,gas:6600,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"NC-009",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Newark",state:"NJ",elec:98000,gas:7800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"landlord_data",notes:""},
+  {id:"NC-010",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Baltimore",state:"MD",elec:312000,gas:7100,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"NC-011",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Bethesda",state:"MD",elec:92000,gas:6400,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"NC-012",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Annapolis",state:"MD",elec:68000,gas:5200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"landlord_data",notes:""},
+  {id:"NC-013",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Richmond",state:"VA",elec:88000,gas:5600,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"NC-014",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Virginia Beach",state:"VA",elec:95000,gas:4800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"NC-015",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Arlington",state:"VA",elec:84000,gas:5900,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"landlord_data",notes:""},
+  {id:"NC-016",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Wilmington",state:"DE",elec:72000,gas:6200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"NC-017",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Dover",state:"DE",elec:60000,gas:4800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"landlord_data",notes:""},
+  {id:"NC-018",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Raleigh",state:"NC",elec:102000,gas:4200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"NC-019",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Charlotte",state:"NC",elec:96000,gas:4600,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"NC-020",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Durham",state:"NC",elec:78000,gas:4100,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"landlord_data",notes:""},
+  {id:"NC-021",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Greenville",state:"SC",elec:86000,gas:3800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"NC-022",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Charleston",state:"SC",elec:92000,gas:3200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"NC-023",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Columbia",state:"SC",elec:88000,gas:3500,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"landlord_data",notes:""},
+  {id:"NC-024",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Atlanta",state:"GA",elec:108000,gas:4000,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"NC-025",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Savannah",state:"GA",elec:96000,gas:2800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"NC-026",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Marietta",state:"GA",elec:0,gas:82000,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"landlord_data",notes:"RehabWorks acquisition — data migrated from prior owner format",flag:"Column swap suspected: gas value appears to be electricity kWh"},
+  {id:"NC-027",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Augusta",state:"GA",elec:0,gas:74000,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"landlord_data",notes:"RehabWorks acquisition — data migrated from prior owner format",flag:"Column swap suspected: gas value appears to be electricity kWh"},
+  {id:"NC-028",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Macon",state:"GA",elec:68000,gas:2900,diesel:0,gasoline:0,propane:0,r22:0,r410a:10,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"NC-029",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Fayetteville",state:"NC",elec:76000,gas:3800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"landlord_data",notes:""},
+  {id:"NC-030",slug:"novacare-health-partners",name:"NovaCare Health Partners",type:"Clinic",city:"Fredericksburg",state:"VA",elec:82000,gas:5400,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"SPM-001",slug:"sterling-precision-mfg",name:"Sterling Precision Manufacturing",type:"Manufacturing HQ / Primary Plant",city:"Akron",state:"OH",elec:4185000,gas:178500,diesel:8500,gasoline:0,propane:3200,r22:50,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:"Primary CNC and heat-treat facility — older R-22 chillers"},
+  {id:"SPM-002",slug:"sterling-precision-mfg",name:"Sterling Precision Manufacturing",type:"Manufacturing Facility",city:"Elyria",state:"OH",elec:2815000,gas:121000,diesel:5500,gasoline:0,propane:2100,r22:0,r410a:15,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:"Secondary machining facility"},
+  {id:"SPM-003",slug:"sterling-precision-mfg",name:"Sterling Precision Manufacturing",type:"Warehouse / Distribution",city:"Canton",state:"OH",elec:345000,gas:24800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:12000,fleet_gas:4500,source:"utility_bill",notes:"Distribution center — 8 delivery trucks and 5 crew vehicles"},
+  {id:"TIT-001",slug:"trident-it-solutions",name:"Trident IT Solutions",type:"HQ",city:"Columbus",state:"OH",elec:182000,gas:12200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"TIT-002",slug:"trident-it-solutions",name:"Trident IT Solutions",type:"Regional Office / SOC",city:"Cleveland",state:"OH",elec:452000,gas:7800,diesel:0,gasoline:0,propane:0,r22:0,r410a:25,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:"24/7 SOC — precision cooling"},
+  {id:"TIT-003",slug:"trident-it-solutions",name:"Trident IT Solutions",type:"Regional Office",city:"Detroit",state:"MI",elec:72000,gas:7200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"accounting_export",notes:""},
+  {id:"TIT-004",slug:"trident-it-solutions",name:"Trident IT Solutions",type:"Regional Office",city:"Milwaukee",state:"WI",elec:67500,gas:7800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"accounting_export",notes:""},
+  {id:"TIT-005",slug:"trident-it-solutions",name:"Trident IT Solutions",type:"Regional Office",city:"Tampa",state:"FL",elec:90000,gas:2400,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"accounting_export",notes:""},
+  {id:"TIT-006",slug:"trident-it-solutions",name:"Trident IT Solutions",type:"Regional Office",city:"Atlanta",state:"GA",elec:81000,gas:3600,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"accounting_export",notes:""},
+  {id:"TIT-007",slug:"trident-it-solutions",name:"Trident IT Solutions",type:"Regional Office",city:"Charlotte",state:"NC",elec:63000,gas:4800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"accounting_export",notes:""},
+  {id:"TIT-008",slug:"trident-it-solutions",name:"Trident IT Solutions",type:"Regional Office",city:"Nashville",state:"TN",elec:72000,gas:4200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"accounting_export",notes:""},
+  {id:"CES-001",slug:"clearview-environmental",name:"Clearview Environmental Services",type:"HQ / Field Ops Base",city:"Indianapolis",state:"IN",elec:198000,gas:14800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:18000,fleet_gas:12000,source:"utility_bill",notes:"Central dispatch — 25 fleet vehicles"},
+  {id:"CES-002",slug:"clearview-environmental",name:"Clearview Environmental Services",type:"Accredited Lab",city:"Indianapolis",state:"IN",elec:602000,gas:20200,diesel:0,gasoline:0,propane:0,r22:0,r410a:20,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:"PFAS analytical lab"},
+  {id:"CES-003",slug:"clearview-environmental",name:"Clearview Environmental Services",type:"Accredited Lab",city:"Cincinnati",state:"OH",elec:478000,gas:15800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"CES-004",slug:"clearview-environmental",name:"Clearview Environmental Services",type:"Accredited Lab",city:"Pittsburgh",state:"PA",elec:522000,gas:18200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"CES-005",slug:"clearview-environmental",name:"Clearview Environmental Services",type:"Field Ops Base",city:"Columbus",state:"OH",elec:105000,gas:6800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:10500,fleet_gas:6200,source:"utility_bill",notes:""},
+  {id:"CES-006",slug:"clearview-environmental",name:"Clearview Environmental Services",type:"Field Ops Base",city:"Baltimore",state:"MD",elec:98000,gas:6200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:9800,fleet_gas:5800,source:"utility_bill",notes:""},
+  {id:"CES-007",slug:"clearview-environmental",name:"Clearview Environmental Services",type:"Field Ops Base",city:"Philadelphia",state:"PA",elec:115000,gas:7400,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:11200,fleet_gas:7200,source:"utility_bill",notes:""},
+  {id:"CES-008",slug:"clearview-environmental",name:"Clearview Environmental Services",type:"Field Ops Base",city:"Hartford",state:"CT",elec:88000,gas:7800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:8500,fleet_gas:5400,source:"utility_bill",notes:""},
+  {id:"CES-009",slug:"clearview-environmental",name:"Clearview Environmental Services",type:"Field Ops Base",city:"Charleston",state:"SC",elec:118000,gas:5200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:9200,fleet_gas:6800,source:"fleet_log",notes:""},
+  {id:"CES-010",slug:"clearview-environmental",name:"Clearview Environmental Services",type:"Equipment Yard",city:"Dayton",state:"OH",elec:45000,gas:2800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:15000,fleet_gas:0,source:"fleet_log",notes:"Heavy equipment staging"},
+  {id:"CES-011",slug:"clearview-environmental",name:"Clearview Environmental Services",type:"Field Ops Base",city:"Richmond",state:"VA",elec:92000,gas:5800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:8800,fleet_gas:5600,source:"utility_bill",notes:""},
+  {id:"CES-012",slug:"clearview-environmental",name:"Clearview Environmental Services",type:"Field Ops Base",city:"Raleigh",state:"NC",elec:108000,gas:4400,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:9500,fleet_gas:6400,source:"fleet_log",notes:""},
+  {id:"PSS-001",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"HQ",city:"Indianapolis",state:"IN",elec:158000,gas:11800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:6000,source:"utility_bill",notes:""},
+  {id:"PSS-002",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"Branch Office",city:"Columbus",state:"OH",elec:52000,gas:4200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:3000,source:"landlord_data",notes:""},
+  {id:"PSS-003",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"Branch Office",city:"Cincinnati",state:"OH",elec:48000,gas:4000,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:3000,source:"landlord_data",notes:""},
+  {id:"PSS-004",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"Branch Office",city:"Cleveland",state:"OH",elec:54000,gas:4800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:3000,source:"landlord_data",notes:""},
+  {id:"PSS-005",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"Branch Office",city:"Dayton",state:"OH",elec:38000,gas:3600,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:2500,source:"landlord_data",notes:""},
+  {id:"PSS-006",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"Branch Office",city:"Louisville",state:"KY",elec:46000,gas:3800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:3000,source:"landlord_data",notes:"Branch closed Aug 2025"},
+  {id:"PSS-007",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"Branch Office",city:"Lexington",state:"KY",elec:40000,gas:3400,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:2500,source:"landlord_data",notes:""},
+  {id:"PSS-008",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"Branch Office",city:"Fort Wayne",state:"IN",elec:42000,gas:4200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:2500,source:"landlord_data",notes:""},
+  {id:"PSS-009",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"Branch Office",city:"Evansville",state:"IN",elec:0,gas:0,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:2500,source:"landlord_data",notes:"Utilities included in lease",flag:"No energy data — lease-included"},
+  {id:"PSS-010",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"Branch Office",city:"Grand Rapids",state:"MI",elec:48000,gas:4600,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:3000,source:"landlord_data",notes:""},
+  {id:"PSS-011",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"Branch Office",city:"Lansing",state:"MI",elec:42000,gas:4400,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:2500,source:"landlord_data",notes:""},
+  {id:"PSS-012",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"Branch Office",city:"Milwaukee",state:"WI",elec:50000,gas:5000,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:3000,source:"landlord_data",notes:""},
+  {id:"PSS-013",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"Branch Office",city:"Madison",state:"WI",elec:44000,gas:4800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:3000,source:"landlord_data",notes:""},
+  {id:"PSS-014",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"Branch Office",city:"Rockford",state:"IL",elec:0,gas:0,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:2500,source:"landlord_data",notes:"Utilities included in lease",flag:"No energy data — lease-included"},
+  {id:"PSS-015",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"Branch Office",city:"Nashville",state:"TN",elec:52000,gas:3200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:3000,source:"landlord_data",notes:""},
+  {id:"PSS-016",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"Branch Office",city:"Knoxville",state:"TN",elec:44000,gas:3400,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:3000,source:"landlord_data",notes:""},
+  {id:"PSS-017",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"Branch Office",city:"Atlanta",state:"GA",elec:56000,gas:2600,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:3000,source:"landlord_data",notes:""},
+  {id:"PSS-018",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"Branch Office",city:"Charlotte",state:"NC",elec:48000,gas:2800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:3000,source:"landlord_data",notes:""},
+  {id:"PSS-019",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"Branch Office",city:"Jacksonville",state:"FL",elec:58000,gas:2000,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:3000,source:"landlord_data",notes:""},
+  {id:"PSS-020",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"Branch Office",city:"Tampa",state:"FL",elec:60000,gas:1800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:3000,source:"fleet_log",notes:""},
+  {id:"PSS-021",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"Branch Office",city:"Columbia",state:"SC",elec:50000,gas:2400,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:3000,source:"landlord_data",notes:""},
+  {id:"PSS-022",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"Branch Office",city:"Birmingham",state:"AL",elec:52000,gas:2600,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:3000,source:"landlord_data",notes:""},
+  {id:"PSS-023",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"Branch Office",city:"Jackson",state:"MS",elec:48000,gas:2200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:2500,source:"landlord_data",notes:""},
+  {id:"PSS-024",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"Branch Office",city:"Little Rock",state:"AR",elec:46000,gas:2800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:3000,source:"landlord_data",notes:""},
+  {id:"PSS-025",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"Branch Office",city:"Memphis",state:"TN",elec:54000,gas:2600,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:3000,source:"landlord_data",notes:""},
+  {id:"PSS-026",slug:"patriot-staffing-solutions",name:"Patriot Staffing Solutions",type:"Branch Office",city:"New Orleans",state:"LA",elec:58000,gas:1600,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:3000,source:"landlord_data",notes:""},
+  {id:"KBH-001",slug:"keystone-behavioral-health",name:"Keystone Behavioral Health",type:"HQ / Clinic",city:"Philadelphia",state:"PA",elec:178000,gas:13800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"KBH-002",slug:"keystone-behavioral-health",name:"Keystone Behavioral Health",type:"Clinic",city:"Bala Cynwyd",state:"PA",elec:82000,gas:6400,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"KBH-003",slug:"keystone-behavioral-health",name:"Keystone Behavioral Health",type:"Clinic",city:"West Chester",state:"PA",elec:72000,gas:5800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"landlord_data",notes:""},
+  {id:"KBH-004",slug:"keystone-behavioral-health",name:"Keystone Behavioral Health",type:"Clinic",city:"Doylestown",state:"PA",elec:33000,gas:5200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"estimate",notes:"Estimated: 2200 sq ft x 15 kWh/sq ft"},
+  {id:"KBH-005",slug:"keystone-behavioral-health",name:"Keystone Behavioral Health",type:"Clinic",city:"Media",state:"PA",elec:64000,gas:5600,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"landlord_data",notes:""},
+  {id:"KBH-006",slug:"keystone-behavioral-health",name:"Keystone Behavioral Health",type:"Clinic",city:"Norristown",state:"PA",elec:68000,gas:5400,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"KBH-007",slug:"keystone-behavioral-health",name:"Keystone Behavioral Health",type:"Clinic",city:"Reading",state:"PA",elec:33000,gas:5000,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"estimate",notes:"Estimated"},
+  {id:"KBH-008",slug:"keystone-behavioral-health",name:"Keystone Behavioral Health",type:"Clinic",city:"Wilmington",state:"DE",elec:62000,gas:4800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"KBH-009",slug:"keystone-behavioral-health",name:"Keystone Behavioral Health",type:"Clinic",city:"Newark",state:"DE",elec:33000,gas:4200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"estimate",notes:"Estimated"},
+  {id:"KBH-010",slug:"keystone-behavioral-health",name:"Keystone Behavioral Health",type:"Clinic",city:"Towson",state:"MD",elec:70000,gas:5200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"KBH-011",slug:"keystone-behavioral-health",name:"Keystone Behavioral Health",type:"Clinic",city:"Columbia",state:"MD",elec:66000,gas:4600,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"landlord_data",notes:""},
+  {id:"KBH-012",slug:"keystone-behavioral-health",name:"Keystone Behavioral Health",type:"Clinic",city:"Annapolis",state:"MD",elec:33000,gas:4000,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"estimate",notes:"Estimated"},
+  {id:"KBH-013",slug:"keystone-behavioral-health",name:"Keystone Behavioral Health",type:"Clinic",city:"Cherry Hill",state:"NJ",elec:74000,gas:5800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"KBH-014",slug:"keystone-behavioral-health",name:"Keystone Behavioral Health",type:"Clinic",city:"Marlton",state:"NJ",elec:33000,gas:4800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"estimate",notes:"Estimated"},
+  {id:"KBH-015",slug:"keystone-behavioral-health",name:"Keystone Behavioral Health",type:"Clinic",city:"Princeton",state:"NJ",elec:68000,gas:5200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"landlord_data",notes:""},
+  {id:"KBH-016",slug:"keystone-behavioral-health",name:"Keystone Behavioral Health",type:"Clinic",city:"Woodbridge",state:"NJ",elec:33000,gas:5400,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"estimate",notes:"Estimated"},
+  {id:"KBH-017",slug:"keystone-behavioral-health",name:"Keystone Behavioral Health",type:"Clinic",city:"Richmond",state:"VA",elec:76000,gas:4200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:""},
+  {id:"KBH-018",slug:"keystone-behavioral-health",name:"Keystone Behavioral Health",type:"Clinic",city:"Alexandria",state:"VA",elec:72000,gas:4600,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"landlord_data",notes:""},
+  {id:"KBH-019",slug:"keystone-behavioral-health",name:"Keystone Behavioral Health",type:"Clinic",city:"Fairfax",state:"VA",elec:64000,gas:4800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"landlord_data",notes:""},
+  {id:"KBH-020",slug:"keystone-behavioral-health",name:"Keystone Behavioral Health",type:"Clinic",city:"Roanoke",state:"VA",elec:46000,gas:5000,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"landlord_data",notes:""},
+  {id:"KBH-021",slug:"keystone-behavioral-health",name:"Keystone Behavioral Health",type:"Clinic",city:"Trenton",state:"NJ",elec:52000,gas:5000,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"landlord_data",notes:"Opened June 2025 — 7 months data"},
+  {id:"KBH-022",slug:"keystone-behavioral-health",name:"Keystone Behavioral Health",type:"Clinic",city:"Hagerstown",state:"MD",elec:0,gas:0,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"N/A",notes:"Opened Nov 2025 — insufficient data",flag:"No data available"},
+  {id:"PTI-001",slug:"pinnacle-testing-inspection",name:"Pinnacle Testing & Inspection",type:"HQ",city:"Houston",state:"TX",elec:282000,gas:3800,diesel:0,gasoline:0,propane:0,r22:0,r410a:15,fleet_diesel:25000,fleet_gas:15000,source:"utility_bill",notes:"35 fleet vehicles"},
+  {id:"PTI-002",slug:"pinnacle-testing-inspection",name:"Pinnacle Testing & Inspection",type:"Field Ops",city:"Beaumont",state:"TX",elec:118000,gas:1800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:18000,fleet_gas:8000,source:"accounting_export",notes:""},
+  {id:"PTI-003",slug:"pinnacle-testing-inspection",name:"Pinnacle Testing & Inspection",type:"Field Ops",city:"Lake Charles",state:"LA",elec:112000,gas:2500,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:16000,fleet_gas:7000,source:"accounting_export",notes:""},
+  {id:"PTI-004",slug:"pinnacle-testing-inspection",name:"Pinnacle Testing & Inspection",type:"Field Ops",city:"Baton Rouge",state:"LA",elec:98000,gas:2200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:14000,fleet_gas:6000,source:"accounting_export",notes:""},
+  {id:"PTI-005",slug:"pinnacle-testing-inspection",name:"Pinnacle Testing & Inspection",type:"Field Ops",city:"Corpus Christi",state:"TX",elec:94000,gas:1400,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:12000,fleet_gas:5500,source:"accounting_export",notes:""},
+  {id:"PTI-006",slug:"pinnacle-testing-inspection",name:"Pinnacle Testing & Inspection",type:"Regional Office",city:"Birmingham",state:"AL",elec:72000,gas:4200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:8000,fleet_gas:4000,source:"accounting_export",notes:""},
+  {id:"PTI-007",slug:"pinnacle-testing-inspection",name:"Pinnacle Testing & Inspection",type:"Regional Office",city:"Mobile",state:"AL",elec:66000,gas:2800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:9000,fleet_gas:4500,source:"accounting_export",notes:""},
+  {id:"PTI-008",slug:"pinnacle-testing-inspection",name:"Pinnacle Testing & Inspection",type:"Field Ops",city:"Pensacola",state:"FL",elec:82000,gas:1600,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:10000,fleet_gas:5000,source:"accounting_export",notes:""},
+  {id:"PTI-009",slug:"pinnacle-testing-inspection",name:"Pinnacle Testing & Inspection",type:"Equipment Depot",city:"Pasadena",state:"TX",elec:54000,gas:1000,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:20000,fleet_gas:0,source:"fleet_log",notes:"Vehicle staging yard"},
+  {id:"PTI-010",slug:"pinnacle-testing-inspection",name:"Pinnacle Testing & Inspection",type:"Field Ops",city:"Port Arthur",state:"TX",elec:88000,gas:1200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:11000,fleet_gas:4800,source:"accounting_export",notes:""},
+  {id:"HRF-001",slug:"harvest-ridge-foods",name:"Harvest Ridge Foods",type:"Production Plant / HQ",city:"Nashville",state:"TN",elec:3200000,gas:185000,diesel:8500,gasoline:0,propane:2200,r22:0,r410a:0,fleet_diesel:6800,fleet_gas:3200,source:"utility_bill",notes:"Primary plant — boilers 18hr/day"},
+  {id:"HRF-002",slug:"harvest-ridge-foods",name:"Harvest Ridge Foods",type:"Production Plant",city:"Murfreesboro",state:"TN",elec:1450000,gas:68000,diesel:3200,gasoline:0,propane:1800,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:"Dressings/condiments"},
+  {id:"HRF-003",slug:"harvest-ridge-foods",name:"Harvest Ridge Foods",type:"Production Plant (Organic)",city:"Bowling Green",state:"KY",elec:1680000,gas:72000,diesel:2800,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:"Organic/specialty"},
+  {id:"HRF-004",slug:"harvest-ridge-foods",name:"Harvest Ridge Foods",type:"Production Plant (Cold-Fill)",city:"Chattanooga",state:"TN",elec:2100000,gas:0,diesel:1500,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:0,source:"utility_bill",notes:"All-electric process heat — no natural gas"},
+  {id:"HRF-005",slug:"harvest-ridge-foods",name:"Harvest Ridge Foods",type:"Corporate HQ / R&D Lab",city:"Nashville",state:"TN",elec:95000,gas:4200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:2800,source:"utility_bill",notes:"Office + pilot kitchen"},
+  {id:"RPS-001",slug:"ridgeline-property-services",name:"Ridgeline Property Services",type:"Corporate HQ",city:"Denver",state:"CO",elec:185000,gas:8500,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:4200,source:"utility_bill",notes:""},
+  {id:"RPS-002",slug:"ridgeline-property-services",name:"Ridgeline Property Services",type:"Regional Office",city:"Phoenix",state:"AZ",elec:95000,gas:0,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:2800,source:"utility_bill",notes:"All-electric"},
+  {id:"RPS-003",slug:"ridgeline-property-services",name:"Ridgeline Property Services",type:"Regional Office",city:"Salt Lake City",state:"UT",elec:52000,gas:3800,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:1200,source:"utility_bill",notes:""},
+  {id:"RPS-004",slug:"ridgeline-property-services",name:"Ridgeline Property Services",type:"Regional Office",city:"Albuquerque",state:"NM",elec:42000,gas:2200,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:900,source:"utility_bill",notes:""},
+  {id:"RPS-005",slug:"ridgeline-property-services",name:"Ridgeline Property Services",type:"Regional Office",city:"Boise",state:"ID",elec:38000,gas:3100,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:800,source:"utility_bill",notes:""},
+  {id:"RPS-006",slug:"ridgeline-property-services",name:"Ridgeline Property Services",type:"Regional Office",city:"Tucson",state:"AZ",elec:48000,gas:0,diesel:0,gasoline:0,propane:0,r22:0,r410a:0,fleet_diesel:0,fleet_gas:700,source:"utility_bill",notes:"All-electric"}
+];
+
+// Portfolio company financial data (LTM as of Jan 31, 2026)
+const PORTCOS = {
+  "meridian-business-solutions": {name:"Meridian Business Solutions",sector:"Business Services",fund:"Fund I",revenue:225,ebitda:38.3,headcount:580},
+  "novacare-health-partners": {name:"NovaCare Health Partners",sector:"Healthcare Services",fund:"Fund I",revenue:175,ebitda:28.0,headcount:385},
+  "sterling-precision-mfg": {name:"Sterling Precision Manufacturing",sector:"Industrial Technology",fund:"Fund I",revenue:168,ebitda:30.2,headcount:420},
+  "trident-it-solutions": {name:"Trident IT Solutions",sector:"IT Services",fund:"Fund I",revenue:142,ebitda:24.9,headcount:305},
+  "clearview-environmental": {name:"Clearview Environmental Services",sector:"Environmental Services",fund:"Fund II",revenue:195,ebitda:31.2,headcount:505},
+  "patriot-staffing-solutions": {name:"Patriot Staffing Solutions",sector:"Business Services",fund:"Fund II",revenue:310,ebitda:23.8,headcount:185},
+  "keystone-behavioral-health": {name:"Keystone Behavioral Health",sector:"Healthcare Services",fund:"Fund II",revenue:138,ebitda:24.2,headcount:340},
+  "pinnacle-testing-inspection": {name:"Pinnacle Testing & Inspection",sector:"Industrial Technology",fund:"Fund II",revenue:115,ebitda:20.1,headcount:275},
+  "harvest-ridge-foods": {name:"Harvest Ridge Foods",sector:"Food & Agriculture",fund:"Fund II",revenue:152,ebitda:22.8,headcount:335},
+  "ridgeline-property-services": {name:"Ridgeline Property Services",sector:"Real Estate Services",fund:"Fund II",revenue:95,ebitda:17.4,headcount:295}
+};
+
+// eGRID 2022 emission factors by state (mt CO2e per kWh)
+const EGRID = {
+  AL:0.000360, AR:0.000422, AZ:0.000372, CA:0.000241, CO:0.000485, CT:0.000204,
+  DC:0.000296, DE:0.000296, FL:0.000369, GA:0.000360, IA:0.000388, ID:0.000100,
+  IL:0.000407, IN:0.000407, KS:0.000617, KY:0.000368, LA:0.000353, MA:0.000204,
+  MD:0.000296, ME:0.000204, MI:0.000536, MN:0.000388, MO:0.000617, MS:0.000360,
+  NC:0.000297, NE:0.000458, NH:0.000204, NJ:0.000296, NM:0.000372, NV:0.000372,
+  NY:0.000235, OH:0.000407, OK:0.000422, OR:0.000279, PA:0.000296, RI:0.000204,
+  SC:0.000297, TN:0.000368, TX:0.000380, UT:0.000279, VA:0.000297, VT:0.000204,
+  WA:0.000079, WI:0.000464, WV:0.000407
+};
+
+// EPA 2023 emission factors
+const EPA = {
+  gas: 0.005306,      // mt CO2e per therm (natural gas)
+  diesel: 0.010180,   // mt CO2e per gallon (stationary diesel)
+  gasoline: 0.008887, // mt CO2e per gallon
+  propane: 0.005740,  // mt CO2e per gallon
+  r22: 0.821,         // mt CO2e per lb (GWP 1810 × 0.4536 kg/lb / 1000)
+  r410a: 0.947        // mt CO2e per lb (GWP 2088 × 0.4536 kg/lb / 1000)
+};
+
+// ═══════════════════════════════════════════════════════
+// CALCULATION ENGINE
+// ═══════════════════════════════════════════════════════
+
+function calcFacility(f) {
+  const s1_gas = (f.gas || 0) * EPA.gas;
+  const s1_diesel = (f.diesel || 0) * EPA.diesel;
+  const s1_gasoline = (f.gasoline || 0) * EPA.gasoline;
+  const s1_propane = (f.propane || 0) * EPA.propane;
+  const s1_r22 = (f.r22 || 0) * EPA.r22;
+  const s1_r410a = (f.r410a || 0) * EPA.r410a;
+  const s1_fleet_diesel = (f.fleet_diesel || 0) * EPA.diesel;
+  const s1_fleet_gas = (f.fleet_gas || 0) * EPA.gasoline;
+  const scope1 = s1_gas + s1_diesel + s1_gasoline + s1_propane + s1_r22 + s1_r410a + s1_fleet_diesel + s1_fleet_gas;
+  const scope2 = (f.elec || 0) * (EGRID[f.state] || 0.000380);
+  return {
+    ...f, scope1, scope2, total: scope1 + scope2,
+    s1_gas, s1_diesel, s1_gasoline, s1_propane, s1_r22, s1_r410a, s1_fleet_diesel, s1_fleet_gas
+  };
+}
+
+const calculated = FACILITIES.map(calcFacility);
+
+function aggregateByPortco(facilities, fundFilter) {
+  const groups = {};
+  facilities.forEach(f => {
+    const pc = PORTCOS[f.slug];
+    if (!pc) return;
+    if (fundFilter && pc.fund !== fundFilter) return;
+    if (!groups[f.slug]) groups[f.slug] = { slug: f.slug, ...pc, scope1:0, scope2:0, total:0, facilities:[], sources:{},
+      s1_gas:0, s1_diesel:0, s1_gasoline:0, s1_propane:0, s1_r22:0, s1_r410a:0, s1_fleet_diesel:0, s1_fleet_gas:0 };
+    const g = groups[f.slug];
+    g.scope1 += f.scope1; g.scope2 += f.scope2; g.total += f.total;
+    g.s1_gas += f.s1_gas; g.s1_diesel += f.s1_diesel; g.s1_gasoline += f.s1_gasoline;
+    g.s1_propane += f.s1_propane; g.s1_r22 += f.s1_r22; g.s1_r410a += f.s1_r410a;
+    g.s1_fleet_diesel += f.s1_fleet_diesel; g.s1_fleet_gas += f.s1_fleet_gas;
+    g.facilities.push(f);
+    g.sources[f.source] = (g.sources[f.source] || 0) + 1;
+  });
+  return Object.values(groups).sort((a,b) => b.total - a.total);
+}
+
+function getDataGrade(sources) {
+  const total = Object.values(sources).reduce((s,v) => s+v, 0);
+  const aCount = sources.utility_bill || 0;
+  const bCount = sources.accounting_export || 0;
+  const cCount = (sources.landlord_data || 0) + (sources.estimate || 0) + (sources.fleet_log || 0);
+  const ratio = aCount / total;
+  if (ratio >= 0.7) return 'A';
+  if ((aCount + bCount) / total >= 0.6) return 'B';
+  return 'C';
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDERING
+// ═══════════════════════════════════════════════════════
+
+let currentFundFilter = null;
+let currentSortMode = 'absolute';
+
+function fmt(n, d=1) { return n < 10 ? n.toFixed(d) : n < 1000 ? Math.round(n).toLocaleString() : n.toLocaleString('en-US', {maximumFractionDigits:0}); }
+function fmtM(n) { return '$' + n.toFixed(1) + 'M'; }
+function fmtK(n) { return n >= 1000 ? (n/1000).toFixed(1) + 'k' : Math.round(n).toString(); }
+function pct(n,d) { return d ? ((n/d)*100).toFixed(1) + '%' : '—'; }
+
+function renderFundView() {
+  const portcos = aggregateByPortco(calculated, currentFundFilter);
+  const totalS1 = portcos.reduce((s,p) => s+p.scope1, 0);
+  const totalS2 = portcos.reduce((s,p) => s+p.scope2, 0);
+  const totalEmissions = totalS1 + totalS2;
+  const totalRev = portcos.reduce((s,p) => s+p.revenue, 0);
+  const totalEbitda = portcos.reduce((s,p) => s+p.ebitda, 0);
+  const totalHC = portcos.reduce((s,p) => s+p.headcount, 0);
+  const totalFacilities = portcos.reduce((s,p) => s+p.facilities.length, 0);
+
+  // Fund filter pills
+  document.getElementById('fund-pills').innerHTML = `
+    <button class="pill ${!currentFundFilter?'active':''}" onclick="setFundFilter(null)">All Portfolio</button>
+    <button class="pill ${currentFundFilter==='Fund I'?'active':''}" onclick="setFundFilter('Fund I')">Fund I</button>
+    <button class="pill ${currentFundFilter==='Fund II'?'active':''}" onclick="setFundFilter('Fund II')">Fund II</button>
+  `;
+
+  // KPI strip — emissions
+  document.getElementById('kpis-emissions').innerHTML = `
+    <div class="kpi"><div class="label">Total Scope 1 + 2</div><div class="value">${fmt(totalEmissions)}<span class="unit">mt CO2e</span></div><div class="sub">${portcos.length} portfolio companies</div></div>
+    <div class="kpi"><div class="label">Scope 1 — Direct</div><div class="value scope1-color">${fmt(totalS1)}<span class="unit">mt CO2e</span></div><div class="sub">${pct(totalS1, totalEmissions)} of total</div></div>
+    <div class="kpi"><div class="label">Scope 2 — Electricity</div><div class="value scope2-color">${fmt(totalS2)}<span class="unit">mt CO2e</span></div><div class="sub">${pct(totalS2, totalEmissions)} of total</div></div>
+    <div class="kpi"><div class="label">Facilities Reporting</div><div class="value">${totalFacilities}</div><div class="sub">Across ${portcos.length} companies</div></div>
+  `;
+
+  // KPI strip — financial context
+  const portfolioIntensity = totalRev > 0 ? totalEmissions / totalRev : 0;
+  document.getElementById('kpis-financial').innerHTML = `
+    <div class="kpi"><div class="label">Portfolio Revenue (LTM)</div><div class="value">${fmtM(totalRev)}</div><div class="sub">${portcos.length} companies</div></div>
+    <div class="kpi"><div class="label">Portfolio EBITDA (LTM)</div><div class="value">${fmtM(totalEbitda)}</div><div class="sub">${(totalEbitda/totalRev*100).toFixed(1)}% margin</div></div>
+    <div class="kpi"><div class="label">Carbon Intensity</div><div class="value">${fmt(portfolioIntensity, 1)}<span class="unit">tCO2e / $M Rev</span></div><div class="sub">Portfolio weighted average</div></div>
+    <div class="kpi"><div class="label">Intensity per Employee</div><div class="value">${fmt(totalEmissions/totalHC, 1)}<span class="unit">tCO2e / FTE</span></div><div class="sub">${fmtK(totalHC)} total headcount</div></div>
+  `;
+
+  // Portco emissions bar chart
+  const sorted = currentSortMode === 'intensity'
+    ? [...portcos].sort((a,b) => (b.total/b.revenue) - (a.total/a.revenue))
+    : portcos;
+  const maxVal = currentSortMode === 'intensity'
+    ? Math.max(...sorted.map(p => p.total/p.revenue))
+    : Math.max(...sorted.map(p => p.total));
+
+  document.getElementById('bar-sort-toggle').textContent = currentSortMode === 'absolute' ? 'Sort: Absolute \u25BE' : 'Sort: Intensity \u25BE';
+  document.getElementById('portco-bars').innerHTML = sorted.map(p => {
+    const displayVal = currentSortMode === 'intensity' ? p.total/p.revenue : p.total;
+    const w = (displayVal / maxVal * 100);
+    const s1w = p.total > 0 ? (p.scope1 / p.total * w) : 0;
+    const s2w = w - s1w;
+    const valLabel = currentSortMode === 'intensity'
+      ? `${fmt(p.total/p.revenue,1)} tCO2e/$M`
+      : `${fmt(p.total)} mt`;
+    return `<div class="bar-row">
+      <div class="bar-label" onclick="showPortco('${p.slug}')">${p.name.split(' ').slice(0,2).join(' ')}</div>
+      <div class="bar-track"><div class="bar-seg s1" style="width:${s1w}%"></div><div class="bar-seg s2" style="width:${s2w}%"></div></div>
+      <div class="bar-value">${valLabel}</div>
+    </div>`;
+  }).join('');
+
+  // Carbon cost exposure
+  const prices = [25, 50, 100];
+  document.getElementById('carbon-scenarios').innerHTML = prices.map(price => {
+    const cost = totalEmissions * price;
+    const bpsImpact = totalEbitda > 0 ? (cost / (totalEbitda * 1e6)) * 10000 : 0;
+    const bpsClass = bpsImpact < 10 ? 'bps-low' : bpsImpact < 50 ? 'bps-med' : 'bps-high';
+    return `<div class="scenario-card">
+      <div class="price">$${price} / tCO2e</div>
+      <div class="cost">$${fmtK(cost)}</div>
+      <div class="impact">${pct(cost, totalEbitda * 1e6)} of EBITDA</div>
+      <div class="bps ${bpsClass}">${fmt(bpsImpact, 0)} bps margin impact</div>
+    </div>`;
+  }).join('');
+
+  // Source waterfall
+  const sources = [
+    {label:'Natural Gas', val: portcos.reduce((s,p)=>s+p.s1_gas,0), color:'var(--scope1)'},
+    {label:'Fleet Diesel', val: portcos.reduce((s,p)=>s+p.s1_fleet_diesel,0), color:'var(--orange)'},
+    {label:'Fleet Gasoline', val: portcos.reduce((s,p)=>s+p.s1_fleet_gas,0), color:'var(--yellow)'},
+    {label:'Stationary Diesel', val: portcos.reduce((s,p)=>s+p.s1_diesel,0), color:'#c0583a'},
+    {label:'Propane', val: portcos.reduce((s,p)=>s+p.s1_propane,0), color:'#a08050'},
+    {label:'Refrigerants', val: portcos.reduce((s,p)=>s+p.s1_r22+p.s1_r410a,0), color:'var(--red)'},
+    {label:'Electricity', val: totalS2, color:'var(--scope2)'},
+  ];
+  const maxSource = Math.max(...sources.map(s => s.val));
+  document.getElementById('source-waterfall').innerHTML = sources.map(s => {
+    const w = maxSource > 0 ? (s.val / maxSource * 100) : 0;
+    return `<div class="wf-row">
+      <div class="wf-label">${s.label}</div>
+      <div class="wf-bar" style="width:${Math.max(w,1)}%;background:${s.color}"></div>
+      <div class="wf-val">${fmt(s.val)} mt</div>
+    </div>`;
+  }).join('');
+
+  // Intensity comparison table
+  const maxIntRev = Math.max(...portcos.map(p => p.total / p.revenue));
+  document.getElementById('intensity-table').innerHTML = `
+    <thead><tr>
+      <th>Company</th><th>Fund</th><th>Sector</th>
+      <th class="r">Scope 1+2</th>
+      <th class="r">Revenue</th><th class="r">EBITDA</th>
+      <th class="r">tCO2e / $M Rev</th>
+      <th class="r">tCO2e / $M EBITDA</th>
+      <th class="r">tCO2e / FTE</th>
+      <th class="r">% of Emissions</th>
+      <th class="r">% of EBITDA</th>
+    </tr></thead>
+    <tbody>${portcos.map(p => {
+      const intRev = p.total / p.revenue;
+      const intEbitda = p.total / p.ebitda;
+      const intFTE = p.total / p.headcount;
+      const pctEmissions = (p.total / totalEmissions * 100);
+      const pctEbitda = (p.ebitda / totalEbitda * 100);
+      const disproportionate = pctEmissions > pctEbitda * 1.5;
+      return `<tr class="${disproportionate ? 'highlight-row' : ''}">
+        <td class="co" onclick="showPortco('${p.slug}')">${p.name}</td>
+        <td><span class="fund-tag ${p.fund==='Fund I'?'fund-i':'fund-ii'}">${p.fund}</span></td>
+        <td style="font-size:11px;color:var(--text-muted)">${p.sector}</td>
+        <td class="r">${fmt(p.total)}</td>
+        <td class="r">${fmtM(p.revenue)}</td>
+        <td class="r">${fmtM(p.ebitda)}</td>
+        <td class="r"><div class="int-bar"><span>${fmt(intRev,1)}</span><div class="int-bar-track"><div class="int-bar-fill" style="width:${intRev/maxIntRev*100}%"></div></div></div></td>
+        <td class="r">${fmt(intEbitda,1)}</td>
+        <td class="r">${fmt(intFTE,1)}</td>
+        <td class="r">${pctEmissions.toFixed(1)}%</td>
+        <td class="r">${pctEbitda.toFixed(1)}%</td>
+      </tr>`;
+    }).join('')}
+    <tr style="font-weight:700;border-top:2px solid var(--accent);">
+      <td>Portfolio Total</td><td></td><td></td>
+      <td class="r">${fmt(totalEmissions)}</td>
+      <td class="r">${fmtM(totalRev)}</td><td class="r">${fmtM(totalEbitda)}</td>
+      <td class="r">${fmt(portfolioIntensity,1)}</td>
+      <td class="r">${fmt(totalEmissions/totalEbitda,1)}</td>
+      <td class="r">${fmt(totalEmissions/totalHC,1)}</td>
+      <td class="r">100%</td><td class="r">100%</td>
+    </tr></tbody>`;
+
+  // Data quality table
+  document.getElementById('dq-table').innerHTML = `
+    <thead><tr><th>Company</th><th class="r">Facilities</th><th class="r">Utility Bill (A)</th><th class="r">Accounting (B)</th><th class="r">Landlord/Est (C)</th><th class="r">Grade</th></tr></thead>
+    <tbody>${portcos.map(p => {
+      const a = p.sources.utility_bill || 0;
+      const b = p.sources.accounting_export || 0;
+      const c = (p.sources.landlord_data||0) + (p.sources.estimate||0) + (p.sources.fleet_log||0) + (p.sources['N/A']||0);
+      const grade = getDataGrade(p.sources);
+      return `<tr>
+        <td class="co" onclick="showPortco('${p.slug}')">${p.name}</td>
+        <td class="r">${p.facilities.length}</td>
+        <td class="r">${a}</td><td class="r">${b}</td><td class="r">${c}</td>
+        <td class="r"><span class="dq dq-${grade.toLowerCase()}">${grade}</span></td>
+      </tr>`;
+    }).join('')}</tbody>`;
+}
+
+// Data quality findings per portco from Step 1 assessment
+const DQ_FINDINGS = {
+  "meridian-business-solutions": {
+    grade: "A", gradeNote: "75% utility bill, 25% accounting export",
+    errors: [
+      {severity:"High", id:"E-06", title:"Fleet boundary contradiction", detail:"Questionnaire states \"Meridian does not operate a vehicle fleet,\" but CSV contains 3,200 gallons fleet gasoline across 5 facilities (MBS-001: 850 gal, MBS-003: 600 gal, MBS-008: 500 gal, MBS-013: 750 gal, MBS-015: 500 gal). Likely management/sales vehicles not formally classified as fleet. Scope 1 fleet emissions (~28 mt CO2e) may need reclassification pending clarification with Patricia Wells (CFO)."},
+      {severity:"Medium", id:"E-12", title:"Natural gas total discrepancy", detail:"Questionnaire reports ~142,300 therms total vs CSV sum of ~129,800 therms — a 9.6% variance (12,500 therms delta). Likely caused by shared-building meter allocations at New York (MBS-005) and Boston (MBS-006) where allocation percentages differ between sources. CSV values used in this calculation."},
+    ],
+    assumptions: [
+      "CSV values used over questionnaire totals — CSV sourced from utility bills (Grade A/B) vs. manual questionnaire sums.",
+      "Boston (MBS-006) electricity: 60% allocation of building total applied per facility note. Remaining 40% attributed to shared common areas and excluded.",
+      "Fleet gasoline included in Scope 1 as mobile combustion pending scope boundary clarification. If reclassified as employee vehicles, would reduce Scope 1 by ~28 mt CO2e.",
+      "All 16 facilities use annual aggregate data — no monthly granularity available to identify seasonal patterns."
+    ],
+    gaps: [
+      "No monthly utility breakdowns — annual totals only.",
+      "Shared-meter allocation methodology at NY and Boston not documented beyond facility notes.",
+    ]
+  },
+  "novacare-health-partners": {
+    grade: "B", gradeNote: "63% utility bill, 37% landlord data",
+    errors: [
+      {severity:"Critical", id:"E-01", title:"Unit swap — Marietta and Augusta clinics", detail:"NC-026 (Marietta, GA) and NC-027 (Augusta, GA) report electricity = 0 kWh and natural gas = 82,000 and 74,000 therms respectively. These values are 12-14x the NovaCare clinic gas median (~5,800 therms). Root cause: data migrated from prior RehabWorks owner format with electricity values entered into the therms column. If uncorrected, this adds ~829 mt CO2e to Scope 1 — nearly doubling actual Scope 1 emissions. Current calculation uses values as-submitted; corrected values would move 82K/74K to electricity column and apply GA clinic median (~3,600 therms) for gas."},
+      {severity:"Medium", id:"E-14", title:"Baltimore electricity outlier", detail:"NC-010 (Baltimore, MD) reports 312,000 kWh — 3.5x the median NovaCare clinic (~88,000 kWh). Next highest is NC-001 (Philadelphia HQ) at 248,000 kWh, expected due to admin offices. Baltimore may be a larger facility, multi-floor, or include shared-meter common areas. Needs confirmation from Michael Park (CFO) on facility size."},
+    ],
+    assumptions: [
+      "NC-026 and NC-027 calculated as-submitted. CRITICAL: Values are almost certainly electricity in the wrong column. Corrected Scope 1 for NovaCare would drop significantly; Scope 2 would increase modestly.",
+      "R-410A recharge at NC-028 (Macon, GA): 10 lbs used as reported — standard rooftop unit recharge.",
+      "Landlord-reported data at 11 clinics (37%) accepted at face value — no independent verification of landlord allocation methodology.",
+      "Baltimore outlier (NC-010) included at reported value. If facility is standard size, electricity may be overstated by ~2.5x."
+    ],
+    gaps: [
+      "No actual utility bills for RehabWorks acquisition clinics (Marietta, Augusta) — only migrated landlord data.",
+      "Regulated medical waste tracked at 22 clinics (Stericycle) but volumes not provided — cannot calculate Scope 3 Category 5.",
+      "4 PhysioFirst clinics on aging HVAC — $280K replacement budgeted 2026, not reflected in current emissions."
+    ]
+  },
+  "sterling-precision-mfg": {
+    grade: "A", gradeNote: "100% utility bill data",
+    errors: [
+      {severity:"High", id:"E-03", title:"Facility allocation swap — Akron vs Elyria", detail:"Energy split between Akron (SPM-001) and Elyria (SPM-002) differs significantly between questionnaire and CSV. Akron electricity: questionnaire ~4,850K kWh vs CSV 4,185K kWh (-14%). Elyria electricity: questionnaire ~2,100K kWh vs CSV 2,815K kWh (+34%). Gas shows similar pattern. However, portfolio totals match exactly (7,345K kWh electricity, 324.3K therms gas). Root cause: questionnaire from COO memory; CSV from actual utility bills. CSV used as authoritative. Akron and Elyria are in different Ohio utility territories with different eGRID subregion factors, causing 5-15% Scope 2 variance if wrong allocation is applied."},
+      {severity:"High", id:"E-04", title:"R-410A refrigerant discrepancy", detail:"CSV reports only Elyria: 15 lbs R-410A. Questionnaire reports Akron: 15 lbs, Elyria: 20 lbs, Canton: 10 lbs — a difference of 25 lbs. CSV likely only captures systems with documented 2025 recharges; questionnaire lists all installed capacity. Impact is small (~24 mt CO2e difference) but methodological consistency requires resolution. Current calculation uses CSV values only."},
+    ],
+    assumptions: [
+      "CSV facility-level allocation used over questionnaire values — CSV sourced directly from utility bills (Grade A).",
+      "R-22 at Akron (50 lbs): included as Scope 1 fugitive emissions at GWP 1,810. Chillers scheduled for replacement in 2026 — future baseline will shift to R-410A or lower-GWP refrigerant.",
+      "R-410A: only CSV-reported 15 lbs at Elyria used. Additional 25 lbs from questionnaire excluded pending HVAC service record confirmation.",
+      "Data is annualized from 11-month period (January–November 2025). December utility bills needed for full-year actuals — introduces ~3% uncertainty.",
+      "Canton fleet (SPM-003): 12,000 gal diesel + 4,500 gal gasoline for 8 delivery trucks and 5 crew vehicles included as Scope 1 mobile combustion."
+    ],
+    gaps: [
+      "December 2025 utility bills outstanding — 11-month extrapolation in use.",
+      "Demand charge data referenced (~$1.8M/yr, ~30% of energy bill) but not itemized — relevant for energy cost optimization but not emissions calculation.",
+      "HVAC equipment inventory incomplete across all 3 facilities — needed for full refrigerant accounting."
+    ]
+  },
+  "trident-it-solutions": {
+    grade: "B", gradeNote: "25% utility bill, 75% accounting export",
+    errors: [
+      {severity:"Low", id:"—", title:"Minor electricity discrepancy", detail:"Questionnaire reports 1,126K kWh vs CSV 1,080K kWh — a 4% variance. Immaterial and within expected rounding for accounting exports."},
+    ],
+    assumptions: [
+      "Cleveland SOC (TIT-002) is 42% of total electricity (452K kWh) — correctly attributed to 24/7 server room operations with precision cooling.",
+      "R-410A at Cleveland SOC: 25 lbs recharge included as Scope 1 fugitive emissions.",
+      "Six branch offices use accounting export data (Grade B) — derived from financial records, not direct utility bills. Methodology acceptable per protocol.",
+      "Cloud migration reduced on-prem servers by 40% — inherent baseline reduction already reflected in current electricity consumption."
+    ],
+    gaps: [
+      "No monthly utility granularity — annual totals only.",
+      "No fleet or mobile sources reported — consistent with IT services operations model."
+    ]
+  },
+  "clearview-environmental": {
+    grade: "A", gradeNote: "75% utility bill, 25% fleet log",
+    errors: [],
+    assumptions: [
+      "Fleet data from GPS telematics and fleet logs used as-is. Fleet is the dominant emissions source: 100,500 gal diesel + 55,400 gal gasoline across ~85 vehicles.",
+      "R-410A at Indianapolis lab (CES-002): 20 lbs recharge included as Scope 1.",
+      "Labs represent 65% of electricity consumption (24/7 fume hoods, GC-MS instruments, precision HVAC). Lab energy intensity is inherent to operations.",
+      "Fleet idle time tracked at 18% of engine-on hours via GPS telematics — not factored into emissions calculation but represents operational optimization opportunity.",
+      "No data inconsistencies identified between questionnaire and CSV — highest internal consistency in the portfolio."
+    ],
+    gaps: [
+      "No monthly utility granularity available.",
+      "Hazardous waste disposal volumes referenced but not quantified — cannot calculate Scope 3 Category 5.",
+      "Credibility risk: environmental services company unable to demonstrate its own footprint. Lost 5 ESG-scored RFPs in 2025 (~$2-3M revenue at risk)."
+    ]
+  },
+  "patriot-staffing-solutions": {
+    grade: "C", gradeNote: "4% utility bill (1 facility), 4% fleet log, 92% landlord data",
+    errors: [
+      {severity:"High", id:"E-05", title:"Fleet gasoline anomaly", detail:"76,700 gallons reported for 8 branch manager vehicles = ~9,600 gal/vehicle/year. Benchmark: typical sedan at 15,000 miles/year @ 25 mpg = 600 gal/year. Reported value is 16x the expected amount. If correct, Patriot fleet Scope 1 = ~680 mt CO2e (significant). If overstated by 10x, this would overreport fleet emissions by ~600 mt CO2e. Cannot be resolved from available data — requires fuel card statements from Scott Henderson (VP of Risk). Current calculation uses reported values with this caveat."},
+      {severity:"Medium", id:"E-10", title:"Two facilities with zero utility data", detail:"PSS-009 (Evansville, IN) and PSS-014 (Rockford, IL) report 0 kWh / 0 therms because utility costs are bundled in lease. Both facilities are operational (fleet gasoline still reported). Emissions are understated — applying the Patriot branch median (~48K kWh, ~3,400 therms) would add approximately 40 mt CO2e to the portfolio total."},
+      {severity:"Medium", id:"E-11", title:"Closed branch reported as full year", detail:"PSS-006 (Louisville, KY) closed in August 2025 but a full-year energy estimate was provided by the landlord (46,000 kWh, 3,800 therms). Should be prorated to 8 months: ~30,700 kWh, ~2,500 therms. Current calculation uses full-year values as submitted — overstates Louisville by ~33%."},
+    ],
+    assumptions: [
+      "Fleet gasoline values used as-submitted despite 16x benchmark anomaly (E-05). THIS IS THE SINGLE LARGEST DATA UNCERTAINTY IN THE PORTFOLIO. Corrected values could reduce Patriot Scope 1 by 50-90%.",
+      "Evansville (PSS-009) and Rockford (PSS-014): calculated with 0 kWh / 0 therms as submitted. Actual emissions at these facilities are understated.",
+      "Louisville (PSS-006): full-year landlord estimate used. Prorating to 8 months would reduce Louisville emissions by ~33%.",
+      "92% of facility data from landlord estimates (Grade C) — allocation methodology varies by landlord and is not documented.",
+      "Questionnaire submitted by VP of Risk (late, March 23 vs March 15 deadline) — not typical financial authority for energy data."
+    ],
+    gaps: [
+      "Only 1 of 26 facilities has direct utility account (Indianapolis HQ).",
+      "Shuttle bus fuel at Fort Wayne, Grand Rapids, and Milwaukee unquantified — vendor contracts paid per-route, not per-gallon.",
+      "Patriot is below plan with margin compression — climate data improvement is explicitly deprioritized by management."
+    ]
+  },
+  "keystone-behavioral-health": {
+    grade: "C", gradeNote: "32% utility bill, 64% landlord/estimate, 4% no data",
+    errors: [
+      {severity:"Medium", id:"E-07", title:"Six clinics using identical formulaic estimates", detail:"KBH-004 (Doylestown), KBH-007 (Reading), KBH-009 (Newark DE), KBH-012 (Annapolis), KBH-014 (Marlton), KBH-016 (Woodbridge) all report exactly 33,000 kWh using the formula '2,200 sq ft x 15 kWh/sq ft.' Same intensity factor applied across 6 different states and climates. Combined impact: 198,000 kWh (15% of Keystone electricity). Actual consumption likely varies significantly by location and climate zone."},
+      {severity:"Medium", id:"E-08", title:"Hagerstown — zero data", detail:"KBH-022 (Hagerstown, MD) opened November 2025. Reports 0 kWh / 0 therms with source 'N/A.' Only 2 months of potential operating data. Facility excluded from current calculation — understates Keystone total by an estimated ~30-40 mt CO2e (based on Maryland clinic average)."},
+      {severity:"Medium", id:"E-09", title:"Trenton — partial year not annualized", detail:"KBH-021 (Trenton, NJ) opened June 2025. Reports 7 months of data (52,000 kWh, 5,000 therms) without annualization. True annual estimate: ~89,100 kWh electricity (x 12/7), ~8,600 therms gas. Current calculation uses 7-month values — understates Trenton by ~40%. Note: heating-season gas may be underrepresented in a June-December window."},
+    ],
+    assumptions: [
+      "Formulaic estimates (33K kWh) used for 6 clinics as submitted — flagged as Grade C. True consumption at these locations is unknown.",
+      "Hagerstown (KBH-022) excluded entirely — 0/0 data. Maryland clinic median would be ~66K kWh / ~4,600 therms if proxy applied.",
+      "Trenton (KBH-021) uses 7-month partial data as-submitted. Not annualized in this calculation — understates by ~40%.",
+      "Questionnaire submitted by COO (Jennifer Martinez) without CFO review due to billing platform rollout. Non-standard format (8 sections vs standard 10).",
+      "Electricity total discrepancy: questionnaire ~1,494K kWh vs CSV ~1,312K kWh (12% variance) — CSV values used.",
+      "In-home ABA therapy (35% of services delivered in patients' homes) — therapist vehicle mileage untracked. Represents unquantified Scope 3 source."
+    ],
+    gaps: [
+      "Lowest Grade A percentage among all portcos (32%) — majority of data is proxy or estimate.",
+      "No HVAC equipment inventory across 22-clinic portfolio.",
+      "No value creation plan or 100-day plan provided despite being at 100-day stage.",
+      "Billing platform rollout in progress — data quality expected to improve when platform is live."
+    ]
+  },
+  "pinnacle-testing-inspection": {
+    grade: "B", gradeNote: "10% utility bill, 90% accounting export",
+    errors: [],
+    assumptions: [
+      "Fleet is the dominant emissions source: 143K gal diesel + 59.8K gal gasoline across 32+ vehicles (~85% of total emissions).",
+      "R-410A at Houston HQ (PTI-001): 15 lbs recharge included as Scope 1.",
+      "Pasadena equipment depot (PTI-009) fleet diesel (20K gal) attributed to heavy equipment staging and vehicle fleet — highest single-facility fleet consumption.",
+      "All 9 non-HQ facilities use accounting export data (Grade B) — derived from financial records.",
+      "Hurricane exposure is a physical risk factor, not an emissions calculation issue: $3.2M revenue deferral from 2 hurricane events (14 shutdown days) in 2025."
+    ],
+    gaps: [
+      "Fleet telematics installed on all vehicles but not formally used for fuel optimization.",
+      "~40% of revenue from refinery/petrochemical clients — energy transition exposure creates commercial risk but does not affect emissions calculation.",
+      "3 major refinery clients (~$18M revenue) sent ESG questionnaires in 2025 — Pinnacle needs its own footprint to respond.",
+      "Insurance premiums rising 12%/yr ($1.18M in 2022 to $1.66M in 2025) — Pasadena depot in storm surge zone."
+    ]
+  },
+  "harvest-ridge-foods": {
+    grade: "A", gradeNote: "100% utility bill (after CSV format fix)",
+    errors: [
+      {severity:"High", id:"E-02", title:"CSV formatting error", detail:"HRF-002, HRF-003, HRF-004 have an extra trailing comma (19 columns instead of 18) in the source CSV. This causes the data_source field to misalign with the correct column during parsing. All three facilities are Grade A (utility bill) data. Current dashboard uses manually corrected values — but source CSV file needs the extra commas removed and all 139 rows validated for column count."},
+    ],
+    assumptions: [
+      "Data annualized from 9-month period (April–December 2025) as Harvest Ridge closed April 2025. Period captures both summer production peak and Q4 holiday peak — reasonable but introduces ~5-8% uncertainty. Q1 2026 bills needed for validation.",
+      "Chattanooga plant (HRF-004) operates with all-electric process heat — 0 therms natural gas is correct and intentional (acquired facility retrofit).",
+      "Nashville plant (HRF-001) boilers run 18 hr/day on production days — gas consumption (185K therms) is the largest single-facility gas load in the portfolio.",
+      "R-404A refrigerant system at Nashville (120 lbs, 17-year-old unit, GWP ~3,922) not included in current calculation — only R-22 and R-410A tracked in submission template. A 15 lb leak occurred in June 2025. If included, adds ~27 mt CO2e for the leak event alone.",
+      "Fleet at Nashville HQ (HRF-001): 6,800 gal diesel + 3,200 gal gasoline for regional delivery and management vehicles."
+    ],
+    gaps: [
+      "R-404A refrigerant not captured in collection template — high-GWP system at Nashville needs separate tracking.",
+      "Food waste volumes not tracked — only disposal cost (~$185K/yr). Cannot calculate Scope 3 Category 5.",
+      "3 of top 10 customers (~$34M revenue) require Scope 3 supplier emissions data; one CPG brand mandatory by 2027.",
+      "Water dependency critical: ~28M gal/yr. Bowling Green had 3 pressure drops in summer 2025 (~$280K production losses)."
+    ]
+  },
+  "ridgeline-property-services": {
+    grade: "C", gradeNote: "17% utility bill (Denver HQ only), 83% lease estimates",
+    errors: [
+      {severity:"Medium", id:"E-13", title:"Las Vegas office missing from inventory", detail:"Las Vegas office opened January 2025 and is reported in the climate questionnaire (7 offices) but is entirely absent from the CSV and facility database. Current calculation includes only 6 facilities. Estimated impact: ~40-50 mt CO2e (based on Phoenix proxy — similar climate, all-electric cooling, comparable office size). Needs to be added as RPS-007."},
+    ],
+    assumptions: [
+      "Only Denver HQ (RPS-001) has metered utility data (Grade A). All 5 regional offices use landlord-provided or square-footage-based estimates (Grade C).",
+      "Phoenix (RPS-002) and Tucson (RPS-006) are all-electric — 0 therms natural gas is correct for these desert cooling-only locations.",
+      "Las Vegas office not included in current calculation — would add 1 facility and an estimated 40-50 mt CO2e.",
+      "Fleet: 10,600 gal gasoline across 10 management vehicles (6 offices). Fleet data sourced from expense reports (Grade B).",
+      "Managed property portfolio (~18M sq ft commercial) is NOT included in this Scope 1+2 inventory. Managed portfolio energy (~285M kWh, ~3.2M therms) is 785x larger than corporate footprint and would be classified as Scope 3 Category 13 (Downstream Leased Assets) if brought in-scope. Scoping decision pending with CFO."
+    ],
+    gaps: [
+      "Las Vegas facility needs to be added to inventory.",
+      "5 of 6 regional offices on gross leases with no metered energy data — estimates are the only available input.",
+      "Managed portfolio scope boundary decision outstanding — largest potential emissions source by far.",
+      "Denver and Phoenix considering Building Performance Standards that could affect 12-14M sq ft of managed property."
+    ]
+  }
+};
+
+function renderPortcoDetail(slug) {
+  const pc = PORTCOS[slug];
+  if (!pc) return;
+  const facilities = calculated.filter(f => f.slug === slug);
+  const totalS1 = facilities.reduce((s,f) => s+f.scope1, 0);
+  const totalS2 = facilities.reduce((s,f) => s+f.scope2, 0);
+  const total = totalS1 + totalS2;
+  const intRev = total / pc.revenue;
+  const intEbitda = total / pc.ebitda;
+  const margin = pc.ebitda / pc.revenue * 100;
+
+  // Portfolio averages for comparison
+  const allPortcos = aggregateByPortco(calculated, null);
+  const totalPortfolioEmissions = allPortcos.reduce((s,p) => s+p.total, 0);
+  const totalPortfolioRev = allPortcos.reduce((s,p) => s+p.revenue, 0);
+  const avgIntRev = totalPortfolioRev > 0 ? totalPortfolioEmissions / totalPortfolioRev : 0;
+
+  const detail = document.getElementById('portco-detail');
+  const sources = [
+    {label:'Natural Gas', val: facilities.reduce((s,f)=>s+f.s1_gas,0), color:'var(--scope1)'},
+    {label:'Fleet Diesel', val: facilities.reduce((s,f)=>s+f.s1_fleet_diesel,0), color:'var(--orange)'},
+    {label:'Fleet Gasoline', val: facilities.reduce((s,f)=>s+f.s1_fleet_gas,0), color:'var(--yellow)'},
+    {label:'Stationary Diesel', val: facilities.reduce((s,f)=>s+f.s1_diesel,0), color:'#c0583a'},
+    {label:'Propane', val: facilities.reduce((s,f)=>s+f.s1_propane,0), color:'#a08050'},
+    {label:'Refrigerants (R-22)', val: facilities.reduce((s,f)=>s+f.s1_r22,0), color:'var(--red)'},
+    {label:'Refrigerants (R-410A)', val: facilities.reduce((s,f)=>s+f.s1_r410a,0), color:'#e86060'},
+    {label:'Electricity', val: totalS2, color:'var(--scope2)'},
+  ].filter(s => s.val > 0);
+  const maxSource = Math.max(...sources.map(s => s.val));
+
+  // Carbon price impact for this company
+  const priceScenarios = [25,50,100].map(price => {
+    const cost = total * price;
+    const bps = pc.ebitda > 0 ? (cost / (pc.ebitda * 1e6)) * 10000 : 0;
+    return {price, cost, bps};
+  });
+
+  detail.innerHTML = `
+    <button class="back-btn" onclick="showFundView()">&larr; Back to Fund View</button>
+    <div class="detail-header">
+      <div>
+        <div class="name">${pc.name}</div>
+        <div class="meta-row">
+          <span class="tag ${pc.fund==='Fund I'?'fund-i':'fund-ii'}" style="background:${pc.fund==='Fund I'?'rgba(88,166,255,0.12)':'rgba(232,168,76,0.12)'};color:${pc.fund==='Fund I'?'var(--blue)':'var(--yellow)'}">${pc.fund}</span>
+          <span>${pc.sector}</span>
+          <span>${facilities.length} facilities</span>
+        </div>
+      </div>
+      <div class="detail-metrics">
+        <div class="detail-metric"><div class="dm-val">${fmtM(pc.revenue)}</div><div class="dm-label">Revenue (LTM)</div></div>
+        <div class="detail-metric"><div class="dm-val">${fmtM(pc.ebitda)}</div><div class="dm-label">EBITDA</div></div>
+        <div class="detail-metric"><div class="dm-val">${margin.toFixed(1)}%</div><div class="dm-label">EBITDA Margin</div></div>
+        <div class="detail-metric"><div class="dm-val" style="color:var(--accent)">${fmt(total)}</div><div class="dm-label">mt CO2e Total</div></div>
+      </div>
+    </div>
+
+    <div class="kpis" style="grid-template-columns:repeat(5,1fr);">
+      <div class="kpi"><div class="label">Scope 1</div><div class="value scope1-color">${fmt(totalS1)}<span class="unit">mt</span></div><div class="sub">${pct(totalS1, total)} of total</div></div>
+      <div class="kpi"><div class="label">Scope 2</div><div class="value scope2-color">${fmt(totalS2)}<span class="unit">mt</span></div><div class="sub">${pct(totalS2, total)} of total</div></div>
+      <div class="kpi"><div class="label">tCO2e / $M Revenue</div><div class="value">${fmt(intRev,1)}</div><div class="sub">Portfolio avg: ${fmt(avgIntRev,1)}</div></div>
+      <div class="kpi"><div class="label">tCO2e / $M EBITDA</div><div class="value">${fmt(intEbitda,1)}</div></div>
+      <div class="kpi"><div class="label">tCO2e / Employee</div><div class="value">${fmt(total/pc.headcount,1)}</div><div class="sub">${fmtK(pc.headcount)} FTEs</div></div>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <h3>Carbon Cost Exposure</h3>
+        <div class="scenario-grid">${priceScenarios.map(s => {
+          const bpsClass = s.bps < 10 ? 'bps-low' : s.bps < 50 ? 'bps-med' : 'bps-high';
+          return `<div class="scenario-card">
+            <div class="price">$${s.price}/tCO2e</div>
+            <div class="cost">$${fmtK(s.cost)}</div>
+            <div class="bps ${bpsClass}">${fmt(s.bps,0)} bps</div>
+          </div>`;
+        }).join('')}</div>
+      </div>
+      <div class="panel">
+        <h3>Emissions by Source</h3>
+        <div class="waterfall">${sources.map(s => {
+          const w = maxSource > 0 ? (s.val / maxSource * 100) : 0;
+          return `<div class="wf-row">
+            <div class="wf-label">${s.label}</div>
+            <div class="wf-bar" style="width:${Math.max(w,1)}%;background:${s.color}"></div>
+            <div class="wf-val">${fmt(s.val)} mt</div>
+          </div>`;
+        }).join('')}</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Facility Detail</h3>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr>
+            <th>Facility</th><th>Type</th><th>Location</th>
+            <th class="r">Electricity (kWh)</th><th class="r">Nat Gas (therms)</th>
+            <th class="r">Fleet (gal)</th>
+            <th class="r">Scope 1</th><th class="r">Scope 2</th><th class="r">Total</th>
+            <th>Source</th>
+          </tr></thead>
+          <tbody>${facilities.sort((a,b) => b.total - a.total).map(f => {
+            const srcClass = f.source === 'utility_bill' ? 'dq-a' : f.source === 'accounting_export' ? 'dq-b' : 'dq-c';
+            const srcLabel = f.source === 'utility_bill' ? 'A' : f.source === 'accounting_export' ? 'B' : 'C';
+            return `<tr${f.flag ? ' style="opacity:0.7"' : ''}>
+              <td style="font-weight:500;font-size:11px">${f.id}</td>
+              <td style="font-size:11px;color:var(--text-muted)">${f.type}</td>
+              <td style="font-size:11px">${f.city}, ${f.state}</td>
+              <td class="r">${f.elec ? f.elec.toLocaleString() : '—'}</td>
+              <td class="r">${f.gas ? f.gas.toLocaleString() : '—'}</td>
+              <td class="r">${(f.fleet_diesel + f.fleet_gas) > 0 ? (f.fleet_diesel + f.fleet_gas).toLocaleString() : '—'}</td>
+              <td class="r">${fmt(f.scope1)}</td>
+              <td class="r">${fmt(f.scope2)}</td>
+              <td class="r" style="font-weight:600">${fmt(f.total)}</td>
+              <td><span class="dq ${srcClass}">${srcLabel}</span>${f.flag ? ' <span style="color:var(--red);font-size:9px">!</span>' : ''}</td>
+            </tr>`;
+          }).join('')}</tbody>
+        </table>
+      </div>
+    </div>
+
+    ${renderDQFindings(slug)}
+  `;
+}
+
+function renderDQFindings(slug) {
+  const dq = DQ_FINDINGS[slug];
+  if (!dq) return '<div class="panel" style="color:var(--text-dim);font-size:12px;">No data quality assessment available for this portfolio company.</div>';
+
+  const sevColor = s => s === 'Critical' ? 'var(--red)' : s === 'High' ? 'var(--orange)' : s === 'Medium' ? 'var(--yellow)' : 'var(--text-dim)';
+  const gradeClass = dq.grade === 'A' ? 'dq-a' : dq.grade === 'B' ? 'dq-b' : 'dq-c';
+
+  let html = `
+    <div class="panel" style="border-left:3px solid ${dq.grade === 'A' ? 'var(--green)' : dq.grade === 'B' ? 'var(--yellow)' : 'var(--red)'};">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <h3 style="margin:0;">Data Assumptions &amp; Known Issues</h3>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:11px;color:var(--text-muted);">Data Quality:</span>
+          <span class="dq ${gradeClass}" style="width:auto;padding:2px 10px;font-size:11px;">Grade ${dq.grade}</span>
+          <span style="font-size:10px;color:var(--text-dim);">${dq.gradeNote}</span>
+        </div>
+      </div>`;
+
+  // Errors section
+  if (dq.errors.length > 0) {
+    html += `<div style="margin-bottom:16px;">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--red);margin-bottom:8px;">Data Errors &amp; Anomalies</div>`;
+    dq.errors.forEach(e => {
+      html += `<div style="background:var(--surface2);border-radius:6px;padding:12px 14px;margin-bottom:8px;border-left:3px solid ${sevColor(e.severity)};">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <span style="font-size:12px;font-weight:600;color:var(--white);">${e.title}</span>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;background:${sevColor(e.severity)}20;color:${sevColor(e.severity)};">${e.severity}</span>
+            ${e.id !== '—' ? `<span style="font-size:9px;color:var(--text-dim);">${e.id}</span>` : ''}
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);line-height:1.6;">${e.detail}</div>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  // Assumptions section
+  if (dq.assumptions.length > 0) {
+    html += `<div style="margin-bottom:16px;">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--yellow);margin-bottom:8px;">Calculation Assumptions</div>
+      <div style="background:var(--surface2);border-radius:6px;padding:12px 14px;">
+        <ul style="margin:0;padding-left:16px;font-size:11px;color:var(--text-muted);line-height:1.8;">
+          ${dq.assumptions.map(a => `<li>${a}</li>`).join('')}
+        </ul>
+      </div>
+    </div>`;
+  }
+
+  // Gaps section
+  if (dq.gaps.length > 0) {
+    html += `<div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--blue);margin-bottom:8px;">Data Gaps &amp; Missing Information</div>
+      <div style="background:var(--surface2);border-radius:6px;padding:12px 14px;">
+        <ul style="margin:0;padding-left:16px;font-size:11px;color:var(--text-muted);line-height:1.8;">
+          ${dq.gaps.map(g => `<li>${g}</li>`).join('')}
+        </ul>
+      </div>
+    </div>`;
+  }
+
+  html += '</div>';
+  return html;
+}
+
+function renderPortcoSelector() {
+  const portcos = aggregateByPortco(calculated, null);
+  document.getElementById('portco-selector').innerHTML = `
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      ${portcos.map(p => `<button class="pill" onclick="showPortco('${p.slug}')" style="font-size:12px">${p.name.split(' ').slice(0,2).join(' ')} <span style="color:var(--text-dim);margin-left:4px">${fmt(p.total)} mt</span></button>`).join('')}
+    </div>
+  `;
+}
+
+function renderScope3() {
+  const categories = [
+    {num:1, name:'Purchased Goods & Services', desc:'Raw materials, components, contracted services'},
+    {num:2, name:'Capital Goods', desc:'Machinery, equipment, buildings, vehicles'},
+    {num:3, name:'Fuel & Energy Activities', desc:'Upstream emissions of purchased fuels and electricity (not in Scope 1/2)'},
+    {num:4, name:'Upstream Transportation', desc:'Inbound logistics, third-party distribution'},
+    {num:5, name:'Waste Generated in Operations', desc:'Disposal and treatment of waste'},
+    {num:6, name:'Business Travel', desc:'Employee air travel, hotels, rental cars'},
+    {num:7, name:'Employee Commuting', desc:'Daily commute by employees'},
+    {num:8, name:'Upstream Leased Assets', desc:'Emissions from leased offices, vehicles, equipment'},
+    {num:9, name:'Downstream Transportation', desc:'Outbound logistics to customers'},
+    {num:10, name:'Processing of Sold Products', desc:'Further processing by customers'},
+    {num:11, name:'Use of Sold Products', desc:'Emissions during customer use'},
+    {num:12, name:'End-of-Life Treatment', desc:'Disposal of sold products'},
+    {num:13, name:'Downstream Leased Assets', desc:'Emissions from assets leased to others'},
+    {num:14, name:'Franchises', desc:'Emissions from franchise operations'},
+    {num:15, name:'Investments', desc:'Emissions from equity/debt investments'},
+  ];
+
+  // Materiality matrix — H=High, M=Medium, L=Low, N=N/A
+  const matrix = {
+    "meridian-business-solutions":     ['M','L','M','L','L','H','M','H','N','N','N','N','L','N','N'],
+    "novacare-health-partners":        ['M','L','M','L','M','M','M','H','N','N','N','M','N','N','N'],
+    "sterling-precision-mfg":          ['H','H','M','M','H','L','M','L','H','H','M','M','N','N','N'],
+    "trident-it-solutions":            ['M','M','M','L','L','M','M','H','N','N','M','M','N','N','N'],
+    "clearview-environmental":         ['M','M','M','H','H','M','M','L','L','N','N','H','N','N','N'],
+    "patriot-staffing-solutions":      ['L','L','M','L','L','H','H','H','N','N','N','N','N','N','N'],
+    "keystone-behavioral-health":      ['M','L','M','L','L','L','M','H','N','N','N','L','N','N','N'],
+    "pinnacle-testing-inspection":     ['M','M','M','M','M','H','M','L','N','N','N','L','N','N','N'],
+    "harvest-ridge-foods":             ['H','M','M','H','H','L','M','L','H','L','L','H','N','N','N'],
+    "ridgeline-property-services":     ['M','M','M','L','L','L','M','L','N','N','N','L','M','N','N'],
+  };
+
+  const slugs = Object.keys(PORTCOS);
+  const shortNames = slugs.map(s => PORTCOS[s].name.split(' ')[0]);
+
+  document.getElementById('scope3-matrix').innerHTML = `
+    <thead><tr>
+      <th class="cat-col">Category</th>
+      ${shortNames.map(n => `<th class="co-col">${n}</th>`).join('')}
+    </tr></thead>
+    <tbody>${categories.map((cat, i) => {
+      const cells = slugs.map(slug => {
+        const val = matrix[slug][i];
+        const cls = val === 'H' ? 'mat-h' : val === 'M' ? 'mat-m' : val === 'L' ? 'mat-l' : 'mat-na';
+        const label = val === 'H' ? 'High' : val === 'M' ? 'Med' : val === 'L' ? 'Low' : '—';
+        return `<td class="${cls}">${label}</td>`;
+      });
+      return `<tr>
+        <td class="cat-name"><span class="cat-num">${cat.num}.</span> ${cat.name}<br><span style="font-size:10px;color:var(--text-dim)">${cat.desc}</span></td>
+        ${cells.join('')}
+      </tr>`;
+    }).join('')}</tbody>`;
+
+  // Priority categories
+  const highCounts = categories.map((cat, i) => ({
+    ...cat, count: slugs.filter(s => matrix[s][i] === 'H').length
+  })).filter(c => c.count > 0).sort((a,b) => b.count - a.count);
+
+  document.getElementById('scope3-priorities').innerHTML = `
+    <h3>Priority Scope 3 Categories for the Portfolio</h3>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Ranked by number of portfolio companies where category is assessed as High materiality.</p>
+    <table class="tbl">
+      <thead><tr><th>Category</th><th class="r">High Count</th><th>Companies</th><th>Estimation Approach</th></tr></thead>
+      <tbody>${highCounts.map(c => {
+        const companies = slugs.filter(s => matrix[s][c.num-1] === 'H').map(s => PORTCOS[s].name.split(' ').slice(0,2).join(' '));
+        const approaches = {
+          1: 'Spend-based: apply emission factors to COGS by category. COGS data available.',
+          2: 'Capex-based: apply emission factors to capital expenditure records.',
+          3: 'Based on Scope 1+2 quantities — standard upstream factors per fuel/electricity type.',
+          4: 'Spend-based or ton-km: freight invoices, shipping records.',
+          5: 'Waste manifests + EPA waste emission factors. Some manifests available.',
+          6: 'Expense reports: air miles, hotel nights, rental car days. T&E data available.',
+          7: 'Average-data: headcount x commuting distance estimates by metro area.',
+          8: 'Floor area of leased spaces x energy intensity benchmarks. Lease data available.',
+          9: 'Outbound shipping records, distribution center data.',
+          10: 'Customer industry data + process emission factors.',
+          11: 'Product energy use estimates (if applicable).',
+          12: 'Packaging weight/type x end-of-life emission factors.',
+          13: 'Leased asset energy data from tenants.',
+        };
+        return `<tr>
+          <td style="font-weight:600">${c.num}. ${c.name}</td>
+          <td class="r" style="font-weight:700;color:var(--red)">${c.count} / ${slugs.length}</td>
+          <td style="font-size:11px;color:var(--text-muted)">${companies.join(', ')}</td>
+          <td style="font-size:11px;color:var(--text-muted)">${approaches[c.num] || '—'}</td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>
+  `;
+
+  // Data availability
+  document.getElementById('scope3-data-avail').innerHTML = `
+    <h3>Data Available for Scope 3 Estimation</h3>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Financial and operational data currently in the Northwood data environment that could support Scope 3 quantification.</p>
+    <table class="tbl">
+      <thead><tr><th>Data Source</th><th>Available For</th><th>Supports Categories</th><th>Quality</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:500">COGS / Cost of Revenue</td><td>All 10 portcos (monthly P&L)</td><td>Cat 1 (Purchased Goods)</td><td><span class="dq dq-a">A</span> Actual financials</td></tr>
+        <tr><td style="font-weight:500">Capital Expenditures</td><td>All 10 portcos (balance sheet)</td><td>Cat 2 (Capital Goods)</td><td><span class="dq dq-b">B</span> Annual budget data</td></tr>
+        <tr><td style="font-weight:500">Scope 1+2 Activity Data</td><td>All 10 portcos (this inventory)</td><td>Cat 3 (Fuel & Energy)</td><td><span class="dq dq-a">A</span> Direct calculation</td></tr>
+        <tr><td style="font-weight:500">Employee Headcount</td><td>All 10 portcos (KPI dashboards)</td><td>Cat 7 (Commuting)</td><td><span class="dq dq-a">A</span> Monthly KPIs</td></tr>
+        <tr><td style="font-weight:500">Facility Lease Data</td><td>Multi-site portcos (leased locations)</td><td>Cat 8 (Upstream Leased)</td><td><span class="dq dq-b">B</span> Lease records</td></tr>
+        <tr><td style="font-weight:500">Fleet Records</td><td>Clearview, Pinnacle, Sterling</td><td>Cat 4 (Transport), Cat 9 (Distribution)</td><td><span class="dq dq-a">A</span> Fleet logs</td></tr>
+        <tr><td style="font-weight:500">Waste Manifests</td><td>Referenced in questionnaires</td><td>Cat 5 (Waste)</td><td><span class="dq dq-c">C</span> Not yet collected</td></tr>
+        <tr><td style="font-weight:500">T&E Expense Data</td><td>Available via accounting systems</td><td>Cat 6 (Business Travel)</td><td><span class="dq dq-c">C</span> Not yet collected</td></tr>
+      </tbody>
+    </table>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════
+// SCOPE 3 ESTIMATION ENGINE
+// ═══════════════════════════════════════════════════════
+
+// Spend-based emission factors (mt CO2e per $M spend) by sector
+// Sources: USEEIO v2.0 supply-chain factors, EPA EEIO models
+const SPEND_EF = {
+  // Cat 1: Purchased Goods & Services — COGS-based
+  cat1: {
+    'Business Services':     95,   // office supplies, outsourced labor, IT services
+    'Healthcare Services':   130,  // medical supplies, pharmaceuticals, clinical consumables
+    'Industrial Technology': 310,  // raw metals, tooling, machining consumables, chemicals
+    'IT Services':           85,   // hardware, licensing, cloud services
+    'Environmental Services':195,  // lab reagents, sampling equipment, PPE, disposal services
+    'Food & Agriculture':    420,  // raw ingredients, packaging, food-grade chemicals
+    'Real Estate Services':  110,  // maintenance supplies, building materials, contracted services
+  },
+  // Cat 2: Capital Goods — CapEx-based
+  cat2: {
+    'Business Services':     180,  // office fit-outs, IT infrastructure
+    'Healthcare Services':   210,  // clinic build-outs, medical equipment
+    'Industrial Technology': 350,  // CNC machines, heat-treat furnaces, tooling
+    'IT Services':           160,  // servers, network equipment, security appliances
+    'Environmental Services':280,  // field equipment, lab instruments, fleet vehicles
+    'Food & Agriculture':    300,  // production lines, packaging equipment, cold storage
+    'Real Estate Services':  200,  // property improvements, fleet vehicles
+  }
+};
+
+// Cat 3: Well-to-tank upstream factors per fuel unit
+const WTT = {
+  gas_per_therm:     0.001108,  // mt CO2e/therm (upstream natural gas, ~21% of combustion)
+  diesel_per_gal:    0.002649,  // mt CO2e/gal (upstream diesel, ~26%)
+  gasoline_per_gal:  0.002399,  // mt CO2e/gal (upstream gasoline, ~27%)
+  propane_per_gal:   0.001033,  // mt CO2e/gal (upstream propane, ~18%)
+  elec_per_kwh:      0.000048,  // mt CO2e/kWh (T&D losses + upstream fuel for generation)
+};
+
+// Cat 7: Employee commuting — average mt CO2e per FTE per year
+// Based on EPA avg US commuting: 16.2 miles one-way, 235 working days, avg fleet 27.5 mpg
+const COMMUTE_EF = 2.42; // mt CO2e per FTE per year
+
+// Monthly financial data (Jan 2026) — annualized (x12) for LTM estimates
+const MONTHLY_FINANCIALS = {
+  "meridian-business-solutions":     { cogs: 12.7, revenue: 18.2 },
+  "novacare-health-partners":        { cogs: 9.3,  revenue: 14.1 },
+  "sterling-precision-mfg":          { cogs: 9.2,  revenue: 13.5 },
+  "trident-it-solutions":            { cogs: 6.7,  revenue: 11.5 },
+  "clearview-environmental":         { cogs: 9.1,  revenue: 14.8 },
+  "patriot-staffing-solutions":      { cogs: 18.9, revenue: 23.5 },
+  "keystone-behavioral-health":      { cogs: 5.5,  revenue: 11.2 },
+  "pinnacle-testing-inspection":     { cogs: 4.6,  revenue: 8.5  },
+  "harvest-ridge-foods":             { cogs: 8.5,  revenue: 12.7 },
+  "ridgeline-property-services":     { cogs: 4.6,  revenue: 7.9  },
+};
+
+// CapEx from KPI data (annual $M)
+const CAPEX_DATA = {
+  "clearview-environmental":     8.2,
+  "harvest-ridge-foods":         6.5,
+  "keystone-behavioral-health":  5.2,
+  "pinnacle-testing-inspection": 3.8,
+  "sterling-precision-mfg":      8.2,
+  "trident-it-solutions":        4.5,
+};
+
+// Ridgeline managed portfolio — Cat 13 downstream leased assets
+// ~18M sq ft commercial, ~285M kWh electricity, ~3.2M therms gas
+const RIDGELINE_MANAGED = {
+  elec_kwh: 285000000,
+  gas_therms: 3200000,
+};
+
+function calcScope3(slug) {
+  const pc = PORTCOS[slug];
+  if (!pc) return null;
+  const fin = MONTHLY_FINANCIALS[slug];
+  const sector = pc.sector;
+  const facilities = calculated.filter(f => f.slug === slug);
+
+  const results = [];
+
+  // ── Cat 1: Purchased Goods & Services (spend-based on COGS) ──
+  if (fin && SPEND_EF.cat1[sector]) {
+    const annualCOGS = fin.cogs * 12; // monthly → annual $M
+    const ef = SPEND_EF.cat1[sector];
+    const val = annualCOGS * ef / 1000; // $M × (mt/$M) / 1000 = thousands... no. ef is mt per $M, so annualCOGS * ef = mt CO2e
+    results.push({ cat: 1, name: 'Purchased Goods & Services', value: annualCOGS * ef, method: `Spend-based: $${annualCOGS.toFixed(0)}M COGS × ${ef} mt/$M (${sector})`, confidence: 'med', source: 'Monthly P&L (Jan 2026) annualized' });
+  }
+
+  // ── Cat 2: Capital Goods (spend-based on CapEx) ──
+  if (CAPEX_DATA[slug] && SPEND_EF.cat2[sector]) {
+    const capex = CAPEX_DATA[slug];
+    const ef = SPEND_EF.cat2[sector];
+    results.push({ cat: 2, name: 'Capital Goods', value: capex * ef, method: `Spend-based: $${capex.toFixed(1)}M CapEx × ${ef} mt/$M`, confidence: 'low', source: 'KPI data (annual budget)' });
+  }
+
+  // ── Cat 3: Fuel & Energy Related Activities (well-to-tank) ──
+  {
+    let cat3 = 0;
+    let detail = [];
+    let totalGas = 0, totalDiesel = 0, totalGasoline = 0, totalPropane = 0, totalElec = 0;
+    facilities.forEach(f => {
+      totalGas += f.gas || 0;
+      totalDiesel += (f.diesel || 0) + (f.fleet_diesel || 0);
+      totalGasoline += (f.gasoline || 0) + (f.fleet_gas || 0);
+      totalPropane += f.propane || 0;
+      totalElec += f.elec || 0;
+    });
+    cat3 += totalGas * WTT.gas_per_therm;
+    cat3 += totalDiesel * WTT.diesel_per_gal;
+    cat3 += totalGasoline * WTT.gasoline_per_gal;
+    cat3 += totalPropane * WTT.propane_per_gal;
+    cat3 += totalElec * WTT.elec_per_kwh;
+
+    if (cat3 > 0) {
+      results.push({ cat: 3, name: 'Fuel & Energy Activities (WTT)', value: cat3, method: 'Well-to-tank upstream factors applied to Scope 1+2 activity data', confidence: 'high', source: 'Facility energy data (this inventory)' });
+    }
+  }
+
+  // ── Cat 7: Employee Commuting ──
+  {
+    const val = pc.headcount * COMMUTE_EF;
+    results.push({ cat: 7, name: 'Employee Commuting', value: val, method: `${pc.headcount} FTEs × ${COMMUTE_EF} mt/FTE (US avg)`, confidence: 'med', source: 'Headcount from KPI data' });
+  }
+
+  // ── Cat 13: Downstream Leased Assets (Ridgeline only) ──
+  if (slug === 'ridgeline-property-services') {
+    // Calculate emissions from managed portfolio using average eGRID
+    const avgEgrid = 0.000380; // US average
+    const elecEmissions = RIDGELINE_MANAGED.elec_kwh * avgEgrid;
+    const gasEmissions = RIDGELINE_MANAGED.gas_therms * EPA.gas;
+    const total13 = elecEmissions + gasEmissions;
+    results.push({ cat: 13, name: 'Downstream Leased Assets', value: total13, method: `Managed portfolio: ~18M sq ft, ${(RIDGELINE_MANAGED.elec_kwh/1e6).toFixed(0)}M kWh + ${(RIDGELINE_MANAGED.gas_therms/1e6).toFixed(1)}M therms`, confidence: 'med', source: 'CFO-reported managed portfolio energy (pending scope decision)' });
+  }
+
+  // ── Cat 9: Downstream Transportation (Harvest Ridge, Sterling) ──
+  if (slug === 'harvest-ridge-foods') {
+    // Estimate: food distribution, ~$152M revenue, ~5% of revenue on outbound freight
+    // US avg freight EF: ~200 mt CO2e per $M freight spend
+    const freightSpend = pc.revenue * 0.05;
+    results.push({ cat: 9, name: 'Downstream Transportation', value: freightSpend * 200, method: `Est. freight spend $${freightSpend.toFixed(0)}M (5% of revenue) × 200 mt/$M`, confidence: 'low', source: 'Revenue-based proxy (no freight invoices)' });
+  }
+  if (slug === 'sterling-precision-mfg') {
+    // Precision parts distribution — lower freight intensity than food
+    const freightSpend = pc.revenue * 0.03;
+    results.push({ cat: 9, name: 'Downstream Transportation', value: freightSpend * 200, method: `Est. freight spend $${freightSpend.toFixed(0)}M (3% of revenue) × 200 mt/$M`, confidence: 'low', source: 'Revenue-based proxy (no freight invoices)' });
+  }
+
+  // ── Cat 5: Waste in Operations (Harvest Ridge — disposal cost proxy) ──
+  if (slug === 'harvest-ridge-foods') {
+    // $185K/yr waste disposal. US food mfg waste EF: ~0.7 mt CO2e per $K disposal spend
+    results.push({ cat: 5, name: 'Waste Generated in Operations', value: 185 * 0.7, method: '$185K waste disposal × 0.7 mt/$K (food mfg waste proxy)', confidence: 'low', source: 'Annual waste disposal cost from questionnaire' });
+  }
+
+  // ── Cat 12: End-of-Life Treatment (Harvest Ridge — food packaging) ──
+  if (slug === 'harvest-ridge-foods') {
+    // Estimate based on revenue and food packaging intensity
+    results.push({ cat: 12, name: 'End-of-Life Treatment', value: pc.revenue * 8, method: `$${pc.revenue}M revenue × 8 mt/$M (food packaging EoL proxy)`, confidence: 'low', source: 'Revenue-based proxy' });
+  }
+
+  // ── Cat 5: Waste (Clearview — hazardous waste) ──
+  if (slug === 'clearview-environmental') {
+    // Environmental services — hazardous waste referenced but not quantified
+    // Proxy: ~$195M revenue, env services waste intensity ~15 mt/$M
+    results.push({ cat: 5, name: 'Waste Generated in Operations', value: pc.revenue * 15, method: `$${pc.revenue}M revenue × 15 mt/$M (env services waste proxy)`, confidence: 'low', source: 'Revenue proxy — waste manifests not yet collected' });
+  }
+
+  // ── Cat 5: Waste (Sterling — industrial/machining waste) ──
+  if (slug === 'sterling-precision-mfg') {
+    results.push({ cat: 5, name: 'Waste Generated in Operations', value: pc.revenue * 20, method: `$${pc.revenue}M revenue × 20 mt/$M (industrial machining waste proxy)`, confidence: 'low', source: 'Revenue proxy — waste data not collected' });
+  }
+
+  return results;
+}
+
+function renderScope3Estimates() {
+  const container = document.getElementById('view-scope3est');
+  const slugs = Object.keys(PORTCOS);
+
+  // Calculate all estimates
+  const allEstimates = {};
+  let portfolioTotal = 0;
+  let portfolioS12 = 0;
+  let categoriesUsed = new Set();
+
+  slugs.forEach(slug => {
+    const estimates = calcScope3(slug);
+    allEstimates[slug] = estimates;
+    const s3total = estimates.reduce((s, e) => s + e.value, 0);
+    portfolioTotal += s3total;
+    const pcFacilities = calculated.filter(f => f.slug === slug);
+    portfolioS12 += pcFacilities.reduce((s, f) => s + f.total, 0);
+    estimates.forEach(e => categoriesUsed.add(e.cat));
+  });
+
+  // Sort portcos by S3 total descending
+  const sortedSlugs = [...slugs].sort((a, b) => {
+    const aTotal = allEstimates[a].reduce((s, e) => s + e.value, 0);
+    const bTotal = allEstimates[b].reduce((s, e) => s + e.value, 0);
+    return bTotal - aTotal;
+  });
+
+  const maxPortcoS3 = Math.max(...sortedSlugs.map(s => allEstimates[s].reduce((sum, e) => sum + e.value, 0)));
+
+  // Summary KPIs
+  let html = `
+    <div class="panel" style="margin-bottom:16px;">
+      <h3>Scope 3 Emissions Estimates</h3>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">Quantitative estimates for Scope 3 categories where data supports calculation. Categories without sufficient data are omitted — this is not a complete Scope 3 inventory.</p>
+      <p style="font-size:11px;color:var(--text-dim);">Estimation methods: spend-based (USEEIO v2.0 factors), well-to-tank (DEFRA 2023 upstream factors), activity-based (EPA commuting averages). All estimates are screening-level and directional.</p>
+    </div>
+
+    <div class="s3e-summary-grid">
+      <div class="s3e-summary-card">
+        <div class="label">Estimated Scope 3 Total</div>
+        <div class="value">${fmt(portfolioTotal)}<span class="unit">mt CO2e</span></div>
+        <div class="sub">${categoriesUsed.size} categories estimated</div>
+      </div>
+      <div class="s3e-summary-card">
+        <div class="label">Scope 1+2 Total</div>
+        <div class="value" style="color:var(--white)">${fmt(portfolioS12)}<span class="unit">mt CO2e</span></div>
+        <div class="sub">From carbon inventory</div>
+      </div>
+      <div class="s3e-summary-card">
+        <div class="label">Scope 3 as % of Total</div>
+        <div class="value">${((portfolioTotal / (portfolioTotal + portfolioS12)) * 100).toFixed(0)}%<span class="unit"></span></div>
+        <div class="sub">S3 / (S1+S2+S3)</div>
+      </div>
+      <div class="s3e-summary-card">
+        <div class="label">Scope 3 Multiplier</div>
+        <div class="value">${(portfolioTotal / portfolioS12).toFixed(1)}×<span class="unit"></span></div>
+        <div class="sub">S3 relative to S1+2</div>
+      </div>
+    </div>
+  `;
+
+  // Per-company cards
+  sortedSlugs.forEach(slug => {
+    const pc = PORTCOS[slug];
+    const estimates = allEstimates[slug];
+    const s3total = estimates.reduce((s, e) => s + e.value, 0);
+    const pcFacilities = calculated.filter(f => f.slug === slug);
+    const s12 = pcFacilities.reduce((s, f) => s + f.total, 0);
+    const maxCatVal = Math.max(...estimates.map(e => e.value), 1);
+
+    html += `
+      <div class="s3e-company">
+        <div class="s3e-company-header">
+          <div>
+            <div class="name">${pc.name}</div>
+            <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">${pc.sector} · ${pc.fund} · ${pc.headcount} FTEs · $${pc.revenue}M revenue</div>
+          </div>
+          <div class="totals">
+            <div style="text-align:right;">
+              <div class="s3-total">${fmt(s3total)}<span class="unit">mt CO2e</span></div>
+              <div class="vs-s12">Scope 3 est. · S1+2: ${fmt(s12)} mt · S3 is ${s12 > 0 ? (s3total / s12).toFixed(1) : '—'}× S1+2</div>
+            </div>
+          </div>
+        </div>
+    `;
+
+    if (estimates.length === 0) {
+      html += `<div class="s3e-empty">No Scope 3 categories could be estimated with available data.</div>`;
+    } else {
+      estimates.sort((a, b) => b.value - a.value).forEach(e => {
+        const confClass = e.confidence === 'high' ? 's3e-conf-high' : e.confidence === 'med' ? 's3e-conf-med' : 's3e-conf-low';
+        const confLabel = e.confidence === 'high' ? 'High' : e.confidence === 'med' ? 'Medium' : 'Low';
+        const barW = (e.value / maxCatVal) * 100;
+        html += `
+          <div class="s3e-cat-row">
+            <div class="s3e-cat-num">Cat ${e.cat}</div>
+            <div class="s3e-cat-name">${e.name}</div>
+            <div class="s3e-cat-bar-wrap"><div class="s3e-cat-bar" style="width:${Math.max(barW, 2)}%;${e.confidence === 'high' ? 'background:var(--green)' : e.confidence === 'med' ? 'background:var(--accent)' : 'background:var(--yellow)'}"></div></div>
+            <div class="s3e-cat-val">${fmt(e.value)} mt</div>
+            <span class="s3e-confidence ${confClass}">${confLabel}</span>
+            <div class="s3e-cat-method">${e.method}</div>
+          </div>
+        `;
+      });
+    }
+
+    html += `</div>`;
+  });
+
+  // Methodology note
+  html += `
+    <div class="panel" style="border-left:3px solid var(--accent);">
+      <h3>Estimation Methodology &amp; Limitations</h3>
+      <div style="font-size:11px;color:var(--text-muted);line-height:1.8;">
+        <p style="margin-bottom:8px;"><strong style="color:var(--white)">Category 1 — Purchased Goods & Services:</strong> Spend-based method using annualized COGS from monthly P&L data (Jan 2026 × 12). Emission factors from USEEIO v2.0, sector-matched. Does not capture supplier-specific intensity.</p>
+        <p style="margin-bottom:8px;"><strong style="color:var(--white)">Category 2 — Capital Goods:</strong> Spend-based method using annual CapEx from KPI data. Only available for 6 of 10 portcos (Meridian, NovaCare, Patriot, and Ridgeline CapEx not tracked in current KPIs). Factors from USEEIO v2.0.</p>
+        <p style="margin-bottom:8px;"><strong style="color:var(--white)">Category 3 — Fuel & Energy Related Activities:</strong> Well-to-tank upstream emission factors (DEFRA 2023) applied to Scope 1+2 activity data. Highest confidence — directly derived from metered fuel and electricity consumption.</p>
+        <p style="margin-bottom:8px;"><strong style="color:var(--white)">Category 5 — Waste:</strong> Only estimated where waste data references exist. Harvest Ridge: disposal cost proxy ($185K/yr). Sterling and Clearview: revenue-based industry proxy. Waste manifests not yet collected for any portco.</p>
+        <p style="margin-bottom:8px;"><strong style="color:var(--white)">Category 7 — Employee Commuting:</strong> EPA average commuting distance (16.2 mi one-way) × 235 working days × average fleet fuel economy. Does not account for remote work, public transit, or geographic variation.</p>
+        <p style="margin-bottom:8px;"><strong style="color:var(--white)">Category 9 — Downstream Transportation:</strong> Only estimated for Harvest Ridge (food distribution) and Sterling (parts distribution). Revenue-based freight spend proxy. No freight invoices available.</p>
+        <p style="margin-bottom:8px;"><strong style="color:var(--white)">Category 12 — End-of-Life Treatment:</strong> Only estimated for Harvest Ridge (food packaging). Revenue-based proxy for packaging end-of-life. Packaging weight/type not available.</p>
+        <p style="margin-bottom:8px;"><strong style="color:var(--white)">Category 13 — Downstream Leased Assets:</strong> Ridgeline only. Managed portfolio energy (~285M kWh, ~3.2M therms across ~18M sq ft) as reported by CFO. This is the single largest potential Scope 3 source in the portfolio. Scope boundary decision still pending.</p>
+        <p><strong style="color:var(--white)">Not estimated:</strong> Cat 4 (Upstream Transport), Cat 6 (Business Travel), Cat 8 (Upstream Leased Assets), Cat 10 (Processing of Sold Products), Cat 11 (Use of Sold Products), Cat 14 (Franchises), Cat 15 (Investments) — insufficient data available for credible estimation.</p>
+      </div>
+    </div>
+  `;
+
+  container.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════
+// NAVIGATION & EVENT HANDLERS
+// ═══════════════════════════════════════════════════════
+
+function setFundFilter(fund) {
+  currentFundFilter = fund;
+  renderFundView();
+}
+
+function showPortco(slug) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab')[1].classList.add('active');
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-portco').classList.add('active');
+  renderPortcoDetail(slug);
+}
+
+function showFundView() {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab')[0].classList.add('active');
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-fund').classList.add('active');
+}
+
+// Tab navigation
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    const viewId = 'view-' + tab.dataset.view;
+    document.getElementById(viewId).classList.add('active');
+    if (tab.dataset.view === 'portco') renderPortcoSelector();
+    if (tab.dataset.view === 'scope3') renderScope3();
+    if (tab.dataset.view === 'scope3est') renderScope3Estimates();
+  });
+});
+
+// Sort toggle
+document.getElementById('bar-sort-toggle').addEventListener('click', () => {
+  currentSortMode = currentSortMode === 'absolute' ? 'intensity' : 'absolute';
+  renderFundView();
+});
+
+// Methodology note
+document.getElementById('methodology').innerHTML = `
+  <strong>Methodology</strong><br>
+  <strong>Scope 1</strong> — Direct emissions from stationary combustion (natural gas, diesel, propane), mobile combustion (fleet vehicles), and fugitive emissions (refrigerant leakage). Factors: EPA Emission Factors Hub (2023).<br>
+  <strong>Scope 2</strong> — Location-based indirect emissions from purchased electricity. Factors: EPA eGRID (2022) state-level total output emission rates.<br>
+  <strong>Refrigerants</strong> — R-22 (GWP 1,810) and R-410A (GWP 2,088) per IPCC AR5. Converted from lbs to mt CO2e.<br>
+  <strong>Financial Data</strong> — Revenue and EBITDA are LTM as of January 31, 2026. Carbon cost scenarios are illustrative and do not represent actual or proposed carbon pricing.<br>
+  <strong>Data Quality</strong> — Grade A: utility bills (actual consumption). Grade B: accounting exports (derived from financial records). Grade C: landlord data, estimates, or fleet logs.<br>
+  <strong>Known Data Issues</strong> — NC-026/027 (NovaCare Marietta/Augusta): suspected column swap in migrated data. PSS-009/014 (Patriot Evansville/Rockford): utilities included in lease, no separate data. KBH-022 (Keystone Hagerstown): opened Nov 2025, insufficient data.
+`;
+
+// Initial render
+renderFundView();
+</script>
+</body>
+</html>

@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Climate Data Pond — Northwood Capital</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #232735;
+    --border: #2e3345;
+    --text: #e2e4ea;
+    --text-muted: #8b8fa3;
+    --accent: #5bb8a4;
+    --accent-dim: #3d7a6d;
+    --high: #e85d5d;
+    --medium: #e8a84c;
+    --low: #6b9bd2;
+    --none: #555a6e;
+    --header-bg: #15171f;
+    --green: #4caf50;
+    --yellow: #e8a84c;
+    --red: #e85d5d;
+    --orange: #e8724c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    padding: 32px 48px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+  h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; color: #fff; }
+  h1 span { color: var(--accent); }
+  .subtitle { font-size: 15px; color: var(--text-muted); margin-bottom: 32px; }
+  h2 { font-size: 18px; font-weight: 600; color: #fff; margin: 40px 0 6px 0; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  h2 .tnum { color: var(--accent); font-weight: 700; margin-right: 6px; }
+  h3 { font-size: 15px; font-weight: 600; color: var(--text); margin: 20px 0 8px 0; }
+
+  .meta-bar { display: flex; gap: 32px; margin-bottom: 36px; padding: 16px 20px; background: var(--surface); border-radius: 8px; border: 1px solid var(--border); flex-wrap: wrap; }
+  .meta-item { display: flex; flex-direction: column; gap: 2px; }
+  .meta-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); }
+  .meta-value { font-size: 15px; font-weight: 600; color: #fff; }
+
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin: 20px 0 32px 0; }
+  .summary-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
+  .summary-card .num { font-size: 28px; font-weight: 700; color: #fff; }
+  .summary-card .label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 4px; margin-bottom: 28px; padding: 6px; background: var(--surface); border-radius: 8px; border: 1px solid var(--border); flex-wrap: wrap; }
+  .tab { padding: 10px 20px; border-radius: 6px; color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 600; border: 1px solid var(--border); cursor: pointer; background: none; transition: all 0.15s; }
+  .tab:hover { background: var(--surface2); color: var(--text); }
+  .tab.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 8px; }
+  thead th { background: var(--header-bg); color: var(--accent); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; padding: 10px 12px; text-align: left; border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 10; }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+  tbody tr:hover { background: var(--surface2); }
+  tbody tr.priority { background: rgba(91,184,164,0.06); }
+  tbody tr.priority:hover { background: rgba(91,184,164,0.12); }
+  td { padding: 8px 12px; vertical-align: top; }
+  .mono { font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 12px; }
+  a.file-link { color: #c9cdd8; text-decoration: none; border-bottom: 1px dashed var(--border); transition: all 0.15s; }
+  a.file-link:hover { color: var(--accent); border-bottom-color: var(--accent); }
+  .desc { color: var(--text-muted); }
+  .desc strong { color: var(--text); font-weight: 600; }
+
+  /* Badges */
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+  .badge-structured { background: rgba(91,184,164,0.15); color: var(--accent); }
+  .badge-unstructured { background: rgba(107,155,210,0.15); color: var(--low); }
+  .badge-a { background: rgba(76,175,80,0.2); color: var(--green); }
+  .badge-b { background: rgba(232,168,76,0.2); color: var(--yellow); }
+  .badge-c { background: rgba(232,93,93,0.2); color: var(--red); }
+
+  .relevance { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+  .rel-high { background: rgba(232,93,93,0.15); color: var(--high); }
+  .rel-medium { background: rgba(232,168,76,0.15); color: var(--medium); }
+  .rel-low { background: rgba(107,155,210,0.1); color: #7ba5d0; }
+
+  /* Score badges */
+  .score { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 6px; font-size: 14px; font-weight: 800; color: #fff; }
+  .score-5 { background: #2d7a3a; }
+  .score-4 { background: #3d8a4a; }
+  .score-3 { background: #a08830; }
+  .score-2 { background: #c06030; }
+  .score-1 { background: #c03030; }
+
+  /* Coverage matrix */
+  .matrix { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .matrix th { background: var(--header-bg); color: var(--accent); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; padding: 8px 10px; text-align: center; border-bottom: 2px solid var(--border); white-space: nowrap; }
+  .matrix th:first-child { text-align: left; min-width: 160px; }
+  .matrix td { padding: 6px 10px; text-align: center; border-bottom: 1px solid var(--border); }
+  .matrix td:first-child { text-align: left; font-weight: 600; color: var(--text); }
+  .matrix tr:hover { background: var(--surface2); }
+  .cell-full { background: rgba(76,175,80,0.2); color: var(--green); font-weight: 700; font-size: 11px; border-radius: 4px; padding: 4px 6px; }
+  .cell-partial { background: rgba(232,168,76,0.15); color: var(--yellow); font-weight: 700; font-size: 11px; border-radius: 4px; padding: 4px 6px; }
+  .cell-missing { background: rgba(232,93,93,0.1); color: var(--red); font-weight: 700; font-size: 11px; border-radius: 4px; padding: 4px 6px; }
+  .cell-na { color: var(--none); font-size: 11px; }
+
+  /* Filter bar */
+  .filter-bar { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+  .filter-bar label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); font-weight: 600; }
+  .filter-bar select, .filter-bar input[type="text"] {
+    background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 6px; font-size: 13px; font-family: inherit;
+  }
+  .filter-bar select:focus, .filter-bar input:focus { outline: none; border-color: var(--accent); }
+  .filter-bar input[type="text"] { width: 240px; }
+  .filter-group { display: flex; flex-direction: column; gap: 4px; }
+
+  /* Intake log */
+  .intake-entry { display: flex; align-items: flex-start; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .intake-entry:last-child { border-bottom: none; }
+  .intake-date { font-size: 12px; color: var(--accent); font-weight: 700; min-width: 90px; font-variant-numeric: tabular-nums; }
+  .intake-source { font-size: 12px; color: var(--text-muted); min-width: 140px; }
+  .intake-desc { font-size: 13px; color: var(--text); flex: 1; }
+  .intake-count { font-size: 12px; color: var(--text-muted); background: var(--surface2); padding: 2px 10px; border-radius: 4px; white-space: nowrap; }
+
+  /* Form */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-group label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); font-weight: 600; }
+  .form-group input, .form-group select, .form-group textarea {
+    background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 6px; font-size: 13px; font-family: inherit;
+  }
+  .form-group textarea { resize: vertical; min-height: 80px; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--accent); }
+  .form-full { grid-column: 1 / -1; }
+  .btn { padding: 10px 24px; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; border: none; transition: all 0.15s; }
+  .btn-primary { background: var(--accent); color: var(--bg); }
+  .btn-primary:hover { background: #6cc8b4; }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { background: var(--border); }
+  .btn-group { display: flex; gap: 8px; margin-top: 16px; }
+
+  /* Source bar */
+  .source-bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; width: 100%; min-width: 100px; }
+  .bar-a { background: #4caf50; }
+  .bar-b { background: var(--yellow); }
+  .bar-c { background: var(--orange); }
+  .bar-na { background: var(--red); }
+
+  /* Status dot */
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+  .dot-a { background: var(--green); }
+  .dot-b { background: var(--yellow); }
+  .dot-c { background: var(--red); }
+
+  /* Export banner */
+  .export-banner { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .export-banner .info { font-size: 13px; color: var(--text-muted); }
+  .export-banner .info strong { color: var(--text); }
+
+  /* File viewer modal */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; display: none; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    width: 90vw; max-width: 1100px; height: 85vh; display: flex; flex-direction: column;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+  }
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between; padding: 16px 24px;
+    border-bottom: 1px solid var(--border); flex-shrink: 0;
+  }
+  .modal-title { font-size: 14px; font-weight: 700; color: #fff; }
+  .modal-path { font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', 'Fira Code', monospace; margin-top: 2px; }
+  .modal-close {
+    background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); width: 32px; height: 32px;
+    border-radius: 6px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+  }
+  .modal-close:hover { background: var(--border); color: var(--text); }
+  .modal-body { flex: 1; overflow: auto; padding: 24px; }
+  .modal-body pre {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 12px; line-height: 1.6; color: var(--text); white-space: pre-wrap; word-wrap: break-word;
+  }
+  .modal-body table.csv-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .modal-body table.csv-table th {
+    background: var(--header-bg); color: var(--accent); font-weight: 600; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.5px; padding: 8px 10px; text-align: left;
+    border-bottom: 2px solid var(--border); position: sticky; top: 0;
+  }
+  .modal-body table.csv-table td { padding: 6px 10px; border-bottom: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  .modal-body table.csv-table tr:hover { background: var(--surface2); }
+  .modal-loading { color: var(--text-muted); font-size: 13px; }
+  .modal-error { color: var(--red); font-size: 13px; }
+
+  /* Toast */
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--accent); color: var(--bg); padding: 12px 24px; border-radius: 8px; font-size: 13px; font-weight: 700; z-index: 100; transform: translateY(100px); opacity: 0; transition: all 0.3s; }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  .footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-muted); text-align: center; }
+@media (max-width: 900px) {
+    body { padding: 16px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .matrix th, .matrix td { padding: 4px 6px; font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Climate <span>Data Pond</span></h1>
+<p class="subtitle">Northwood Capital Partners — All climate data in one place, organized and queryable</p>
+
+<div class="meta-bar">
+  <div class="meta-item"><span class="meta-label">Prepared by</span><span class="meta-value">Kith Consulting</span></div>
+  <div class="meta-item"><span class="meta-label">Last Updated</span><span class="meta-value" id="lastUpdated">March 29, 2026</span></div>
+  <div class="meta-item"><span class="meta-label">Portfolio Companies</span><span class="meta-value">10</span></div>
+  <div class="meta-item"><span class="meta-label">Total Data Sources</span><span class="meta-value" id="totalSources">212</span></div>
+  <div class="meta-item"><span class="meta-label">Persistence</span><span class="meta-value" style="color:var(--accent)">localStorage</span></div>
+</div>
+
+<!-- DASHBOARD SUMMARY -->
+<div class="summary-grid" id="summaryGrid">
+  <div class="summary-card"><div class="num" style="color:var(--accent)" id="sumTotal">212</div><div class="label">Total Data Sources</div></div>
+  <div class="summary-card"><div class="num" style="color:var(--green)" id="sumGradeA">4</div><div class="label">Grade A Portcos</div></div>
+  <div class="summary-card"><div class="num" style="color:var(--yellow)" id="sumGradeB">3</div><div class="label">Grade B Portcos</div></div>
+  <div class="summary-card"><div class="num" style="color:var(--red)" id="sumGradeC">3</div><div class="label">Grade C Portcos</div></div>
+  <div class="summary-card"><div class="num" id="sumIntake">3</div><div class="label">Intake Events</div></div>
+  <div class="summary-card"><div class="num" style="color:var(--high)" id="sumGaps">28</div><div class="label">Open Gaps</div></div>
+</div>
+
+<!-- SECTION TABS -->
+<div class="tabs">
+  <button class="tab active" data-tab="browser">Data Browser</button>
+  <button class="tab" data-tab="coverage">Coverage Matrix</button>
+  <button class="tab" data-tab="portcos">Portfolio View</button>
+  <button class="tab" data-tab="intake">Intake Log</button>
+  <button class="tab" data-tab="add">Add Data</button>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB: DATA BROWSER -->
+<!-- ============================================================ -->
+<div class="tab-panel active" id="panel-browser">
+
+  <div class="filter-bar">
+    <div class="filter-group">
+      <label>Portfolio Company</label>
+      <select id="filterPortco">
+        <option value="">All Portcos</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Data Category</label>
+      <select id="filterCategory">
+        <option value="">All Categories</option>
+        <option value="Climate Questionnaire">Climate Questionnaire</option>
+        <option value="Energy — Electricity">Energy — Electricity</option>
+        <option value="Energy — Natural Gas">Energy — Natural Gas</option>
+        <option value="Fleet & Fuel">Fleet & Fuel</option>
+        <option value="Refrigerants">Refrigerants</option>
+        <option value="Waste">Waste</option>
+        <option value="Financial">Financial</option>
+        <option value="Operational">Operational</option>
+        <option value="Reference">Reference</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Relevance</label>
+      <select id="filterRelevance">
+        <option value="">All</option>
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Source Grade</label>
+      <select id="filterGrade">
+        <option value="">All</option>
+        <option value="A">Grade A</option>
+        <option value="B">Grade B</option>
+        <option value="C">Grade C</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Search</label>
+      <input type="text" id="filterSearch" placeholder="Search files, descriptions...">
+    </div>
+  </div>
+
+  <div class="export-banner">
+    <div class="info">Showing <strong id="showCount">0</strong> of <strong id="totalCount">0</strong> data sources</div>
+    <button class="btn btn-secondary" onclick="exportJSON()">Export JSON</button>
+  </div>
+
+  <table id="browserTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>File</th>
+        <th>Portfolio Co.</th>
+        <th>Category</th>
+        <th>Format</th>
+        <th>Source Grade</th>
+        <th>Relevance</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody id="browserBody"></tbody>
+  </table>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB: COVERAGE MATRIX -->
+<!-- ============================================================ -->
+<div class="tab-panel" id="panel-coverage">
+
+  <p class="desc" style="margin-bottom:16px;">Coverage of climate-critical data categories across the portfolio. Green = data received and usable. Yellow = partial or estimated. Red = missing entirely.</p>
+
+  <table class="matrix" id="coverageMatrix">
+    <thead>
+      <tr>
+        <th>Portfolio Company</th>
+        <th>Questionnaire</th>
+        <th>Electricity</th>
+        <th>Natural Gas</th>
+        <th>Fleet / Fuel</th>
+        <th>Refrigerants</th>
+        <th>Waste</th>
+        <th>Financials</th>
+        <th>Value Creation Plan</th>
+        <th>Grade</th>
+        <th>Ready</th>
+      </tr>
+    </thead>
+    <tbody id="coverageBody"></tbody>
+  </table>
+
+  <div style="display:flex;gap:20px;margin-top:16px;font-size:12px;color:var(--text-muted);">
+    <span><span class="status-dot dot-a"></span> Have — data received and usable</span>
+    <span><span class="status-dot dot-b"></span> Partial — estimated or incomplete</span>
+    <span><span class="status-dot dot-c"></span> Missing — not received</span>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB: PORTFOLIO VIEW -->
+<!-- ============================================================ -->
+<div class="tab-panel" id="panel-portcos">
+
+  <p class="desc" style="margin-bottom:20px;">Per-portco data readiness overview. Priority portcos (Meridian, Sterling, Keystone) are highlighted.</p>
+
+  <div id="portcoCards"></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB: INTAKE LOG -->
+<!-- ============================================================ -->
+<div class="tab-panel" id="panel-intake">
+
+  <p class="desc" style="margin-bottom:20px;">Chronological record of when data was received, from whom, and what it covers. The chain of custody for auditability.</p>
+
+  <div id="intakeLog"></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB: ADD DATA -->
+<!-- ============================================================ -->
+<div class="tab-panel" id="panel-add">
+
+  <p class="desc" style="margin-bottom:20px;">Log a new data source into the pond. This records metadata about the file — what it is, where it came from, and what it covers.</p>
+
+  <div class="form-grid">
+    <div class="form-group">
+      <label>Portfolio Company</label>
+      <select id="addPortco"></select>
+    </div>
+    <div class="form-group">
+      <label>Data Category</label>
+      <select id="addCategory">
+        <option value="Climate Questionnaire">Climate Questionnaire</option>
+        <option value="Energy — Electricity">Energy — Electricity</option>
+        <option value="Energy — Natural Gas">Energy — Natural Gas</option>
+        <option value="Fleet & Fuel">Fleet & Fuel</option>
+        <option value="Refrigerants">Refrigerants</option>
+        <option value="Waste">Waste</option>
+        <option value="Financial">Financial</option>
+        <option value="Operational">Operational</option>
+        <option value="Reference">Reference</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>File Name</label>
+      <input type="text" id="addFileName" placeholder="e.g., utility-bills-jan-2026.xlsx">
+    </div>
+    <div class="form-group">
+      <label>File Format</label>
+      <select id="addFormat">
+        <option value="CSV">CSV</option>
+        <option value="XLSX">XLSX</option>
+        <option value="PDF">PDF</option>
+        <option value="MD">MD</option>
+        <option value="HTML">HTML</option>
+        <option value="JSON">JSON</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Source Grade</label>
+      <select id="addGrade">
+        <option value="A">Grade A — Utility Bills / Primary</option>
+        <option value="B">Grade B — Accounting Estimates</option>
+        <option value="C">Grade C — Landlord / Proxy</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Relevance</label>
+      <select id="addRelevance">
+        <option value="High">High — directly used in emissions</option>
+        <option value="Medium">Medium — supporting context</option>
+        <option value="Low">Low — general context</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Received From</label>
+      <input type="text" id="addFrom" placeholder="e.g., Patricia Wells, CFO">
+    </div>
+    <div class="form-group">
+      <label>Coverage Period</label>
+      <input type="text" id="addPeriod" placeholder="e.g., Jan–Dec 2025">
+    </div>
+    <div class="form-group form-full">
+      <label>Description</label>
+      <textarea id="addDesc" placeholder="What does this file contain? Key details, facility count, any issues..."></textarea>
+    </div>
+  </div>
+  <div class="btn-group">
+    <button class="btn btn-primary" onclick="addDataSource()">Add to Data Pond</button>
+    <button class="btn btn-secondary" onclick="clearForm()">Clear</button>
+  </div>
+</div>
+
+<!-- FILE VIEWER MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeViewer()">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modalTitle"></div>
+        <div class="modal-path" id="modalPath"></div>
+      </div>
+      <button class="modal-close" onclick="closeViewer()">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody">
+      <div class="modal-loading">Loading...</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">Northwood Capital Partners — Climate Data Pond — Kith Consulting &copy; 2026</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// DATA MODEL
+// ============================================================
+
+// Base path to the Northwood data environment, served via localhost.
+// The server root is claude-projects/, so paths are relative from there.
+const DATA_ROOT = '/_reference/Client%20Data/northwood-capital/';
+
+function fileURL(path, file) {
+  if (!path) return null;
+  return DATA_ROOT + path + file;
+}
+
+const PORTCOS = [
+  { id: 'meridian', name: 'Meridian Business Solutions', fund: 'I', sector: 'Business Services', facilities: 16, gradeA: 75, gradeB: 25, gradeC: 0, protocolRating: 'A', readiness: 4, contact: 'Patricia Wells, CFO', status: 'Exit prep', priority: true, keyIssue: 'Fleet boundary unclear — questionnaire says none, CSV has 3,200 gal' },
+  { id: 'sterling', name: 'Sterling Precision Manufacturing', fund: 'I', sector: 'Industrial Technology', facilities: 3, gradeA: 100, gradeB: 0, gradeC: 0, protocolRating: 'A', readiness: 4, contact: 'Derek Williams, COO', status: 'Strong', priority: true, keyIssue: 'Akron/Elyria allocation swapped between sources (totals match)' },
+  { id: 'keystone', name: 'Keystone Behavioral Health', fund: 'II', sector: 'Healthcare Services', facilities: 22, gradeA: 32, gradeB: 0, gradeC: 63, protocolRating: 'C', readiness: 2, contact: 'Jennifer Martinez, COO', status: '100-day', priority: true, keyIssue: '27% formulaic estimates, in-home therapy boundary question, no CFO review' },
+  { id: 'novacare', name: 'NovaCare Health Partners', fund: 'I', sector: 'Healthcare Services', facilities: 30, gradeA: 63, gradeB: 0, gradeC: 37, protocolRating: 'B', readiness: 3, contact: '', status: 'Active', priority: false, keyIssue: 'RehabWorks unit swap — kWh entered as therms. Would corrupt Scope 1.' },
+  { id: 'trident', name: 'Trident IT Solutions', fund: 'I', sector: 'IT Services', facilities: 8, gradeA: 25, gradeB: 75, gradeC: 0, protocolRating: 'B', readiness: 4, contact: '', status: 'Active', priority: false, keyIssue: 'Most mature — already calculated ~595 mt CO2e, evaluating SBTs' },
+  { id: 'clearview', name: 'Clearview Environmental Services', fund: 'II', sector: 'Environmental Services', facilities: 12, gradeA: 75, gradeB: 25, gradeC: 0, protocolRating: 'A', readiness: 4, contact: '', status: 'Active', priority: false, keyIssue: 'Fleet dominant (~156K gal). EHS co-authored. Credibility gap.' },
+  { id: 'patriot', name: 'Patriot Staffing Solutions', fund: 'II', sector: 'Staffing', facilities: 26, gradeA: 4, gradeB: 4, gradeC: 92, protocolRating: 'C', readiness: 2, contact: 'Scott Henderson', status: 'Active', priority: false, keyIssue: '96% landlord data. 2 zero facilities. 76K gal / 8 vehicles anomaly.' },
+  { id: 'pinnacle', name: 'Pinnacle Testing & Inspection', fund: 'II', sector: 'Industrial Technology', facilities: 10, gradeA: 10, gradeB: 90, gradeC: 0, protocolRating: 'B', readiness: 3, contact: '', status: 'Active', priority: false, keyIssue: 'Fleet dominant (~203K gal). $3.2M hurricane revenue deferral.' },
+  { id: 'harvest', name: 'Harvest Ridge Foods', fund: 'II', sector: 'Food Manufacturing', facilities: 5, gradeA: 100, gradeB: 0, gradeC: 0, protocolRating: 'A', readiness: 4, contact: '', status: 'Active', priority: false, keyIssue: 'CSV format error (3 rows). 9-month extrapolation. R-404A leak.' },
+  { id: 'ridgeline', name: 'Ridgeline Property Services', fund: 'II', sector: 'Property Services', facilities: 6, gradeA: 17, gradeB: 0, gradeC: 83, protocolRating: 'C', readiness: 3, contact: '', status: 'Active', priority: false, keyIssue: '83% landlord data. Small footprint, some fleet.' }
+];
+
+// Coverage matrix: portco → category → status (full/partial/missing)
+const COVERAGE = {
+  meridian:   { questionnaire: 'full', electricity: 'full', gas: 'full', fleet: 'partial', refrigerants: 'missing', waste: 'missing', financials: 'partial', vcp: 'missing' },
+  sterling:   { questionnaire: 'full', electricity: 'full', gas: 'full', fleet: 'missing', refrigerants: 'partial', waste: 'missing', financials: 'partial', vcp: 'missing' },
+  keystone:   { questionnaire: 'full', electricity: 'partial', gas: 'partial', fleet: 'missing', refrigerants: 'missing', waste: 'missing', financials: 'missing', vcp: 'missing' },
+  novacare:   { questionnaire: 'full', electricity: 'partial', gas: 'partial', fleet: 'missing', refrigerants: 'missing', waste: 'missing', financials: 'missing', vcp: 'missing' },
+  trident:    { questionnaire: 'full', electricity: 'full', gas: 'partial', fleet: 'missing', refrigerants: 'missing', waste: 'missing', financials: 'missing', vcp: 'missing' },
+  clearview:  { questionnaire: 'full', electricity: 'full', gas: 'full', fleet: 'full', refrigerants: 'missing', waste: 'missing', financials: 'missing', vcp: 'missing' },
+  patriot:    { questionnaire: 'full', electricity: 'partial', gas: 'partial', fleet: 'partial', refrigerants: 'missing', waste: 'missing', financials: 'missing', vcp: 'missing' },
+  pinnacle:   { questionnaire: 'full', electricity: 'partial', gas: 'partial', fleet: 'full', refrigerants: 'missing', waste: 'missing', financials: 'missing', vcp: 'missing' },
+  harvest:    { questionnaire: 'full', electricity: 'full', gas: 'full', fleet: 'missing', refrigerants: 'partial', waste: 'missing', financials: 'missing', vcp: 'missing' },
+  ridgeline:  { questionnaire: 'full', electricity: 'partial', gas: 'partial', fleet: 'partial', refrigerants: 'missing', waste: 'missing', financials: 'missing', vcp: 'missing' }
+};
+
+// Seed data sources — representative sample from the 212-file inventory
+const SEED_SOURCES = [
+  // Climate-specific primary sources
+  { id: 1, portco: 'all', file: 'carbon-collection-template-2025-submitted.csv', path: '_data/carbon/', format: 'CSV', category: 'Reference', grade: 'A', relevance: 'High', desc: 'Facility-level energy consumption for all 10 portcos. 139 rows. Electricity (kWh), gas (therms), fuel (gal), refrigerants (lbs), fleet fuel.' },
+  { id: 2, portco: 'all', file: 'carbon-collection-template-2025.csv', path: '_data/carbon/', format: 'CSV', category: 'Reference', grade: 'A', relevance: 'High', desc: 'Blank template sent to portco finance teams. 127 pre-populated facility rows.' },
+  { id: 3, portco: 'all', file: 'climate-data-collection-protocol.md', path: '_reference/', format: 'MD', category: 'Reference', grade: 'A', relevance: 'High', desc: 'Three-tier data flow protocol. Data quality grading (A/B/C), emission factor sources, calculation methodology, QA standards.' },
+
+  // Meridian
+  { id: 4, portco: 'meridian', file: 'climate-questionnaire-2025.md', path: 'portfolio/meridian-business-solutions/climate/_submitted/', format: 'MD', category: 'Climate Questionnaire', grade: 'A', relevance: 'High', desc: '10 sections. CFO Patricia Wells, Feb 28 2026. 16 office facilities, no fleet, no emissions tracking.' },
+  { id: 5, portco: 'meridian', file: 'portco-status.md', path: 'portfolio/meridian-business-solutions/', format: 'MD', category: 'Operational', grade: 'B', relevance: 'Low', desc: 'Current status, RAG. Exit prep.' },
+  { id: 6, portco: 'meridian', file: '2025-q4-board-deck.md', path: 'portfolio/meridian-business-solutions/board-materials/', format: 'MD', category: 'Operational', grade: 'B', relevance: 'Medium', desc: 'Q4 2025 board deck. May contain energy data.' },
+  { id: 7, portco: 'meridian', file: 'exit-strategy.md', path: 'portfolio/meridian-business-solutions/exit-prep/', format: 'MD', category: 'Operational', grade: 'B', relevance: 'Medium', desc: 'Exit process. ESG positioning for sale.' },
+  { id: 8, portco: 'meridian', file: 'annual-budget-2026.md', path: 'portfolio/meridian-business-solutions/financial-reporting/', format: 'MD', category: 'Financial', grade: 'B', relevance: 'Medium', desc: '2026 budget. Energy cost line items.' },
+  { id: 9, portco: 'meridian', file: 'kpi-dashboard.md', path: 'portfolio/meridian-business-solutions/financial-reporting/', format: 'MD', category: 'Financial', grade: 'B', relevance: 'Medium', desc: 'KPIs: headcount (580), revenue ($225M).' },
+  { id: 10, portco: 'meridian', file: '2026-01-package.md', path: 'portfolio/meridian-business-solutions/financial-reporting/monthly/', format: 'MD', category: 'Financial', grade: 'B', relevance: 'Medium', desc: 'Jan 2026 monthly financials.' },
+  { id: 11, portco: 'meridian', file: 'meridian-management-package-q4-2025-v1.xlsx', path: 'portfolio/meridian-business-solutions/reporting/', format: 'XLSX', category: 'Financial', grade: 'A', relevance: 'Medium', desc: 'Q4 2025 management reporting package.' },
+  { id: 12, portco: 'meridian', file: 'strategic-initiatives.md', path: 'portfolio/meridian-business-solutions/value-creation/', format: 'MD', category: 'Operational', grade: 'B', relevance: 'Medium', desc: 'Strategic initiatives.' },
+  { id: 13, portco: 'meridian', file: 'closing-summary.md', path: 'portfolio/meridian-business-solutions/acquisition/', format: 'MD', category: 'Operational', grade: 'B', relevance: 'Low', desc: 'Entry: $117M equity, Fund I.' },
+  { id: 14, portco: 'meridian', file: 'lbo-model-output.html', path: 'portfolio/meridian-business-solutions/exit-prep/', format: 'HTML', category: 'Financial', grade: 'A', relevance: 'Low', desc: 'LBO model output for exit valuation.' },
+
+  // Sterling
+  { id: 15, portco: 'sterling', file: 'climate-questionnaire-2025.md', path: 'portfolio/sterling-precision-manufacturing/climate/_submitted/', format: 'MD', category: 'Climate Questionnaire', grade: 'A', relevance: 'High', desc: '10 sections. COO Derek Williams, Dec 12 2025. 3 mfg facilities, $1.8M/yr energy, R-22 issue, defense customer ESG reqs.' },
+  { id: 16, portco: 'sterling', file: 'annual-budget-2026.md', path: 'portfolio/sterling-precision-manufacturing/financial-reporting/', format: 'MD', category: 'Financial', grade: 'A', relevance: 'High', desc: '2026 budget. Energy = $1.8M/yr, top-3 opex.' },
+  { id: 17, portco: 'sterling', file: 'kpi-dashboard.md', path: 'portfolio/sterling-precision-manufacturing/financial-reporting/', format: 'MD', category: 'Financial', grade: 'B', relevance: 'Medium', desc: 'KPIs: headcount (420), revenue ($168M).' },
+  { id: 18, portco: 'sterling', file: '2025-q4-board-deck.md', path: 'portfolio/sterling-precision-manufacturing/board-materials/', format: 'MD', category: 'Operational', grade: 'B', relevance: 'Medium', desc: 'Q4 board deck. Capex plan, R-22 replacement.' },
+  { id: 19, portco: 'sterling', file: 'strategic-initiatives.md', path: 'portfolio/sterling-precision-manufacturing/value-creation/', format: 'MD', category: 'Operational', grade: 'B', relevance: 'Medium', desc: 'Strategic initiatives. Energy efficiency capex.' },
+  { id: 20, portco: 'sterling', file: 'portco-status.md', path: 'portfolio/sterling-precision-manufacturing/', format: 'MD', category: 'Operational', grade: 'B', relevance: 'Low', desc: 'Status. Strong performer, Fund I.' },
+  { id: 21, portco: 'sterling', file: 'closing-summary.md', path: 'portfolio/sterling-precision-manufacturing/acquisition/', format: 'MD', category: 'Operational', grade: 'B', relevance: 'Low', desc: 'Entry: $90M equity, Fund I.' },
+
+  // Keystone
+  { id: 22, portco: 'keystone', file: 'climate-questionnaire-2025.md', path: 'portfolio/keystone-behavioral-health/climate/_submitted/', format: 'MD', category: 'Climate Questionnaire', grade: 'A', relevance: 'High', desc: '8 sections. COO Jennifer Martinez, Mar 14 2026. 22 clinics, 6 estimated, no CFO review. 35% in-home therapy unquantified.' },
+  { id: 23, portco: 'keystone', file: 'portco-status.md', path: 'portfolio/keystone-behavioral-health/', format: 'MD', category: 'Operational', grade: 'B', relevance: 'Low', desc: '100-day stage. Fund II.' },
+  { id: 24, portco: 'keystone', file: 'closing-summary.md', path: 'portfolio/keystone-behavioral-health/acquisition/', format: 'MD', category: 'Operational', grade: 'B', relevance: 'Low', desc: 'Entry details. Fund II.' },
+  { id: 25, portco: 'keystone', file: 'kpi-dashboard.md', path: 'portfolio/keystone-behavioral-health/financial-reporting/', format: 'MD', category: 'Financial', grade: 'C', relevance: 'Medium', desc: 'KPIs. Early stage — limited data.' },
+
+  // NovaCare
+  { id: 26, portco: 'novacare', file: 'climate-questionnaire-2025.md', path: 'portfolio/novacare-health-partners/climate/_submitted/', format: 'MD', category: 'Climate Questionnaire', grade: 'A', relevance: 'High', desc: '30 clinic locations. RehabWorks acquisition data included.' },
+  { id: 27, portco: 'novacare', file: 'portco-status.md', path: 'portfolio/novacare-health-partners/', format: 'MD', category: 'Operational', grade: 'B', relevance: 'Low', desc: 'Status. Fund I.' },
+
+  // Clearview
+  { id: 28, portco: 'clearview', file: 'climate-questionnaire-2025.md', path: 'portfolio/clearview-environmental/climate/_submitted/', format: 'MD', category: 'Climate Questionnaire', grade: 'A', relevance: 'High', desc: '12 facilities. Labs, field ops, large fleet. Most complex emissions profile.' },
+  { id: 29, portco: 'clearview', file: 'portco-status.md', path: 'portfolio/clearview-environmental/', format: 'MD', category: 'Operational', grade: 'B', relevance: 'Low', desc: 'Status. Fund II.' },
+
+  // Patriot
+  { id: 30, portco: 'patriot', file: 'climate-questionnaire-2025.md', path: 'portfolio/patriot-staffing-solutions/climate/_submitted/', format: 'MD', category: 'Climate Questionnaire', grade: 'A', relevance: 'High', desc: '26 branches. Many landlord-data facilities.' },
+  { id: 31, portco: 'patriot', file: 'portco-status.md', path: 'portfolio/patriot-staffing-solutions/', format: 'MD', category: 'Operational', grade: 'B', relevance: 'Low', desc: 'Status. Fund II.' },
+
+  // Pinnacle
+  { id: 32, portco: 'pinnacle', file: 'climate-questionnaire-2025.md', path: 'portfolio/pinnacle-testing/climate/_submitted/', format: 'MD', category: 'Climate Questionnaire', grade: 'A', relevance: 'High', desc: '10 facilities. Gulf Coast field ops, large fleet.' },
+  { id: 33, portco: 'pinnacle', file: 'portco-status.md', path: 'portfolio/pinnacle-testing/', format: 'MD', category: 'Operational', grade: 'B', relevance: 'Low', desc: 'Status. Fund II.' },
+
+  // Trident
+  { id: 34, portco: 'trident', file: 'climate-questionnaire-2025.md', path: 'portfolio/trident-it-solutions/climate/_submitted/', format: 'MD', category: 'Climate Questionnaire', grade: 'A', relevance: 'High', desc: '8 offices. 24/7 SOC with server room cooling.' },
+  { id: 35, portco: 'trident', file: 'portco-status.md', path: 'portfolio/trident-it-solutions/', format: 'MD', category: 'Operational', grade: 'B', relevance: 'Low', desc: 'Status. Fund I.' },
+
+  // Harvest Ridge
+  { id: 36, portco: 'harvest', file: 'climate-questionnaire-2025.md', path: 'portfolio/harvest-ridge-foods/climate/_submitted/', format: 'MD', category: 'Climate Questionnaire', grade: 'A', relevance: 'High', desc: '5 plants. Food mfg, cold storage, boilers.' },
+  { id: 37, portco: 'harvest', file: 'portco-status.md', path: 'portfolio/harvest-ridge-foods/', format: 'MD', category: 'Operational', grade: 'B', relevance: 'Low', desc: 'Status. Fund II.' },
+
+  // Ridgeline
+  { id: 38, portco: 'ridgeline', file: 'climate-questionnaire-2025.md', path: 'portfolio/ridgeline-property-services/climate/_submitted/', format: 'MD', category: 'Climate Questionnaire', grade: 'A', relevance: 'High', desc: '6 offices. Small footprint, some fleet.' },
+  { id: 39, portco: 'ridgeline', file: 'portco-status.md', path: 'portfolio/ridgeline-property-services/', format: 'MD', category: 'Operational', grade: 'B', relevance: 'Low', desc: 'Status. Fund II.' }
+];
+
+// Intake log entries
+const SEED_INTAKE = [
+  { date: '2026-02-28', from: 'Patricia Wells, CFO — Meridian', desc: 'Climate questionnaire submitted. 10 sections covering 16 office facilities. Reported no fleet, no emissions tracking history.', count: '1 questionnaire' },
+  { date: '2026-03-01', from: 'Sarah Mitchell, COO — Northwood', desc: 'Carbon collection template (submitted CSV) with 139 facility-level energy rows across all 10 portcos. Blank template also provided. Climate data collection protocol document.', count: '3 files (CSV + template + protocol)' },
+  { date: '2026-03-14', from: 'Jennifer Martinez, COO — Keystone', desc: 'Climate questionnaire submitted. 8 sections, 22 clinics. 6 facilities estimated. No CFO review. 35% in-home therapy services unquantified.', count: '1 questionnaire' },
+  { date: '2026-03-15', from: 'Sarah Mitchell, COO — Northwood', desc: 'Bulk data drop: portco status files, board decks, financial reporting packages, KPI dashboards, value creation files, and management packages across all 10 portcos. 200+ files.', count: '~200 files' },
+  { date: '2026-12-12', from: 'Derek Williams, COO — Sterling', desc: 'Climate questionnaire submitted. 10 sections. 3 manufacturing facilities, $1.8M/yr energy spend, R-22 refrigerant issue flagged, defense customer ESG requirements noted.', count: '1 questionnaire' }
+];
+
+// ============================================================
+// STATE
+// ============================================================
+
+let dataSources = [];
+let intakeEntries = [];
+
+function loadState() {
+  const saved = localStorage.getItem('northwood-data-pond');
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      dataSources = parsed.sources || [];
+      intakeEntries = parsed.intake || [];
+      return;
+    } catch(e) {}
+  }
+  // First load — use seed data
+  dataSources = [...SEED_SOURCES];
+  intakeEntries = [...SEED_INTAKE];
+  saveState();
+}
+
+function saveState() {
+  localStorage.setItem('northwood-data-pond', JSON.stringify({
+    sources: dataSources,
+    intake: intakeEntries,
+    lastUpdated: new Date().toISOString()
+  }));
+}
+
+// ============================================================
+// RENDER FUNCTIONS
+// ============================================================
+
+function getPortcoName(id) {
+  if (id === 'all') return 'All (Portfolio-wide)';
+  const p = PORTCOS.find(p => p.id === id);
+  return p ? p.name : id;
+}
+
+function renderBrowser() {
+  const portcoFilter = document.getElementById('filterPortco').value;
+  const catFilter = document.getElementById('filterCategory').value;
+  const relFilter = document.getElementById('filterRelevance').value;
+  const gradeFilter = document.getElementById('filterGrade').value;
+  const search = document.getElementById('filterSearch').value.toLowerCase();
+
+  let filtered = dataSources.filter(s => {
+    if (portcoFilter && s.portco !== portcoFilter) return false;
+    if (catFilter && s.category !== catFilter) return false;
+    if (relFilter && s.relevance !== relFilter) return false;
+    if (gradeFilter && s.grade !== gradeFilter) return false;
+    if (search && !s.file.toLowerCase().includes(search) && !s.desc.toLowerCase().includes(search) && !getPortcoName(s.portco).toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  document.getElementById('showCount').textContent = filtered.length;
+  document.getElementById('totalCount').textContent = dataSources.length;
+
+  const tbody = document.getElementById('browserBody');
+  tbody.innerHTML = filtered.map((s, i) => {
+    const portco = PORTCOS.find(p => p.id === s.portco);
+    const isPriority = portco && portco.priority;
+    const relClass = s.relevance === 'High' ? 'rel-high' : s.relevance === 'Medium' ? 'rel-medium' : 'rel-low';
+    const gradeClass = s.grade === 'A' ? 'badge-a' : s.grade === 'B' ? 'badge-b' : 'badge-c';
+    return `<tr class="${isPriority ? 'priority' : ''}">
+      <td style="color:var(--text-muted);font-variant-numeric:tabular-nums;width:36px;text-align:center;">${i + 1}</td>
+      <td class="mono">${s.path ? `<a class="file-link" href="javascript:void(0)" data-path="${s.path}" data-file="${s.file}" title="${s.path}${s.file}">${s.file}</a>` : s.file}</td>
+      <td>${getPortcoName(s.portco)}</td>
+      <td>${s.category}</td>
+      <td><span class="badge badge-structured">${s.format}</span></td>
+      <td><span class="badge ${gradeClass}">Grade ${s.grade}</span></td>
+      <td><span class="relevance ${relClass}">${s.relevance}</span></td>
+      <td class="desc">${s.desc}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderCoverage() {
+  const tbody = document.getElementById('coverageBody');
+  tbody.innerHTML = PORTCOS.map(p => {
+    const cov = COVERAGE[p.id];
+    const cellHTML = (status) => {
+      if (status === 'full') return '<span class="cell-full">Have</span>';
+      if (status === 'partial') return '<span class="cell-partial">Partial</span>';
+      return '<span class="cell-missing">Missing</span>';
+    };
+    const ratingClass = p.protocolRating === 'A' ? 'badge-a' : p.protocolRating === 'B' ? 'badge-b' : 'badge-c';
+    const scoreClass = `score-${p.readiness}`;
+    return `<tr class="${p.priority ? 'priority' : ''}">
+      <td>${p.priority ? '<strong>' : ''}${p.name}${p.priority ? ' ***</strong>' : ''}</td>
+      <td>${cellHTML(cov.questionnaire)}</td>
+      <td>${cellHTML(cov.electricity)}</td>
+      <td>${cellHTML(cov.gas)}</td>
+      <td>${cellHTML(cov.fleet)}</td>
+      <td>${cellHTML(cov.refrigerants)}</td>
+      <td>${cellHTML(cov.waste)}</td>
+      <td>${cellHTML(cov.financials)}</td>
+      <td>${cellHTML(cov.vcp)}</td>
+      <td><span class="badge ${ratingClass}">Grade ${p.protocolRating}</span></td>
+      <td><span class="score ${scoreClass}">${p.readiness}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderPortcoCards() {
+  const container = document.getElementById('portcoCards');
+  container.innerHTML = PORTCOS.map(p => {
+    const cov = COVERAGE[p.id];
+    const categories = Object.entries(cov);
+    const haveCount = categories.filter(([,v]) => v === 'full').length;
+    const partialCount = categories.filter(([,v]) => v === 'partial').length;
+    const missingCount = categories.filter(([,v]) => v === 'missing').length;
+    const sourceCount = dataSources.filter(s => s.portco === p.id).length;
+    const ratingClass = p.protocolRating === 'A' ? 'badge-a' : p.protocolRating === 'B' ? 'badge-b' : 'badge-c';
+    const scoreClass = `score-${p.readiness}`;
+    const barA = p.gradeA; const barB = p.gradeB; const barC = p.gradeC;
+
+    return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:16px;${p.priority ? 'border-left:3px solid var(--accent);' : ''}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="font-size:16px;font-weight:700;color:#fff;">${p.name}${p.priority ? ' <span style="color:var(--accent)">***</span>' : ''}</div>
+          <div style="font-size:12px;color:var(--text-muted);">Fund ${p.fund} &bull; ${p.sector} &bull; ${p.facilities} facilities &bull; ${p.status}</div>
+          ${p.contact ? `<div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Contact: ${p.contact}</div>` : ''}
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <span class="badge ${ratingClass}" style="font-size:12px;padding:4px 12px;">Grade ${p.protocolRating}</span>
+          <span class="score ${scoreClass}">${p.readiness}</span>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div>
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.6px;color:var(--accent);margin-bottom:6px;font-weight:600;">Source Grade Mix</div>
+          <div class="source-bar" style="margin-bottom:8px;">
+            ${barA ? `<div class="bar-a" style="width:${barA}%"></div>` : ''}
+            ${barB ? `<div class="bar-b" style="width:${barB}%"></div>` : ''}
+            ${barC ? `<div class="bar-c" style="width:${barC}%"></div>` : ''}
+          </div>
+          <div style="font-size:11px;color:var(--text-muted);">A: ${barA}% &bull; B: ${barB}% &bull; C: ${barC}%</div>
+        </div>
+        <div>
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.6px;color:var(--accent);margin-bottom:6px;font-weight:600;">Data Coverage</div>
+          <div style="font-size:13px;color:var(--text-muted);">
+            <span style="color:var(--green);font-weight:600;">${haveCount}</span> have &bull;
+            <span style="color:var(--yellow);font-weight:600;">${partialCount}</span> partial &bull;
+            <span style="color:var(--red);font-weight:600;">${missingCount}</span> missing &bull;
+            ${sourceCount} files in pond
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;color:var(--text-muted);">
+        <strong style="color:var(--text);">Key Issue:</strong> ${p.keyIssue}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderIntake() {
+  const container = document.getElementById('intakeLog');
+  const sorted = [...intakeEntries].sort((a, b) => b.date.localeCompare(a.date));
+  container.innerHTML = sorted.map(e => `
+    <div class="intake-entry">
+      <div class="intake-date">${formatDate(e.date)}</div>
+      <div class="intake-source">${e.from}</div>
+      <div class="intake-desc">${e.desc}</div>
+      <div class="intake-count">${e.count}</div>
+    </div>
+  `).join('');
+}
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function updateSummary() {
+  document.getElementById('sumTotal').textContent = dataSources.length;
+  document.getElementById('totalSources').textContent = dataSources.length;
+  document.getElementById('sumIntake').textContent = intakeEntries.length;
+
+  const gradeA = PORTCOS.filter(p => p.protocolRating === 'A').length;
+  const gradeB = PORTCOS.filter(p => p.protocolRating === 'B').length;
+  const gradeC = PORTCOS.filter(p => p.protocolRating === 'C').length;
+  document.getElementById('sumGradeA').textContent = gradeA;
+  document.getElementById('sumGradeB').textContent = gradeB;
+  document.getElementById('sumGradeC').textContent = gradeC;
+
+  // Count missing cells in coverage
+  let gaps = 0;
+  PORTCOS.forEach(p => {
+    const cov = COVERAGE[p.id];
+    Object.values(cov).forEach(v => { if (v === 'missing') gaps++; });
+  });
+  document.getElementById('sumGaps').textContent = gaps;
+}
+
+// ============================================================
+// ACTIONS
+// ============================================================
+
+function addDataSource() {
+  const portco = document.getElementById('addPortco').value;
+  const category = document.getElementById('addCategory').value;
+  const fileName = document.getElementById('addFileName').value.trim();
+  const format = document.getElementById('addFormat').value;
+  const grade = document.getElementById('addGrade').value;
+  const relevance = document.getElementById('addRelevance').value;
+  const from = document.getElementById('addFrom').value.trim();
+  const period = document.getElementById('addPeriod').value.trim();
+  const desc = document.getElementById('addDesc').value.trim();
+
+  if (!fileName) { showToast('File name is required'); return; }
+  if (!desc) { showToast('Description is required'); return; }
+
+  const newId = Math.max(...dataSources.map(s => s.id), 0) + 1;
+  const newSource = {
+    id: newId,
+    portco: portco,
+    file: fileName,
+    path: '',
+    format: format,
+    category: category,
+    grade: grade,
+    relevance: relevance,
+    desc: desc + (period ? ` Coverage: ${period}.` : ''),
+    addedBy: from || 'Manual entry',
+    addedDate: new Date().toISOString().split('T')[0]
+  };
+
+  dataSources.push(newSource);
+
+  // Add intake log entry
+  intakeEntries.push({
+    date: new Date().toISOString().split('T')[0],
+    from: from || 'Manual entry',
+    desc: `Added ${fileName} (${category}) for ${getPortcoName(portco)}.${desc ? ' ' + desc : ''}`,
+    count: '1 file'
+  });
+
+  saveState();
+  renderAll();
+  clearForm();
+  showToast('Data source added to pond');
+}
+
+function clearForm() {
+  document.getElementById('addFileName').value = '';
+  document.getElementById('addFrom').value = '';
+  document.getElementById('addPeriod').value = '';
+  document.getElementById('addDesc').value = '';
+}
+
+function exportJSON() {
+  const exportData = {
+    exportDate: new Date().toISOString(),
+    portfolio: PORTCOS,
+    coverage: COVERAGE,
+    dataSources: dataSources,
+    intakeLog: intakeEntries
+  };
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `northwood-data-pond-${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Exported as JSON');
+}
+
+// ============================================================
+// FILE VIEWER
+// ============================================================
+
+function openViewer(path, file) {
+  const overlay = document.getElementById('modalOverlay');
+  const title = document.getElementById('modalTitle');
+  const pathEl = document.getElementById('modalPath');
+  const body = document.getElementById('modalBody');
+
+  title.textContent = file;
+  pathEl.textContent = path + file;
+  body.innerHTML = '<div class="modal-loading">Loading file...</div>';
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  const url = fileURL(path, file);
+  fetch(url)
+    .then(res => {
+      if (!res.ok) throw new Error(`File not found (${res.status})`);
+      return res.text();
+    })
+    .then(text => {
+      const ext = file.split('.').pop().toLowerCase();
+      if (ext === 'csv') {
+        body.innerHTML = renderCSV(text);
+      } else {
+        body.innerHTML = `<pre>${escapeHTML(text)}</pre>`;
+      }
+    })
+    .catch(err => {
+      body.innerHTML = `<div style="text-align:center;padding:32px;">
+        <div style="font-size:24px;margin-bottom:16px;color:var(--accent);">&#9670;</div>
+        <div style="font-size:14px;font-weight:600;color:#fff;margin-bottom:8px;">${file}</div>
+        <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">This file is available in the Northwood data environment but is not deployed to the web platform.</div>
+        <div style="font-size:12px;color:var(--text-dim);background:var(--surface2);display:inline-block;padding:8px 16px;border-radius:6px;font-family:'JetBrains Mono',monospace;">${path}${file}</div>
+        </div>`;
+    });
+}
+
+function closeViewer() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function renderCSV(text) {
+  const rows = text.split('\n').filter(r => r.trim());
+  if (rows.length === 0) return '<div class="modal-error">Empty file</div>';
+
+  // Parse CSV (handles basic quoting)
+  function parseLine(line) {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        if (inQuotes && line[i+1] === '"') { current += '"'; i++; }
+        else { inQuotes = !inQuotes; }
+      } else if (ch === ',' && !inQuotes) {
+        result.push(current.trim());
+        current = '';
+      } else {
+        current += ch;
+      }
+    }
+    result.push(current.trim());
+    return result;
+  }
+
+  const headers = parseLine(rows[0]);
+  const dataRows = rows.slice(1).map(parseLine);
+
+  let html = '<table class="csv-table"><thead><tr>';
+  headers.forEach(h => { html += `<th>${escapeHTML(h)}</th>`; });
+  html += '</tr></thead><tbody>';
+  dataRows.forEach(row => {
+    html += '<tr>';
+    row.forEach(cell => { html += `<td>${escapeHTML(cell)}</td>`; });
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  return html;
+}
+
+function escapeHTML(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// Close on Escape key
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeViewer(); });
+
+// Delegated click handler for file links
+document.addEventListener('click', e => {
+  const link = e.target.closest('a.file-link');
+  if (link) {
+    e.preventDefault();
+    e.stopPropagation();
+    openViewer(link.dataset.path, link.dataset.file);
+  }
+});
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ============================================================
+// TAB SWITCHING
+// ============================================================
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// Filter listeners
+['filterPortco', 'filterCategory', 'filterRelevance', 'filterGrade'].forEach(id => {
+  document.getElementById(id).addEventListener('change', renderBrowser);
+});
+document.getElementById('filterSearch').addEventListener('input', renderBrowser);
+
+// ============================================================
+// INIT
+// ============================================================
+
+function populatePortcoDropdowns() {
+  const options = PORTCOS.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+  document.getElementById('filterPortco').innerHTML = '<option value="">All Portcos</option><option value="all">Portfolio-wide</option>' + options;
+  document.getElementById('addPortco').innerHTML = options;
+}
+
+function renderAll() {
+  updateSummary();
+  renderBrowser();
+  renderCoverage();
+  renderPortcoCards();
+  renderIntake();
+}
+
+// Boot
+loadState();
+populatePortcoDropdowns();
+renderAll();
+</script>
+
+</body>
+</html>

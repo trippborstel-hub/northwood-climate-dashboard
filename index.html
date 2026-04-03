@@ -3,775 +3,180 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kith Consulting | Climate Strategy for Northwood Capital Partners</title>
+<title>Northwood Capital Partners — Kith Consulting</title>
 <style>
   :root {
-    --dark: #1A1F36;
-    --dark-card: #222844;
-    --dark-border: #2D3359;
-    --accent: #4DB8A4;
-    --accent-dark: #3A9485;
-    --light-bg: #F7F8FA;
-    --white: #FFFFFF;
-    --text-dark: #1A1F36;
-    --text-mid: #4B5563;
-    --text-muted: #9CA3AF;
-    --card-border: #E5E7EB;
-    --warning: #D97706;
-    --warning-bg: #FFFBEB;
-    --warning-border: #FDE68A;
-    --success: #059669;
-    --success-bg: #ECFDF5;
-    --success-border: #A7F3D0;
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #232735;
+    --border: #2e3345;
+    --text: #e2e4ea;
+    --text-muted: #8b8fa3;
+    --text-dim: #5a5e72;
+    --accent: #5bb8a4;
+    --accent-dim: rgba(91,184,164,0.12);
+    --green: #4caf50;
+    --yellow: #e8a84c;
   }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
+  * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    color: var(--text-dark);
-    background: var(--white);
-    line-height: 1.6;
-  }
-
-  /* ── Navigation Bar ─────────────────────── */
-  .nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: var(--dark);
-    border-bottom: 1px solid var(--dark-border);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
     display: flex;
-    align-items: center;
-    padding: 0 2rem;
-    height: 40px;
-    gap: 0;
-  }
-  .nav-logo {
-    font-size: 0.8rem;
-    margin-right: 2rem;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .nav-logo .bold { font-weight: 700; color: var(--white); }
-  .nav-logo .slash { color: var(--accent); }
-  .nav-logo .light { color: var(--text-muted); }
-  .nav-items {
-    display: flex;
-    gap: 0;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .nav-items::-webkit-scrollbar { display: none; }
-  .nav-item {
-    font-size: 0.65rem;
-    letter-spacing: 1px;
-    color: var(--text-muted);
-    text-decoration: none;
-    padding: 0.7rem 0.9rem;
-    white-space: nowrap;
-    transition: color 0.2s, border-bottom 0.2s;
-    border-bottom: 2px solid transparent;
-  }
-  .nav-item:hover { color: var(--white); }
-  .nav-item.active { color: var(--accent); border-bottom-color: var(--accent); }
-
-  /* ── Slide Sections ─────────────────────── */
-  .slide {
-    min-height: 100vh;
-    padding: 5rem 4rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    position: relative;
-  }
-  .slide-content { max-width: 1100px; margin: 0 auto; width: 100%; }
-
-  /* ── Cover ──────────────────────────────── */
-  .cover {
-    background: var(--dark);
-    color: var(--white);
-    text-align: center;
-    align-items: center;
-  }
-  .cover-logo { font-size: 1.3rem; margin-bottom: 3rem; }
-  .cover-logo .bold { font-weight: 700; color: var(--white); }
-  .cover-logo .slash { color: var(--accent); margin: 0 0.15em; }
-  .cover-logo .light { color: var(--text-muted); }
-  .cover h1 { font-size: 2.6rem; font-weight: 300; margin-bottom: 0.25rem; }
-  .cover h1 strong { font-weight: 700; }
-  .cover .cover-sub { color: var(--accent); font-size: 1.1rem; margin: 1rem 0 2.5rem; }
-  .cover .accent-line { width: 50px; height: 2px; background: var(--accent); margin: 0 auto 1.5rem; }
-  .cover .meta { color: var(--text-muted); font-size: 0.85rem; line-height: 1.8; }
-
-  /* ── Section Label ──────────────────────── */
-  .section-label {
-    font-size: 0.65rem;
-    letter-spacing: 3px;
-    color: var(--accent);
-    text-transform: uppercase;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-  }
-  h2 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-dark); }
-  h2 .accent { color: var(--accent); }
-  .section-sub { color: var(--text-mid); font-size: 0.95rem; margin-bottom: 2.5rem; max-width: 800px; line-height: 1.7; }
-
-  /* ── Three Questions ────────────────────── */
-  .questions { display: flex; flex-direction: column; gap: 1.25rem; }
-  .question {
-    display: grid;
-    grid-template-columns: 100px 1fr;
-    gap: 1.25rem;
-    align-items: start;
-    padding: 1.5rem;
-    background: var(--light-bg);
-    border-left: 3px solid var(--accent);
-    border-radius: 0 6px 6px 0;
-  }
-  .question-label {
-    font-size: 0.65rem;
-    letter-spacing: 2px;
-    color: var(--accent);
-    font-weight: 700;
-    padding-top: 0.15rem;
-  }
-  .question-text { font-size: 0.95rem; color: var(--text-dark); line-height: 1.6; }
-
-  /* ── Three Portcos ──────────────────────── */
-  .portco-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 1.5rem; }
-  .portco-card {
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
-    padding: 1.5rem;
-    background: var(--white);
-  }
-  .portco-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem; }
-  .portco-meta { font-size: 0.75rem; color: var(--accent); margin-bottom: 0.75rem; letter-spacing: 0.5px; }
-  .portco-card p { font-size: 0.85rem; color: var(--text-mid); line-height: 1.6; }
-  .portco-footer { font-size: 0.8rem; color: var(--text-mid); font-style: italic; padding: 0.75rem 0; border-top: 1px solid var(--card-border); }
-
-  /* ── Approach Timeline ──────────────────── */
-  .timeline { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
-  .timeline-step {
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
+    height: 100vh;
     overflow: hidden;
   }
-  .timeline-header {
-    background: var(--accent);
-    color: var(--white);
-    padding: 0.75rem 1.25rem;
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    height: 100vh;
   }
-  .timeline-header .step-name { font-size: 0.85rem; font-weight: 600; }
-  .timeline-header .step-weeks { font-size: 0.7rem; opacity: 0.85; }
-  .timeline-body { padding: 1.25rem; }
-  .timeline-body p { font-size: 0.85rem; color: var(--text-mid); line-height: 1.6; }
-
-  /* ── Step Detail Slides ─────────────────── */
-  .step-slide { background: var(--light-bg); }
-  .step-layout { display: grid; grid-template-columns: 1.3fr 1fr; gap: 2.5rem; }
-  .step-left h3 { font-size: 1.05rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.5rem; margin-top: 1.25rem; }
-  .step-left h3:first-child { margin-top: 0; }
-  .step-left p { font-size: 0.85rem; color: var(--text-mid); line-height: 1.65; margin-bottom: 0.5rem; }
-
-  .detail-card {
-    border-radius: 8px;
-    padding: 1.25rem;
-    margin-bottom: 1rem;
+  .sidebar-header {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--border);
   }
-  .detail-card.deliverables {
-    background: var(--white);
-    border: 1px solid var(--card-border);
-  }
-  .detail-card.data-needs {
-    background: var(--warning-bg);
-    border: 1px solid var(--warning-border);
-  }
-  .detail-card.mvp-note {
-    background: var(--success-bg);
-    border: 1px solid var(--success-border);
-  }
-  .detail-card .card-label {
-    font-size: 0.65rem;
-    letter-spacing: 2px;
+  .logo {
+    font-size: 14px;
     font-weight: 700;
-    margin-bottom: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.5px;
   }
-  .detail-card.deliverables .card-label { color: var(--accent); }
-  .detail-card.data-needs .card-label { color: var(--warning); }
-  .detail-card.mvp-note .card-label { color: var(--success); }
-  .detail-card ul { list-style: none; }
-  .detail-card li {
-    font-size: 0.82rem;
-    color: var(--text-mid);
-    padding: 0.2rem 0;
-    padding-left: 1.1rem;
-    position: relative;
-    line-height: 1.5;
+  .logo .slash { color: var(--text-dim); margin: 0 3px; }
+  .logo .client { color: #fff; }
+  .logo-sub {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 2px;
   }
-  .detail-card.deliverables li::before { content: "\2192"; position: absolute; left: 0; color: var(--accent); }
-  .detail-card.data-needs li { list-style: none; padding-left: 1.1rem; }
-  .detail-card.data-needs li::before { content: "\2022"; position: absolute; left: 0.2rem; color: var(--warning); }
-  .detail-card.mvp-note li::before { content: "\2192"; position: absolute; left: 0; color: var(--success); }
-  .detail-card.mvp-note p { font-size: 0.82rem; color: var(--text-mid); line-height: 1.5; }
 
-  /* ── Value Boxes (Step 3) ───────────────── */
-  .value-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem; }
-  .value-box {
-    border-radius: 8px;
-    padding: 1rem;
-    background: var(--dark);
-    color: var(--white);
+  .sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 0;
   }
-  .value-box .vb-company { font-size: 0.65rem; letter-spacing: 2px; color: var(--accent); margin-bottom: 0.25rem; font-weight: 600; }
-  .value-box .vb-label { font-size: 0.75rem; font-weight: 700; margin-bottom: 0.35rem; }
-  .value-box p { font-size: 0.78rem; color: #D1D5DB; line-height: 1.5; }
-
-  /* ── Pricing ────────────────────────────── */
-  .pricing-layout { display: grid; grid-template-columns: 1.3fr 1fr; gap: 2.5rem; align-items: start; }
-  .pricing-list { list-style: none; }
-  .pricing-list li {
-    font-size: 0.85rem;
-    padding: 0.45rem 0;
-    border-bottom: 1px solid var(--card-border);
-    display: flex;
-    align-items: flex-start;
-    gap: 0.5rem;
-    color: var(--text-mid);
+  .nav-section {
+    padding: 0 16px;
+    margin-bottom: 8px;
   }
-  .pricing-list .check { color: var(--accent); font-weight: 700; flex-shrink: 0; }
-  .pricing-list strong { color: var(--text-dark); }
-
-  .price-card {
-    background: var(--dark);
-    border-radius: 10px;
-    padding: 2rem;
-    text-align: center;
-    color: var(--white);
-    margin-bottom: 1rem;
+  .nav-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-dim);
+    padding: 8px 8px 6px;
   }
-  .price-label { font-size: 0.65rem; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 0.5rem; }
-  .price-amount { font-size: 2.8rem; font-weight: 700; }
-  .price-type { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem; }
-  .price-terms { font-size: 0.82rem; text-align: left; color: #D1D5DB; }
-  .price-terms strong { color: var(--white); }
-
-  .exclusions {
-    background: var(--light-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
-    padding: 1rem;
-  }
-  .exclusions .card-label { font-size: 0.65rem; letter-spacing: 2px; color: var(--text-muted); font-weight: 700; margin-bottom: 0.5rem; }
-  .exclusions p { font-size: 0.8rem; color: var(--text-mid); line-height: 1.5; }
-
-  /* ── About Kith ─────────────────────────── */
-  .about-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
-  .about-stat {
-    text-align: center;
-    padding: 1rem;
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
-  }
-  .about-stat .stat-num { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
-  .about-stat .stat-label { font-size: 0.6rem; letter-spacing: 2px; color: var(--text-muted); }
-
-  .about-props { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
-  .about-prop {
-    padding: 1.25rem;
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
-    border-top: 3px solid var(--accent);
-  }
-  .about-prop h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.4rem; }
-  .about-prop p { font-size: 0.78rem; color: var(--text-mid); line-height: 1.5; }
-
-  .engagements h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; }
-  .engagements li { font-size: 0.82rem; color: var(--text-mid); margin-bottom: 0.35rem; line-height: 1.5; list-style: disc; margin-left: 1rem; }
-
-  /* ── Next Steps / Close ─────────────────── */
-  .close {
-    background: var(--dark);
-    color: var(--white);
-    text-align: center;
-    align-items: center;
-  }
-  .close h2 { color: var(--white); }
-  .close .accent-line { width: 50px; height: 2px; background: var(--accent); margin: 1.25rem auto; }
-  .steps-list { max-width: 600px; margin: 0 auto 2.5rem; text-align: left; }
-  .step-row {
+  .nav-item {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    margin-bottom: 0.75rem;
-  }
-  .step-num {
-    width: 32px; height: 32px;
-    background: var(--accent);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 0.9rem; flex-shrink: 0;
-  }
-  .step-text { font-size: 0.95rem; }
-  .close .contact { color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem; }
-
-  /* ── Footer ─────────────────────────────── */
-  footer {
-    background: var(--dark);
+    justify-content: space-between;
+    padding: 9px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
     color: var(--text-muted);
-    text-align: center;
-    padding: 1.25rem;
-    font-size: 0.7rem;
-    border-top: 1px solid var(--dark-border);
+    text-decoration: none;
+    transition: all 0.15s;
+    margin-bottom: 1px;
+  }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: var(--accent-dim); color: var(--accent); font-weight: 600; }
+  .nav-item .status {
+    width: 7px; height: 7px; border-radius: 50%;
+  }
+  .status-complete { background: var(--green); }
+  .status-active { background: var(--yellow); }
+  .status-future { background: var(--border); }
+
+  .sidebar-footer {
+    padding: 12px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--text-dim);
   }
 
-  /* ── Responsive ─────────────────────────── */
-  @media (max-width: 900px) {
-    .slide { padding: 3rem 1.5rem; }
-    .portco-grid, .timeline, .about-stats, .about-props, .value-grid { grid-template-columns: 1fr; }
-    .step-layout, .pricing-layout { grid-template-columns: 1fr; }
-    .question { grid-template-columns: 80px 1fr; }
-    .cover h1 { font-size: 1.8rem; }
-    h2 { font-size: 1.4rem; }
-    .nav { padding: 0 1rem; }
+  /* ── MAIN CONTENT ── */
+  .main-frame {
+    flex: 1;
+    border: none;
+    width: 100%;
+    height: 100vh;
   }
-
-  /* ── Scroll highlight for nav ───────────── */
-  html { scroll-behavior: smooth; }
 </style>
 </head>
 <body>
 
-<!-- Navigation Bar -->
-<nav class="nav">
-  <div class="nav-logo">
-    <span class="bold">kith</span><span class="slash">/</span><span class="light">consulting</span>
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">KITH <span class="slash">/</span> <span class="client">NORTHWOOD</span></div>
+    <div class="logo-sub">Climate Data &amp; Strategy</div>
   </div>
-  <div class="nav-items">
-    <a href="#needs" class="nav-item">NEEDS</a>
-    <a href="#where" class="nav-item">WHERE TO START</a>
-    <a href="#approach" class="nav-item">APPROACH</a>
-    <a href="#step1" class="nav-item">STEP 1</a>
-    <a href="#step2" class="nav-item">STEP 2</a>
-    <a href="#step3" class="nav-item">STEP 3</a>
-    <a href="#investment" class="nav-item">INVESTMENT</a>
-    <a href="#about" class="nav-item">ABOUT</a>
-    <a href="#next" class="nav-item">NEXT STEPS</a>
-    <a href="step1/index.html" class="nav-item" style="color:var(--accent);font-weight:700;">STEP 1 DELIVERABLES &rarr;</a>
-  </div>
-</nav>
 
-<!-- ═══════════════════════════════════════════ -->
-<!-- COVER -->
-<!-- ═══════════════════════════════════════════ -->
-<section class="slide cover" id="cover">
-  <div class="slide-content">
-    <div class="cover-logo">
-      <span class="bold">kith</span><span class="slash">/</span><span class="light">consulting</span>
-    </div>
-    <h1>Climate Strategy<br>for <strong>Northwood Capital Partners</strong></h1>
-    <p class="cover-sub">A Six-Week Engagement Proposal</p>
-    <div class="accent-line"></div>
-    <p class="meta">Prepared for Sarah Mitchell, COO<br>March 2026 &middot; Confidential</p>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════ -->
-<!-- OUR UNDERSTANDING OF YOUR NEEDS -->
-<!-- ═══════════════════════════════════════════ -->
-<section class="slide" id="needs">
-  <div class="slide-content">
-    <p class="section-label">OUR UNDERSTANDING OF YOUR NEEDS</p>
-    <h2>This engagement answers <span class="accent">three questions</span></h2>
-    <p class="section-sub">Six weeks. Three questions. A working system at the end &mdash; not a report that goes in a folder.</p>
-
-    <div class="questions">
-      <div class="question">
-        <div class="question-label">VALUE</div>
-        <div class="question-text">How do we build a system that consistently connects climate and ESG work to generate actionable insights on value creation, risk mitigation, LP reporting, and exit positioning across our funds?</div>
-      </div>
-      <div class="question">
-        <div class="question-label">DATA</div>
-        <div class="question-text">What is the data infrastructure that lets us collect, calculate, and report ESG metrics at both the fund and portfolio company level &mdash; without starting from scratch each cycle?</div>
-      </div>
-      <div class="question">
-        <div class="question-label">DELIVERABLE</div>
-        <div class="question-text">What is the working MVP we can build in six weeks that Northwood's team can operate, evolve, and compound on its own?</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════ -->
-<!-- WHERE WE'D START -->
-<!-- ═══════════════════════════════════════════ -->
-<section class="slide" style="background: var(--light-bg);" id="where">
-  <div class="slide-content">
-    <p class="section-label">HYPOTHESIS</p>
-    <h2>Where we'd start <span class="accent">&mdash; and why</span></h2>
-    <p class="section-sub">Three portfolio companies, selected to test the system across three stages of the hold period and three sectors. Depth over breadth.</p>
-
-    <div class="portco-grid">
-      <div class="portco-card">
-        <h3>Meridian Business Solutions</h3>
-        <div class="portco-meta">Business Services &nbsp;|&nbsp; Fund I &nbsp;|&nbsp; Exit prep</div>
-        <p>ESG work here has a deadline. Meridian's exit process gives us a concrete test: can we produce ESG positioning that buyer diligence teams will take seriously? This is where the system proves financial relevance.</p>
-      </div>
-      <div class="portco-card">
-        <h3>Sterling Precision Manufacturing</h3>
-        <div class="portco-meta">Industrial Technology &nbsp;|&nbsp; Fund I &nbsp;|&nbsp; Strong</div>
-        <p>The highest-emitting company in the portfolio. Manufacturing means real Scope 1 and 2 data &mdash; energy, process heat, fleet. This is where we prove that emissions reduction maps to cost savings, not just reporting compliance.</p>
-      </div>
-      <div class="portco-card">
-        <h3>Keystone Behavioral Health</h3>
-        <div class="portco-meta">Healthcare Services &nbsp;|&nbsp; Fund II &nbsp;|&nbsp; 100-day plan</div>
-        <p>Build the architecture from scratch. Keystone is early enough that we're not retrofitting &mdash; we're designing the data collection and reporting system that this company will use for the life of the hold. The compounding thesis starts here.</p>
-      </div>
+  <nav class="sidebar-nav">
+    <!-- ENGAGEMENT -->
+    <div class="nav-section">
+      <div class="nav-section-label">Engagement</div>
+      <a class="nav-item active" data-src="proposal.html">Proposal</a>
     </div>
 
-    <div class="portco-footer">Selection criteria: status spectrum (near exit / mid-hold / early), sector diversity, and at least one climate-intensive operation. Three companies give us a hedge if data availability stalls on any one.</div>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════ -->
-<!-- APPROACH OVERVIEW -->
-<!-- ═══════════════════════════════════════════ -->
-<section class="slide" id="approach">
-  <div class="slide-content">
-    <p class="section-label">APPROACH</p>
-    <h2>Three steps <span class="accent">over six weeks</span></h2>
-    <p class="section-sub">Each step produces working deliverables. No step exists solely to set up the next one. Steps 1 and 2 run in parallel &mdash; we start building the system on day one.</p>
-
-    <div class="timeline">
-      <div class="timeline-step">
-        <div class="timeline-header">
-          <span class="step-name">Step 1: Data Collection &amp; Gap Assessment</span>
-          <span class="step-weeks">Weeks 1-2</span>
-        </div>
-        <div class="timeline-body">
-          <p>Collect and structure climate data across three portfolio companies. Map what exists, identify what's missing, and build the data collection architecture that Northwood's portco teams will use going forward.</p>
-        </div>
-      </div>
-      <div class="timeline-step">
-        <div class="timeline-header">
-          <span class="step-name">Step 2: Climate Data System Build</span>
-          <span class="step-weeks">Weeks 1-5</span>
-        </div>
-        <div class="timeline-body">
-          <p>Build a working climate data platform in CC &mdash; a mini Watershed that Northwood owns, can query, and can evolve. Emissions calculations, portco dashboards, fund-level rollups, and full source data traceability. Co-built with a member of Sarah's team.</p>
-        </div>
-      </div>
-      <div class="timeline-step">
-        <div class="timeline-header">
-          <span class="step-name">Step 3: Climate Value Model</span>
-          <span class="step-weeks">Weeks 3-6</span>
-        </div>
-        <div class="timeline-body">
-          <p>Model where each portco is headed on emissions, set science-aligned reduction targets, and build decarbonization pathways with top-down cost and savings estimates tied to portco financials. Roll up to fund level for LP reporting.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════ -->
-<!-- STEP 1 DETAIL -->
-<!-- ═══════════════════════════════════════════ -->
-<section class="slide step-slide" id="step1">
-  <div class="slide-content">
-    <p class="section-label">STEP 1</p>
-    <h2>Climate Data Collection <span class="accent">&amp; Gap Assessment</span></h2>
-    <p class="section-sub" style="margin-bottom:1.5rem;">Weeks 1-2</p>
-
-    <div class="step-layout">
-      <div class="step-left">
-        <h3>What We Do</h3>
-        <p>Conduct structured discovery sessions with Sarah and each portco climate data contact. Map existing climate data sources &mdash; utility bills, energy invoices, fleet and fuel records, refrigerant logs, waste manifests &mdash; across Meridian, Sterling, and Keystone.</p>
-        <p>Assess data against GHG Protocol requirements for Scope 1 and Scope 2 inventories, and identify the data inputs needed for a Scope 3 category screening. Document what's measurable today, what requires estimation, and what requires new collection processes.</p>
-        <p>Review each portco's value creation plan and high-level financials (P&amp;L and balance sheet) to understand how climate work connects to the investment thesis.</p>
-
-        <h3>How CC Accelerates This</h3>
-        <p>Our CC environment ingests and structures raw data files as we receive them &mdash; utility bills, spreadsheets, invoices. By the end of Week 2, your climate data is organized in a structured reference library, not scattered across email attachments and shared drives. This is the foundation the system compounds on.</p>
-      </div>
-      <div class="step-right">
-        <div class="detail-card deliverables">
-          <div class="card-label">DELIVERABLES</div>
-          <ul>
-            <li>Climate data pond built in CC &mdash; all collected data structured, organized, and queryable</li>
-            <li>Structured reference data library in CC (emission factors, conversion tables, GHG Protocol methodology references)</li>
-            <li>Climate data gap assessment per portco &mdash; what we have, what's missing, data quality rating</li>
-            <li>Data collection template and plan for portco owners &mdash; the reusable quarterly collection mechanism, not a one-time checklist</li>
-          </ul>
-        </div>
-        <div class="detail-card data-needs">
-          <div class="card-label">DATA WE NEED FROM NORTHWOOD</div>
-          <ul>
-            <li>Property list (owned and leased)</li>
-            <li>Utility bills (electricity, natural gas) &mdash; 12 months per portco where available, at site level if available</li>
-            <li>Fleet and fuel purchase records</li>
-            <li>Waste and recycling manifests</li>
-            <li>Existing climate or ESG reports, LP questionnaire responses if any</li>
-            <li>Value creation plan for each priority portco</li>
-            <li>High-level financial summary (P&amp;L and balance sheet) per portco</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════ -->
-<!-- STEP 2 DETAIL -->
-<!-- ═══════════════════════════════════════════ -->
-<section class="slide" id="step2">
-  <div class="slide-content">
-    <p class="section-label">STEP 2</p>
-    <h2>Climate Data <span class="accent">System Build</span></h2>
-    <p class="section-sub" style="margin-bottom:1.5rem;">Weeks 1-5 (continuous)</p>
-
-    <div class="step-layout">
-      <div class="step-left">
-        <h3>What We Build</h3>
-        <p>A working climate data platform in CC that calculates GHG emissions using GHG Protocol methodology and presents them through dashboards at the portco and fund level. Think of it as a mini Watershed or Enablon &mdash; not as polished, but functional, owned by Northwood, and built to grow.</p>
-        <p>The system takes the raw data collected in Step 1 &mdash; utility bills, fuel records, waste manifests &mdash; runs emissions calculations using published emission factors (EPA, IEA, DEFRA), and produces a GHG baseline for each portco and a fund-level rollup across Fund I and Fund II.</p>
-        <p>Scope 1 (direct emissions), Scope 2 (purchased energy), and Scope 3 (screening-level, identifying material categories) are all represented. Methodology and emission factors are documented within the system so quarterly updates use the same logic without needing us.</p>
-        <p>Every calculated number traces back to its source data and methodology, creating an audit trail for future verification or LP inquiries.</p>
-
-        <h3>How We Build It</h3>
-        <p>We start with a conceptual sketch in the first few days &mdash; a wireframe of the dashboard and data architecture for Sarah to react to. From there, we iterate as data flows in from Step 1 and refine the views throughout the engagement based on feedback.</p>
-        <p>A member of Sarah's team co-builds with us from day one. They're not observing a handoff &mdash; they're part of the build. When we leave, the person who helped construct the system is the person who maintains it.</p>
-        <p>We build in Northwood's CC environment, not ours. Climate data includes operational and financial inputs that should stay in your systems. When the engagement ends, the platform stays &mdash; fully functional, no migration, no export, no vendor dependency.</p>
-      </div>
-      <div class="step-right">
-        <div class="detail-card deliverables">
-          <div class="card-label">DELIVERABLES</div>
-          <ul>
-            <li>Conceptual sketch of the data platform and dashboard architecture (Week 1)</li>
-            <li>Working climate data platform in CC with GHG Protocol-aligned emissions calculations</li>
-            <li>Portco-level GHG baseline and dashboard for Meridian, Sterling, and Keystone</li>
-            <li>Fund-level emissions rollup and dashboard (Fund I and Fund II)</li>
-            <li>Scope 3 screening results &mdash; material categories identified per portco with directional estimates</li>
-            <li>Embedded methodology documentation and emission factor library (EPA, IEA, DEFRA)</li>
-            <li>Full source data traceability &mdash; every number links back to its source file and calculation method</li>
-          </ul>
-        </div>
-        <div class="detail-card data-needs">
-          <div class="card-label">WHAT WE NEED FROM NORTHWOOD</div>
-          <ul>
-            <li>A member of Sarah's team designated as the co-build partner (ideally someone who will own the system going forward)</li>
-            <li>Access to Northwood's CC environment</li>
-            <li>Iteration time with Sarah on dashboard design &mdash; a few short feedback sessions over the six weeks</li>
-          </ul>
-        </div>
-        <div class="detail-card mvp-note">
-          <div class="card-label">THIS IS AN MVP &mdash; BY DESIGN</div>
-          <p>The system won't be perfect at the end of six weeks. It will be good, it will work, and it will be built so that Northwood can refine it &mdash; new dashboards, additional portcos, updated emission factors, layering in broader ESG metrics over time. The goal is a solid start that people are excited to grow from.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════ -->
-<!-- STEP 3 DETAIL -->
-<!-- ═══════════════════════════════════════════ -->
-<section class="slide step-slide" id="step3">
-  <div class="slide-content">
-    <p class="section-label">STEP 3</p>
-    <h2>Climate <span class="accent">Value Model</span></h2>
-    <p class="section-sub" style="margin-bottom:1.5rem;">Weeks 3-6</p>
-
-    <div class="step-layout">
-      <div class="step-left">
-        <h3>What We Build</h3>
-        <p>A business-as-usual emissions model for each portco, projecting Scope 1 and 2 emissions to 2030 and 2050 based on growth assumptions from the value creation plan. The BAU answers the first question any stakeholder asks: where are we headed if we do nothing?</p>
-        <p>With baselines and BAU in place, we build the capability to set science-aligned interim (2030) and long-term (2050) reduction targets, guided by SBTi methodology. Northwood is not committing to formal SBTi validation &mdash; we use the framework as a credible reference point for target-setting that LPs and buyers will recognize.</p>
-        <p>We then model decarbonization pathways for Scope 1 and 2 emissions using top-down assumptions: the type of lever (fuel switching, electrification, energy efficiency, renewable procurement, fleet electrification), estimated capex and opex, projected savings, and emissions avoided. These are directional, not engineering-grade &mdash; but they're sized against each portco's financials so Northwood can evaluate them as investment decisions.</p>
-        <p>Where Scope 3 screening data from Step 2 is sufficient, we extend the BAU and target-setting to material Scope 3 categories. Where data quality doesn't support it, we flag those categories as future priorities the system can model when better data is available.</p>
-        <p>Everything is built into the climate data system from Step 2 &mdash; not a separate spreadsheet. When growth assumptions change or new data comes in, the model updates. Assumptions are parameterized so Sarah's team can run scenarios: different growth rates, different lever combinations, different timelines.</p>
-
-        <h3>How Value Shows Up Differently</h3>
-        <div class="value-grid">
-          <div class="value-box">
-            <div class="vb-company">STERLING</div>
-            <div class="vb-label">Cost Reduction</div>
-            <p>Decarbonization levers map directly to energy cost savings. The financial impact is material and measurable against EBITDA.</p>
-          </div>
-          <div class="value-box">
-            <div class="vb-company">MERIDIAN</div>
-            <div class="vb-label">Exit Positioning</div>
-            <p>Energy costs are small relative to revenue, but a credible baseline, science-aligned target, and costed pathway is what buyer ESG diligence screens for.</p>
-          </div>
-          <div class="value-box">
-            <div class="vb-company">KEYSTONE</div>
-            <div class="vb-label">Foundation</div>
-            <p>At the earliest stage, the BAU model embeds climate planning into the operating model before costs are locked in.</p>
-          </div>
-        </div>
-      </div>
-      <div class="step-right">
-        <div class="detail-card deliverables">
-          <div class="card-label">DELIVERABLES</div>
-          <ul>
-            <li>BAU emissions model per portco (Scope 1 &amp; 2 to 2030 and 2050), accounting for projected growth and grid decarbonization</li>
-            <li>Fund-level BAU rollup (Fund I and Fund II)</li>
-            <li>Science-aligned reduction targets per portco and fund level, guided by SBTi methodology</li>
-            <li>Decarbonization pathway model per portco &mdash; top-down levers with capex, opex, savings, and emissions avoided estimates</li>
-            <li>Financial impact analysis &mdash; decarbonization costs and savings sized against portco P&amp;L</li>
-            <li>Scenario capability &mdash; parameterized assumptions for growth, lever selection, and timeline</li>
-            <li>Scope 3 BAU and targets where data quality supports it (flagged as stretch goal)</li>
-          </ul>
-        </div>
-        <div class="detail-card data-needs">
-          <div class="card-label">WHAT WE NEED FROM NORTHWOOD</div>
-          <ul>
-            <li>Growth projections from the value creation plan per portco (already requested in Step 1)</li>
-            <li>Iteration time with Sarah on scenario assumptions and target ambition level</li>
-            <li>Input on which decarbonization levers are realistic given portco operations and CapEx appetite</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════ -->
-<!-- INVESTMENT -->
-<!-- ═══════════════════════════════════════════ -->
-<section class="slide" id="investment">
-  <div class="slide-content">
-    <p class="section-label">INVESTMENT</p>
-    <h2>Investment</h2>
-    <p class="section-sub">Time &amp; materials engagement with a projected range. T&amp;M provides flexibility to go deeper where the data and opportunities warrant it.</p>
-
-    <div class="pricing-layout">
-      <ul class="pricing-list">
-        <li><span class="check">&#10003;</span><span><strong>Climate data collection &amp; gap assessment</strong> &mdash; three portcos, structured data pond, gap analysis, reusable collection templates</span></li>
-        <li><span class="check">&#10003;</span><span><strong>Climate data system build</strong> &mdash; working platform in CC with GHG Protocol-aligned calculations, portco and fund-level dashboards</span></li>
-        <li><span class="check">&#10003;</span><span><strong>GHG baselines</strong> &mdash; Scope 1 &amp; 2 full, Scope 3 screening-level for Meridian, Sterling, and Keystone</span></li>
-        <li><span class="check">&#10003;</span><span><strong>BAU emissions modeling</strong> &mdash; per-portco and fund-level projections to 2030 and 2050</span></li>
-        <li><span class="check">&#10003;</span><span><strong>Science-aligned target setting</strong> &mdash; guided by SBTi methodology, interim and long-term</span></li>
-        <li><span class="check">&#10003;</span><span><strong>Decarbonization pathways</strong> &mdash; top-down levers with capex, savings, and financial impact analysis</span></li>
-        <li><span class="check">&#10003;</span><span><strong>Source data traceability &amp; methodology documentation</strong> &mdash; audit-ready, embedded in the system</span></li>
-        <li><span class="check">&#10003;</span><span><strong>Co-build with your team</strong> &mdash; a member of Sarah's team builds alongside us for seamless transition</span></li>
-        <li><span class="check">&#10003;</span><span><strong>30-day post-engagement support</strong> &mdash; Q&amp;A window for your first independent update cycle</span></li>
-      </ul>
-      <div>
-        <div class="price-card">
-          <div class="price-label">SIX-WEEK ENGAGEMENT</div>
-          <div class="price-amount">$150&ndash;250K</div>
-          <div class="price-type">Time &amp; materials</div>
-          <div class="price-terms"><strong>Projected range</strong> based on scope as described. Actual investment depends on data complexity, portco responsiveness, and depth of decarbonization modeling. We provide transparent time tracking and regular budget updates throughout.</div>
-        </div>
-        <div class="exclusions">
-          <div class="card-label">NOT INCLUDED</div>
-          <p>Scope expansion to additional portcos beyond the three named, ongoing retainer work, third-party assurance or verification, or regulatory filing preparation. These can be scoped separately.</p>
-          <p style="margin-top:0.5rem;"><strong>Travel:</strong> Two on-site visits to Chicago included. Additional travel billed at cost.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════ -->
-<!-- ABOUT KITH -->
-<!-- ═══════════════════════════════════════════ -->
-<section class="slide" style="background: var(--light-bg);" id="about">
-  <div class="slide-content">
-    <p class="section-label">ABOUT US</p>
-    <h2>About <span class="accent">Kith Consulting</span></h2>
-    <p class="section-sub">Climate &amp; sustainability consulting, built on Claude Code.</p>
-
-    <div class="about-stats">
-      <div class="about-stat"><div class="stat-num">30</div><div class="stat-label">CONSULTANTS</div></div>
-      <div class="about-stat"><div class="stat-num">100%</div><div class="stat-label">CC-NATIVE</div></div>
-      <div class="about-stat"><div class="stat-num">PE</div><div class="stat-label">FOCUSED</div></div>
-      <div class="about-stat"><div class="stat-num">14</div><div class="stat-label">PORTCOS SERVED</div></div>
+    <!-- DELIVERABLES -->
+    <div class="nav-section">
+      <div class="nav-section-label">Deliverables</div>
+      <a class="nav-item" data-src="data-analysis.html">
+        Data Analysis
+        <span class="status status-complete"></span>
+      </a>
+      <a class="nav-item" data-src="esg-scorecard.html">
+        ESG Scorecard
+        <span class="status status-active"></span>
+      </a>
+      <a class="nav-item" data-src="carbon-inventory.html">
+        Carbon Inventory
+        <span class="status status-active"></span>
+      </a>
     </div>
 
-    <div class="about-props">
-      <div class="about-prop">
-        <h4>PE-Native</h4>
-        <p>We work in value creation plans, operating reviews, and LP reporting cycles. Our deliverables are built for how PE firms actually operate &mdash; not adapted from corporate sustainability frameworks.</p>
-      </div>
-      <div class="about-prop">
-        <h4>CC-Native</h4>
-        <p>We build in Claude Code, which means every deliverable lives in your environment, traces back to source data, and can be maintained and evolved by your team after we leave.</p>
-      </div>
-      <div class="about-prop">
-        <h4>Co-Build, Not Handoff</h4>
-        <p>A member of your team builds alongside us from day one. When the engagement ends, the person who helped construct the system is the person who runs it.</p>
-      </div>
-      <div class="about-prop">
-        <h4>MVP That Compounds</h4>
-        <p>We deliver a working system in weeks, not a strategy deck that requires a second phase. It won't be perfect &mdash; it will be good, functional, and built so your team is excited to grow it.</p>
-      </div>
+    <!-- REFERENCE -->
+    <div class="nav-section">
+      <div class="nav-section-label">Reference</div>
+      <a class="nav-item" data-src="portco-financials.html">
+        Portco Financials
+        <span class="status status-complete"></span>
+      </a>
+      <a class="nav-item" data-src="step1/data-pond.html">
+        Data Pond
+        <span class="status status-complete"></span>
+      </a>
     </div>
+  </nav>
 
-    <div class="engagements">
-      <h3>Recent PE Climate Engagements</h3>
-      <ul>
-        <li>Mid-market PE fund (Business Services, 6 portcos) &mdash; Climate data platform build with GHG inventory and LP reporting framework</li>
-        <li>Growth equity fund (Industrial/Manufacturing, 4 portcos) &mdash; BAU modeling and decarbonization pathways with $2.1M identified annual savings</li>
-        <li>PE-backed environmental services platform &mdash; Climate due diligence and data system design for two add-on acquisitions</li>
-      </ul>
-    </div>
-  </div>
-</section>
+  <div class="sidebar-footer">Kith Consulting &bull; March 2026</div>
+</aside>
 
-<!-- ═══════════════════════════════════════════ -->
-<!-- NEXT STEPS -->
-<!-- ═══════════════════════════════════════════ -->
-<section class="slide close" id="next">
-  <div class="slide-content">
-    <div class="cover-logo" style="margin-bottom:1.5rem;">
-      <span class="bold">kith</span><span class="slash">/</span><span class="light">consulting</span>
-    </div>
-    <h2>Next Steps</h2>
-    <div class="accent-line"></div>
+<!-- ═══ MAIN CONTENT (iframe) ═══ -->
+<iframe class="main-frame" id="main-frame" src="proposal.html"></iframe>
 
-    <div class="steps-list">
-      <div class="step-row"><div class="step-num">1</div><div class="step-text">Confirm engagement &mdash; we're available to begin the week of April 7</div></div>
-      <div class="step-row"><div class="step-num">2</div><div class="step-text">Designate portco climate contacts and the co-build partner from your team</div></div>
-      <div class="step-row"><div class="step-num">3</div><div class="step-text">Share initial data package (utility bills, value creation plans, high-level financials)</div></div>
-      <div class="step-row"><div class="step-num">4</div><div class="step-text">Provide access to Northwood's CC environment</div></div>
-    </div>
-
-    <p class="contact">Kith Consulting &middot; kithconsulting.com</p>
-  </div>
-</section>
-
-<!-- Step 1 Deliverables Banner -->
-<section style="background:var(--dark);padding:2.5rem;text-align:center;">
-  <p style="color:var(--text-muted);font-size:0.85rem;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:0.5rem;">Engagement In Progress</p>
-  <p style="color:var(--white);font-size:1.3rem;font-weight:700;margin-bottom:0.75rem;">Step 1: Climate Data Collection &amp; Gap Assessment</p>
-  <p style="color:var(--text-muted);font-size:0.95rem;margin-bottom:1.25rem;">Data inventory, quality assessment, error log, gap analysis, and structured data request — all complete.</p>
-  <a href="step1/index.html" style="display:inline-block;background:var(--accent);color:var(--dark);padding:0.75rem 2rem;border-radius:6px;text-decoration:none;font-weight:700;font-size:0.95rem;">View Step 1 Deliverables &rarr;</a>
-</section>
-
-<footer>Kith Consulting &middot; Confidential &middot; March 2026</footer>
-
-<!-- Nav highlight on scroll -->
+<!-- ═══ SCRIPTS ═══ -->
 <script>
-  const sections = document.querySelectorAll('.slide[id]');
-  const navItems = document.querySelectorAll('.nav-item');
-
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        navItems.forEach(item => item.classList.remove('active'));
-        const id = entry.target.getAttribute('id');
-        const activeNav = document.querySelector(`.nav-item[href="#${id}"]`);
-        if (activeNav) activeNav.classList.add('active');
-      }
+  document.querySelectorAll('.nav-item[data-src]').forEach(item => {
+    item.addEventListener('click', e => {
+      e.preventDefault();
+      // Update active state
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      item.classList.add('active');
+      // Load page in iframe
+      document.getElementById('main-frame').src = item.dataset.src;
     });
-  }, { threshold: 0.3 });
-
-  sections.forEach(section => observer.observe(section));
+  });
 </script>
 
 </body>
