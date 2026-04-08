@@ -151,10 +151,8 @@
     </div>
   </div>
 
-  <div class="chart-wrap" style="margin-bottom:28px;">
-    <div class="chart-title">Annual Capex & Opex Budget</div>
-    <div class="chart-canvas-wrap" style="height:260px;"><canvas id="budgetChart"></canvas></div>
-  </div>
+  <div class="section-title">Annual Capex & Opex by Lever <span class="dim">$k · capex in start year, opex Δ in subsequent years (negative = savings)</span></div>
+  <div style="overflow-x:auto;"><table class="budget-table" id="leverBudgetTable"></table></div>
 
   <!-- LEVER LIBRARY -->
   <div class="section-title">Decarbonization Lever Library <span class="dim">click row to toggle · edit "Start" year to schedule</span></div>
@@ -257,10 +255,12 @@ function npv(lever, horizonYrs) {
   return npv;
 }
 
-// BAU emissions in year y (no levers)
+// BAU emissions in year y (no levers) — grid decarb applies to scope 2 only
 function bauEmissions(y) {
-  const yrsFromBase = y - state.baseYear;
-  return baselineTotal() * Math.pow(1 + state.bauGrowth, yrsFromBase);
+  const yrs = Math.max(0, y - state.baseYear);
+  const s1 = BASELINE.scope1 * Math.pow(1 + state.bauGrowth, yrs);
+  const s2 = BASELINE.scope2 * Math.pow(1 + state.bauGrowth, yrs) * Math.pow(1 - state.gridDecarb, yrs);
+  return s1 + s2;
 }
 
 // Target line in year y
@@ -269,28 +269,109 @@ function targetEmissions(y) {
   return Math.max(0, baselineTotal() * (1 - reductionRate() * yrsFromBase));
 }
 
-// Selected emissions trajectory: BAU minus active levers (ramped from start year)
-function selectedEmissions(y) {
-  let abated = 0;
+// Ramp factor: capex in year sy, 0% abatement, then 33% / 67% / 100% over next 3 years
+// (realistic commissioning + learning curve — avoids the cliff)
+function rampFactor(y, sy) {
+  const dy = y - sy;
+  if (dy <= 0) return 0;
+  if (dy === 1) return 0.33;
+  if (dy === 2) return 0.67;
+  return 1.0;
+}
+
+// Per-lever EFFECTIVE abatement in year y, after resolving double-counting
+// between efficiency and renewables, and capping at scope baselines.
+// Efficiency reduces the load that renewables then fill → renewables re-sized
+// to the residual (solves the circular reference).
+function abatementByLever(y) {
+  const out = {};
+  LEVERS.forEach(l => out[l.id] = 0);
+  if (y < state.baseYear) return out;
+
+  // Classify S2 levers: efficiency vs. renewable/procurement
+  const S2_EFFICIENCY = ['led','air','hvacctrl','spindle','audit'];
+  const S2_RENEWABLE  = ['solar','vppa'];
+
+  // Nominal potential (ramp × nominal abate) for each selected lever
+  const nominal = {};
   state.selected.forEach(id => {
     const lev = LEVERS.find(l => l.id === id);
-    const sy = state.startYear[id];
-    if (y >= sy) {
-      // Scope 2 levers benefit from grid decarb degradation of remaining baseline
-      let a = lev.abate;
-      if (lev.scope === 's2') {
-        const yrs = y - state.baseYear;
-        a = a * Math.pow(1 - state.gridDecarb, Math.max(0, yrs));
+    nominal[id] = rampFactor(y, state.startYear[id]) * lev.abate;
+  });
+
+  // ── SCOPE 2 pipeline ──
+  const yrsFromBase = Math.max(0, y - state.baseYear);
+  const s2AfterGrid = BASELINE.scope2 * Math.pow(1 - state.gridDecarb, yrsFromBase);
+
+  // 1. Apply efficiency (capped at remaining S2 after grid decarb)
+  let s2Remaining = s2AfterGrid;
+  S2_EFFICIENCY.forEach(id => {
+    if (state.selected.has(id)) {
+      const lev = LEVERS.find(l => l.id === id);
+      if (lev.scope === 's2' || lev.scope === 'both') {
+        const share = lev.scope === 'both' ? 0.5 : 1.0; // 'both' split 50/50 S1/S2
+        const eff = Math.min(nominal[id] * share, s2Remaining);
+        out[id] += eff;
+        s2Remaining -= eff;
       }
-      abated += a;
     }
   });
-  return Math.max(0, bauEmissions(y) - abated);
+  // 2. Renewables fill the residual (solar first, then VPPA)
+  S2_RENEWABLE.forEach(id => {
+    if (state.selected.has(id) && s2Remaining > 0) {
+      const eff = Math.min(nominal[id], s2Remaining);
+      out[id] += eff;
+      s2Remaining -= eff;
+    }
+  });
+
+  // ── SCOPE 1 pipeline ── (cap at baseline, order: efficiency → electrification)
+  const S1_ORDER = ['refrig','envelope','whr','fleet','hpspace','hpwash','induction'];
+  let s1Remaining = BASELINE.scope1;
+  // 'both' levers contribute their S1 half
+  state.selected.forEach(id => {
+    const lev = LEVERS.find(l => l.id === id);
+    if (lev.scope === 'both') {
+      const eff = Math.min(nominal[id] * 0.5, s1Remaining);
+      out[id] += eff;
+      s1Remaining -= eff;
+    }
+  });
+  S1_ORDER.forEach(id => {
+    if (state.selected.has(id)) {
+      const lev = LEVERS.find(l => l.id === id);
+      const eff = Math.min(nominal[id], s1Remaining);
+      out[id] += eff;
+      s1Remaining -= eff;
+    }
+  });
+
+  return out;
+}
+
+// Selected emissions trajectory
+function selectedEmissions(y) {
+  const byLever = abatementByLever(y);
+  let abated = 0;
+  Object.values(byLever).forEach(v => abated += v);
+  // Grid decarb also reduces BAU scope 2 even without levers
+  const yrsFromBase = Math.max(0, y - state.baseYear);
+  const s1Bau = BASELINE.scope1 * Math.pow(1 + state.bauGrowth, yrsFromBase);
+  const s2Bau = BASELINE.scope2 * Math.pow(1 + state.bauGrowth, yrsFromBase) * Math.pow(1 - state.gridDecarb, yrsFromBase);
+  return Math.max(0, s1Bau + s2Bau - abated);
 }
 
 // ─── PRESET LOGIC ────────────────────────────────────────────────
 function presetMin() {
+  // "SBTi-compliant minimum cost" — add levers in LCOA order until target is met
+  // in the target year, AFTER accounting for 3-year ramp. Pulls start years forward
+  // if needed so ramped abatement is fully online by target year.
   state.selected.clear();
+  // Pull all start years forward to give full ramp by target year
+  LEVERS.forEach(l => {
+    state.startYear[l.id] = Math.min(state.startYear[l.id], state.targetYear - 2);
+    if (state.startYear[l.id] < 2026) state.startYear[l.id] = 2026;
+  });
   const sorted = [...LEVERS].sort((a,b) => lcoa(a) - lcoa(b));
   const target = targetEmissions(state.targetYear);
   for (const lev of sorted) {
@@ -314,7 +395,7 @@ function presetAll() { state.selected = new Set(LEVERS.map(l => l.id)); render()
 function presetClear() { state.selected.clear(); render(); }
 
 // ─── RENDER ──────────────────────────────────────────────────────
-let glideChart, maccChart, budgetChart;
+let glideChart, maccChart;
 
 function render() {
   renderMetrics();
@@ -322,7 +403,7 @@ function render() {
   renderBudgetTable();
   renderGlide();
   renderMacc();
-  renderBudgetChart();
+  renderLeverBudgetTable();
 }
 
 function renderMetrics() {
@@ -463,7 +544,7 @@ function renderGlide() {
       plugins: { legend: { labels: { color: '#8b8fa3', font: { size: 11 } } } },
       scales: {
         x: { ticks: { color: '#5a5e72' }, grid: { color: '#2e3345' } },
-        y: { ticks: { color: '#5a5e72', callback: v => v.toLocaleString() }, grid: { color: '#2e3345' }, title: { display: true, text: 'tCO2e', color: '#5a5e72' } }
+        y: { beginAtZero: true, ticks: { color: '#5a5e72', callback: v => v.toLocaleString() }, grid: { color: '#2e3345' }, title: { display: true, text: 'tCO2e', color: '#5a5e72' } }
       }
     }
   });
@@ -490,32 +571,63 @@ function renderMacc() {
   });
 }
 
-function renderBudgetChart() {
+function renderLeverBudgetTable() {
   const years = [];
   for (let y = 2026; y <= state.horizonEnd; y++) years.push(y);
   const sel = [...state.selected].map(id => LEVERS.find(l => l.id === id));
-  const capexData = years.map(y => sel.reduce((s,l) => s + (state.startYear[l.id]===y ? l.capex : 0), 0));
-  const opexData = years.map(y => sel.reduce((s,l) => s + (y > state.startYear[l.id] ? l.opex : 0), 0));
 
-  if (budgetChart) budgetChart.destroy();
-  budgetChart = new Chart(document.getElementById('budgetChart'), {
-    type: 'bar',
-    data: {
-      labels: years,
-      datasets: [
-        { label: 'Capex ($k)', data: capexData, backgroundColor: '#b07cf0', borderRadius: 4 },
-        { label: 'Opex Δ ($k/yr)', data: opexData, backgroundColor: '#e8a84c', borderRadius: 4 },
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { labels: { color: '#8b8fa3', font: { size: 11 } } } },
-      scales: {
-        x: { ticks: { color: '#5a5e72' }, grid: { color: '#2e3345' } },
-        y: { ticks: { color: '#5a5e72', callback: v => '$'+v.toLocaleString() }, grid: { color: '#2e3345' } }
-      }
-    }
-  });
+  const fmt = v => {
+    if (v === 0) return '<span style="color:var(--text-dim)">—</span>';
+    const abs = Math.abs(Math.round(v));
+    if (v < 0) return `<span style="color:var(--green)">+$${abs}</span>`; // savings
+    return `<span style="color:var(--capex)">−$${abs}</span>`; // cost
+  };
+
+  // Per-lever ramping opex (scales with ramp factor, same as abatement)
+  const cellValue = (lev, y) => {
+    const sy = state.startYear[lev.id];
+    let v = 0;
+    if (y === sy) v += lev.capex;                 // capex (positive = cost)
+    if (y > sy) v += lev.opex * rampFactor(y, sy); // opex delta (neg = savings)
+    return v;
+  };
+
+  const colTotals = years.map(y => sel.reduce((s,l) => s + cellValue(l, y), 0));
+  const grandTotal = colTotals.reduce((s,v) => s + v, 0);
+
+  let html = `<thead><tr><th>Lever</th>${years.map(y => `<th>${y}</th>`).join('')}<th>Total</th></tr></thead><tbody>`;
+
+  if (sel.length === 0) {
+    html += `<tr><td colspan="${years.length+2}" style="text-align:center;color:var(--text-dim);padding:24px;">No levers selected — pick a preset or toggle rows above</td></tr>`;
+  } else {
+    sel.forEach(lev => {
+      const cells = years.map(y => fmt(cellValue(lev, y))).join('').replace(/<td/g,'<td');
+      const rowTotal = years.reduce((s,y) => s + cellValue(lev, y), 0);
+      html += `<tr><td style="font-weight:500;">${lev.name}</td>`;
+      years.forEach(y => html += `<td>${fmt(cellValue(lev, y))}</td>`);
+      html += `<td>${fmt(rowTotal)}</td></tr>`;
+    });
+  }
+
+  // Totals row
+  html += `<tr><td class="total-row">NET CASH IMPACT</td>`;
+  colTotals.forEach(v => html += `<td class="total-row">${fmt(v)}</td>`);
+  html += `<td class="total-row">${fmt(grandTotal)}</td></tr>`;
+
+  // Capex-only row
+  const capexRow = years.map(y => sel.reduce((s,l) => s + (state.startYear[l.id]===y ? l.capex : 0), 0));
+  html += `<tr><td class="total-row" style="color:var(--capex);">  of which Capex</td>`;
+  capexRow.forEach(v => html += `<td class="total-row">${v===0?'—':'$'+v.toLocaleString()}</td>`);
+  html += `<td class="total-row">$${capexRow.reduce((s,v)=>s+v,0).toLocaleString()}</td></tr>`;
+
+  // Opex-only row
+  const opexRow = years.map(y => sel.reduce((s,l) => s + (y > state.startYear[l.id] ? l.opex * rampFactor(y, state.startYear[l.id]) : 0), 0));
+  html += `<tr><td class="total-row" style="color:var(--opex);">  of which Opex Δ</td>`;
+  opexRow.forEach(v => html += `<td class="total-row">${v===0?'—':(v<0?'+$':'−$')+Math.abs(Math.round(v))}</td>`);
+  html += `<td class="total-row">${opexRow.reduce((s,v)=>s+v,0)<0?'+$':'−$'}${Math.abs(Math.round(opexRow.reduce((s,v)=>s+v,0)))}</td></tr>`;
+
+  html += `</tbody>`;
+  document.getElementById('leverBudgetTable').innerHTML = html;
 }
 
 // ─── EVENT WIRING ────────────────────────────────────────────────
