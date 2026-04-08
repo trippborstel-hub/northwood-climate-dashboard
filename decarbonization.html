@@ -597,53 +597,111 @@ function renderGlide() {
   });
 }
 
+// Classic McKinsey MACC layout: vertical rectangles sorted cheapest→most expensive
+// left-to-right along x (cumulative abatement), with bar WIDTH = abatement potential
+// and bar HEIGHT = LCOA ($/tCO2e). Negative LCOA bars extend below the zero line.
+// Implemented via a custom Chart.js plugin since Chart.js native bars don't support
+// variable widths on a linear axis.
+const maccPlugin = {
+  id: 'maccPlugin',
+  afterDatasetsDraw(chart, args, opts) {
+    const { ctx, chartArea, scales } = chart;
+    const sorted = opts.sorted || [];
+    if (!sorted.length) return;
+    const xScale = scales.x, yScale = scales.y;
+    const y0 = yScale.getPixelForValue(0);
+
+    ctx.save();
+    ctx.font = '9px Inter, sans-serif';
+    ctx.textAlign = 'center';
+
+    let cum = 0;
+    sorted.forEach(lev => {
+      const x1 = xScale.getPixelForValue(cum);
+      const x2 = xScale.getPixelForValue(cum + lev.abate);
+      const lc = lcoa(lev);
+      const yTop = yScale.getPixelForValue(Math.max(lc, 0));
+      const yBot = yScale.getPixelForValue(Math.min(lc, 0));
+      const w = x2 - x1;
+      const h = yBot - yTop;
+
+      // Fill
+      ctx.fillStyle = opts.selected.has(lev.id)
+        ? (lc < 0 ? 'rgba(91,184,164,0.85)' : 'rgba(91,143,232,0.85)')
+        : (lc < 0 ? 'rgba(91,184,164,0.30)' : 'rgba(91,143,232,0.30)');
+      ctx.fillRect(x1, yTop, w, h);
+      // Border
+      ctx.strokeStyle = opts.selected.has(lev.id) ? '#ffffff' : 'rgba(139,143,163,0.5)';
+      ctx.lineWidth = opts.selected.has(lev.id) ? 1.5 : 0.5;
+      ctx.strokeRect(x1, yTop, w, h);
+
+      // Label above the zero line for negative bars, above the top for positive
+      const cx = (x1 + x2) / 2;
+      const labelY = lc < 0 ? y0 - 4 : yTop - 4;
+      ctx.fillStyle = '#e2e4ea';
+      const name = lev.name.length > 18 ? lev.name.slice(0,16) + '…' : lev.name;
+
+      // Only draw label if bar is wide enough
+      if (w > 28) {
+        ctx.save();
+        ctx.translate(cx, labelY);
+        ctx.rotate(-Math.PI / 2.5);
+        ctx.textAlign = 'left';
+        ctx.fillText(name, 0, 3);
+        ctx.restore();
+      }
+    });
+
+    // Zero line
+    ctx.beginPath();
+    ctx.strokeStyle = '#5a5e72';
+    ctx.lineWidth = 1;
+    ctx.moveTo(chartArea.left, y0);
+    ctx.lineTo(chartArea.right, y0);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+};
+
 function renderMacc() {
-  // Proper MACC: bar LENGTH = abatement potential (tCO2e/yr), sorted by LCOA ascending.
-  // Color encodes $/tCO2e tier. Label shows LCOA. Selected levers outlined.
   const sorted = [...LEVERS].sort((a,b) => lcoa(a) - lcoa(b));
-  const labels = sorted.map(l => {
-    const lc = Math.round(lcoa(l));
-    const lcStr = lc < 0 ? `−$${Math.abs(lc)}` : `$${lc}`;
-    const name = l.name.length > 28 ? l.name.slice(0,26)+'…' : l.name;
-    return `${name}  (${lcStr}/t)`;
-  });
-  const data = sorted.map(l => l.abate);
-  const tierColor = lc => {
-    if (lc < 0)   return 'rgba(91,184,164,0.85)';   // negative cost — green
-    if (lc < 50)  return 'rgba(91,143,232,0.85)';   // cheap — blue
-    if (lc < 150) return 'rgba(232,168,76,0.85)';   // moderate — yellow
-    return 'rgba(232,93,93,0.85)';                   // expensive — red
-  };
-  const bg = sorted.map(l => tierColor(lcoa(l)));
-  const borders = sorted.map(l => state.selected.has(l.id) ? '#ffffff' : 'transparent');
-  const borderWidths = sorted.map(l => state.selected.has(l.id) ? 2 : 0);
+  const totalAbate = sorted.reduce((s,l) => s + l.abate, 0);
+  const lcoas = sorted.map(lcoa);
+  const yMin = Math.min(0, Math.min(...lcoas) * 1.1);
+  const yMax = Math.max(10, Math.max(...lcoas) * 1.1);
 
   if (maccChart) maccChart.destroy();
   maccChart = new Chart(document.getElementById('maccChart'), {
-    type: 'bar',
-    data: { labels, datasets: [{
-      data,
-      backgroundColor: bg,
-      borderColor: borders,
-      borderWidth: borderWidths,
-      borderRadius: 3,
-    }]},
+    type: 'scatter',
+    data: { datasets: [{ data: [] }] }, // no native data — plugin draws everything
     options: {
-      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      responsive: true, maintainAspectRatio: false,
+      animation: false,
       plugins: {
         legend: { display: false },
-        tooltip: { callbacks: {
-          label: ctx => {
-            const lev = sorted[ctx.dataIndex];
-            return [`Abatement: ${lev.abate.toLocaleString()} tCO2e/yr`, `LCOA: $${Math.round(lcoa(lev))}/tCO2e`, `Capex: $${lev.capex}k`];
-          }
-        }}
+        tooltip: { enabled: false },
+        maccPlugin: { sorted, selected: state.selected }
       },
       scales: {
-        x: { beginAtZero: true, ticks: { color: '#5a5e72', callback: v => v.toLocaleString() }, grid: { color: '#2e3345' }, title: { display: true, text: 'Abatement potential (tCO2e/yr) — sorted cheapest to most expensive top→bottom', color: '#5a5e72', font: { size: 10 } } },
-        y: { ticks: { color: '#8b8fa3', font: { size: 10 } }, grid: { display: false } }
+        x: {
+          type: 'linear',
+          min: 0,
+          max: totalAbate,
+          ticks: { color: '#5a5e72', callback: v => v.toLocaleString() },
+          grid: { color: '#2e3345' },
+          title: { display: true, text: 'Cumulative abatement potential (tCO2e/yr)', color: '#8b8fa3', font: { size: 11 } }
+        },
+        y: {
+          min: yMin,
+          max: yMax,
+          ticks: { color: '#5a5e72', callback: v => (v<0?'−$':'$') + Math.abs(v) },
+          grid: { color: '#2e3345' },
+          title: { display: true, text: '$/tCO2e abated (LCOA)', color: '#8b8fa3', font: { size: 11 } }
+        }
       }
-    }
+    },
+    plugins: [maccPlugin]
   });
 }
 
