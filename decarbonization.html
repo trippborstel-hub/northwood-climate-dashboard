@@ -128,11 +128,9 @@
 
   <!-- PRESETS -->
   <div class="preset-row">
-    <span class="preset-label">Preset Bundles:</span>
-    <button class="preset-btn" id="preset-min">Minimum Compliance</button>
-    <button class="preset-btn" id="preset-npv">NPV-Optimal</button>
-    <button class="preset-btn" id="preset-exit">Exit-Value Max</button>
-    <button class="preset-btn" id="preset-all">Select All</button>
+    <span class="preset-label">Scenarios:</span>
+    <button class="preset-btn" id="preset-min">Target Optimization</button>
+    <button class="preset-btn" id="preset-exit">Exit Value Optimization</button>
     <button class="preset-btn clear" id="preset-clear">Clear</button>
   </div>
 
@@ -379,18 +377,16 @@ function presetMin() {
   }
   render();
 }
-function presetNPV() {
-  state.selected.clear();
-  LEVERS.forEach(l => { if (lcoa(l) <= 10) state.selected.add(l.id); });
-  render();
-}
 function presetExit() {
+  // Maximize EBITDA uplift before exit: include every lever whose simple payback
+  // fits within the horizon (opex savings flow through before sale)
   state.selected.clear();
   const yrsLeft = state.horizonEnd - 2026;
-  LEVERS.forEach(l => { if (payback(l) <= yrsLeft && payback(l) !== Infinity) state.selected.add(l.id); });
+  LEVERS.forEach(l => {
+    if (payback(l) <= yrsLeft && payback(l) !== Infinity) state.selected.add(l.id);
+  });
   render();
 }
-function presetAll() { state.selected = new Set(LEVERS.map(l => l.id)); render(); }
 function presetClear() { state.selected.clear(); render(); }
 
 // ─── RENDER ──────────────────────────────────────────────────────
@@ -527,20 +523,72 @@ function renderGlide() {
   const tgt = years.map(targetEmissions);
   const sel = years.map(selectedEmissions);
 
+  // Wedges: abatement by lever at each year. Pick top 5 contributors across horizon.
+  const selectedLevers = [...state.selected].map(id => LEVERS.find(l => l.id === id));
+  const totalByLever = {};
+  selectedLevers.forEach(l => {
+    totalByLever[l.id] = years.reduce((s,y) => s + (abatementByLever(y)[l.id] || 0), 0);
+  });
+  const topIds = Object.entries(totalByLever).sort((a,b) => b[1] - a[1]).slice(0, 5).map(e => e[0]);
+  const WEDGE_COLORS = ['rgba(91,184,164,0.55)','rgba(91,143,232,0.55)','rgba(176,124,240,0.55)','rgba(232,168,76,0.55)','rgba(232,114,76,0.55)'];
+
+  // Precompute cumulative bands so wedges fill between consecutive datasets
+  // without requiring y-axis stacking (which would break BAU/target overlays).
+  // Order bottom→top: residual, then each wedge added on top, final band reaches BAU.
+  const wedgeOrder = [...topIds];
+  const otherIds = selectedLevers.map(l => l.id).filter(id => !topIds.includes(id));
+
+  // Cumulative y-values for each band boundary
+  const bandBoundaries = [sel.slice()]; // boundary 0 = residual
+  wedgeOrder.forEach(id => {
+    const prev = bandBoundaries[bandBoundaries.length - 1];
+    const next = prev.map((v, i) => v + (abatementByLever(years[i])[id] || 0));
+    bandBoundaries.push(next);
+  });
+  if (otherIds.length > 0) {
+    const prev = bandBoundaries[bandBoundaries.length - 1];
+    const next = prev.map((v, i) => {
+      const a = abatementByLever(years[i]);
+      return v + otherIds.reduce((s,id) => s + (a[id]||0), 0);
+    });
+    bandBoundaries.push(next);
+  }
+
+  const datasets = [];
+  // Band 0: residual (fill to origin)
+  datasets.push({ label: 'Residual Emissions', data: bandBoundaries[0], borderColor: '#5b8fe8', backgroundColor: 'rgba(91,143,232,0.30)', fill: 'origin', tension: 0.25, pointRadius: 0, borderWidth: 2 });
+  // Wedge bands: each fills to the previous dataset
+  wedgeOrder.forEach((id, i) => {
+    const lev = LEVERS.find(l => l.id === id);
+    datasets.push({
+      label: lev.name,
+      data: bandBoundaries[i+1],
+      borderColor: WEDGE_COLORS[i].replace('0.55','0.85'),
+      backgroundColor: WEDGE_COLORS[i],
+      fill: '-1',
+      tension: 0.25, pointRadius: 0, borderWidth: 1,
+    });
+  });
+  if (otherIds.length > 0) {
+    datasets.push({
+      label: `Other (${otherIds.length})`,
+      data: bandBoundaries[bandBoundaries.length - 1],
+      borderColor: 'rgba(139,143,163,0.6)',
+      backgroundColor: 'rgba(139,143,163,0.35)',
+      fill: '-1', tension: 0.25, pointRadius: 0, borderWidth: 1,
+    });
+  }
+  // BAU and target as unstacked overlays
+  datasets.push({ label: 'BAU', data: bau, borderColor: '#e8724c', borderWidth: 2, fill: false, tension: 0.2, pointRadius: 0, borderDash: [2,3] });
+  datasets.push({ label: 'SBTi Target', data: tgt, borderColor: '#5bb8a4', borderDash: [6,4], borderWidth: 2.5, fill: false, pointRadius: 0 });
+
   if (glideChart) glideChart.destroy();
   glideChart = new Chart(document.getElementById('glideChart'), {
     type: 'line',
-    data: {
-      labels: years,
-      datasets: [
-        { label: 'BAU', data: bau, borderColor: '#e8724c', backgroundColor: 'rgba(232,114,76,0.1)', fill: false, tension: 0.2, pointRadius: 0 },
-        { label: 'Selected Plan', data: sel, borderColor: '#5b8fe8', backgroundColor: 'rgba(91,143,232,0.15)', fill: true, tension: 0.2, pointRadius: 0, borderWidth: 2.5 },
-        { label: 'SBTi Target', data: tgt, borderColor: '#5bb8a4', borderDash: [6,4], fill: false, pointRadius: 0, borderWidth: 2 },
-      ]
-    },
+    data: { labels: years, datasets },
     options: {
       responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { labels: { color: '#8b8fa3', font: { size: 11 } } } },
+      plugins: { legend: { labels: { color: '#8b8fa3', font: { size: 10 }, boxWidth: 12 } }, tooltip: { mode: 'index' } },
       scales: {
         x: { ticks: { color: '#5a5e72' }, grid: { color: '#2e3345' } },
         y: { beginAtZero: true, ticks: { color: '#5a5e72', callback: v => v.toLocaleString() }, grid: { color: '#2e3345' }, title: { display: true, text: 'tCO2e', color: '#5a5e72' } }
@@ -550,20 +598,49 @@ function renderGlide() {
 }
 
 function renderMacc() {
+  // Proper MACC: bar LENGTH = abatement potential (tCO2e/yr), sorted by LCOA ascending.
+  // Color encodes $/tCO2e tier. Label shows LCOA. Selected levers outlined.
   const sorted = [...LEVERS].sort((a,b) => lcoa(a) - lcoa(b));
-  const labels = sorted.map(l => l.name.length > 22 ? l.name.slice(0,20)+'…' : l.name);
-  const data = sorted.map(l => Math.round(lcoa(l)));
-  const colors = sorted.map(l => state.selected.has(l.id) ? '#5bb8a4' : '#3a3f55');
+  const labels = sorted.map(l => {
+    const lc = Math.round(lcoa(l));
+    const lcStr = lc < 0 ? `−$${Math.abs(lc)}` : `$${lc}`;
+    const name = l.name.length > 28 ? l.name.slice(0,26)+'…' : l.name;
+    return `${name}  (${lcStr}/t)`;
+  });
+  const data = sorted.map(l => l.abate);
+  const tierColor = lc => {
+    if (lc < 0)   return 'rgba(91,184,164,0.85)';   // negative cost — green
+    if (lc < 50)  return 'rgba(91,143,232,0.85)';   // cheap — blue
+    if (lc < 150) return 'rgba(232,168,76,0.85)';   // moderate — yellow
+    return 'rgba(232,93,93,0.85)';                   // expensive — red
+  };
+  const bg = sorted.map(l => tierColor(lcoa(l)));
+  const borders = sorted.map(l => state.selected.has(l.id) ? '#ffffff' : 'transparent');
+  const borderWidths = sorted.map(l => state.selected.has(l.id) ? 2 : 0);
 
   if (maccChart) maccChart.destroy();
   maccChart = new Chart(document.getElementById('maccChart'), {
     type: 'bar',
-    data: { labels, datasets: [{ data, backgroundColor: colors, borderRadius: 3 }] },
+    data: { labels, datasets: [{
+      data,
+      backgroundColor: bg,
+      borderColor: borders,
+      borderWidth: borderWidths,
+      borderRadius: 3,
+    }]},
     options: {
       indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `$${ctx.parsed.x}/tCO2e` } } },
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: {
+          label: ctx => {
+            const lev = sorted[ctx.dataIndex];
+            return [`Abatement: ${lev.abate.toLocaleString()} tCO2e/yr`, `LCOA: $${Math.round(lcoa(lev))}/tCO2e`, `Capex: $${lev.capex}k`];
+          }
+        }}
+      },
       scales: {
-        x: { ticks: { color: '#5a5e72', callback: v => '$'+v }, grid: { color: '#2e3345' }, title: { display: true, text: '$/tCO2e (LCOA)', color: '#5a5e72' } },
+        x: { beginAtZero: true, ticks: { color: '#5a5e72', callback: v => v.toLocaleString() }, grid: { color: '#2e3345' }, title: { display: true, text: 'Abatement potential (tCO2e/yr) — sorted cheapest to most expensive top→bottom', color: '#5a5e72', font: { size: 10 } } },
         y: { ticks: { color: '#8b8fa3', font: { size: 10 } }, grid: { display: false } }
       }
     }
@@ -653,9 +730,7 @@ Object.entries(numericInputs).forEach(([id, key]) => {
 });
 
 document.getElementById('preset-min').addEventListener('click', presetMin);
-document.getElementById('preset-npv').addEventListener('click', presetNPV);
 document.getElementById('preset-exit').addEventListener('click', presetExit);
-document.getElementById('preset-all').addEventListener('click', presetAll);
 document.getElementById('preset-clear').addEventListener('click', presetClear);
 
 // initial preset
