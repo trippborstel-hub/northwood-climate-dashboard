@@ -203,8 +203,7 @@ const LEVERS = [
   { id: 'whr',       name: 'Waste heat recovery (compressors→space)',  scope: 's1',   capex: 240, opex: -35, abate: 180, life: 15, leadYr: 2 },
   { id: 'spindle',   name: 'Machine tool VFD / spindle upgrades',      scope: 's2',   capex: 480, opex: -90, abate: 310, life: 12, leadYr: 2 },
   { id: 'fleet',     name: 'EV facility fleet transition',             scope: 's1',   capex: 320, opex: -28, abate:  90, life: 10, leadYr: 2 },
-  { id: 'solar',     name: 'Rooftop solar (~1.5 MW DC)',               scope: 's2',   capex: 2400, opex:-240, abate: 920, life: 25, leadYr: 2 },
-  { id: 'vppa',      name: 'VPPA / green tariff (residual S2)',        scope: 's2',   capex:   0, opex:  45, abate: 1500, life: 12, leadYr: 2 },
+  { id: 'vppa',      name: 'Green tariff / VPPA (residual S2)',        scope: 's2',   capex:   0, opex:  60, abate: 2400, life: 12, leadYr: 2 },
   { id: 'hpspace',   name: 'Heat pump space heating retrofit',         scope: 's1',   capex: 850, opex: -45, abate: 520, life: 18, leadYr: 3 },
   { id: 'hpwash',    name: 'High-temp heat pump for parts wash',       scope: 's1',   capex: 620, opex: -25, abate: 380, life: 15, leadYr: 3 },
   { id: 'induction', name: 'Electric induction for heat treat',        scope: 's1',   capex: 1100, opex:  15, abate: 640, life: 20, leadYr: 4 },
@@ -290,7 +289,7 @@ function abatementByLever(y) {
 
   // Classify S2 levers: efficiency vs. renewable/procurement
   const S2_EFFICIENCY = ['led','air','hvacctrl','spindle','audit'];
-  const S2_RENEWABLE  = ['solar','vppa'];
+  const S2_RENEWABLE  = ['vppa'];
 
   // Nominal potential (ramp × nominal abate) for each selected lever
   const nominal = {};
@@ -316,7 +315,7 @@ function abatementByLever(y) {
       }
     }
   });
-  // 2. Renewables fill the residual (solar first, then VPPA)
+  // 2. Green tariff / VPPA fills the residual S2 load
   S2_RENEWABLE.forEach(id => {
     if (state.selected.has(id) && s2Remaining > 0) {
       const eff = Math.min(nominal[id], s2Remaining);
