@@ -556,12 +556,13 @@ function renderGlide() {
 
   const datasets = [];
   // Band 0: residual (fill to origin)
-  datasets.push({ label: 'Residual Emissions', data: bandBoundaries[0], borderColor: '#5b8fe8', backgroundColor: 'rgba(91,143,232,0.30)', fill: 'origin', tension: 0.25, pointRadius: 0, borderWidth: 2 });
+  datasets.push({ label: 'Residual Emissions', _rank: 1e6, data: bandBoundaries[0], borderColor: '#5b8fe8', backgroundColor: 'rgba(91,143,232,0.30)', fill: 'origin', tension: 0.25, pointRadius: 0, borderWidth: 2 });
   // Wedge bands: each fills to the previous dataset
   wedgeOrder.forEach((id, i) => {
     const lev = LEVERS.find(l => l.id === id);
     datasets.push({
       label: lev.name,
+      _rank: -(totalByLever[id] || 0), // largest wedge first
       data: bandBoundaries[i+1],
       borderColor: WEDGE_COLORS[i].replace('0.55','0.85'),
       backgroundColor: WEDGE_COLORS[i],
@@ -572,6 +573,7 @@ function renderGlide() {
   if (otherIds.length > 0) {
     datasets.push({
       label: `Other (${otherIds.length})`,
+      _rank: 1e6 + 1,
       data: bandBoundaries[bandBoundaries.length - 1],
       borderColor: 'rgba(139,143,163,0.6)',
       backgroundColor: 'rgba(139,143,163,0.35)',
@@ -579,8 +581,8 @@ function renderGlide() {
     });
   }
   // BAU and target as unstacked overlays
-  datasets.push({ label: 'BAU', data: bau, borderColor: '#e8724c', borderWidth: 2, fill: false, tension: 0.2, pointRadius: 0, borderDash: [2,3] });
-  datasets.push({ label: 'SBTi Target', data: tgt, borderColor: '#5bb8a4', borderDash: [6,4], borderWidth: 2.5, fill: false, pointRadius: 0 });
+  datasets.push({ label: 'BAU', _rank: 1e6 + 2, data: bau, borderColor: '#e8724c', borderWidth: 2, fill: false, tension: 0.2, pointRadius: 0, borderDash: [2,3] });
+  datasets.push({ label: 'SBTi Target', _rank: 1e6 + 3, data: tgt, borderColor: '#5bb8a4', borderDash: [6,4], borderWidth: 2.5, fill: false, pointRadius: 0 });
 
   if (glideChart) glideChart.destroy();
   glideChart = new Chart(document.getElementById('glideChart'), {
@@ -588,10 +590,35 @@ function renderGlide() {
     data: { labels: years, datasets },
     options: {
       responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { labels: { color: '#8b8fa3', font: { size: 10 }, boxWidth: 12 } }, tooltip: { mode: 'index' } },
+      plugins: {
+        legend: {
+          position: 'bottom',
+          align: 'start',
+          labels: {
+            color: '#8b8fa3',
+            font: { size: 10 },
+            boxWidth: 10,
+            boxHeight: 10,
+            padding: 10,
+            usePointStyle: false,
+            // Order by the _rank hint set on each dataset (biggest wedge first)
+            sort: (a, b, data) => {
+              const ra = data.datasets[a.datasetIndex]._rank ?? 0;
+              const rb = data.datasets[b.datasetIndex]._rank ?? 0;
+              return ra - rb;
+            }
+          }
+        },
+        tooltip: { mode: 'index' }
+      },
       scales: {
         x: { ticks: { color: '#5a5e72' }, grid: { color: '#2e3345' } },
-        y: { beginAtZero: true, ticks: { color: '#5a5e72', callback: v => v.toLocaleString() }, grid: { color: '#2e3345' }, title: { display: true, text: 'tCO2e', color: '#5a5e72' } }
+        y: {
+          min: targetEmissions(state.horizonEnd),
+          ticks: { color: '#5a5e72', callback: v => v.toLocaleString() },
+          grid: { color: '#2e3345' },
+          title: { display: true, text: 'tCO2e', color: '#5a5e72' }
+        }
       }
     }
   });
