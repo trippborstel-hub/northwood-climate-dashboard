@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Northwood Capital — Physical Risk Explorer</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0f1117; --surface: #1a1d27; --surface2: #232735; --surface3: #2a2e3f;
+    --border: #2e3345; --text: #e2e4ea; --text-muted: #8b8fa3; --text-dim: #5a5e72;
+    --accent: #5bb8a4; --accent-dim: rgba(91,184,164,0.12); --white: #fff;
+    --green: #4caf50; --yellow: #e8a84c; --red: #e85d5d;
+    --water: #5b8fe8; --heat: #e8724c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .container { max-width: 1280px; margin: 0 auto; padding: 40px 40px 80px; }
+  .page-header { margin-bottom: 20px; }
+  .page-title { font-size: 28px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
+  .page-title span { color: var(--accent); }
+  .page-subtitle { font-size: 14px; color: var(--text-muted); }
+  .data-badge { display: inline-block; font-size: 11px; color: var(--yellow); background: rgba(232,168,76,0.1); border: 1px solid rgba(232,168,76,0.25); padding: 3px 10px; border-radius: 4px; margin-top: 10px; }
+
+  /* PORTCO SELECTOR */
+  .selector-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+  .selector-group-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim); width: 100%; margin-bottom: 2px; }
+  .selector-btn { padding: 7px 14px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+  .selector-btn:hover { background: var(--surface2); color: var(--text); }
+  .selector-btn.active { background: var(--accent-dim); color: var(--accent); border-color: rgba(91,184,164,0.3); font-weight: 600; }
+  .selector-btn .fund-tag { font-size: 10px; color: var(--text-dim); margin-left: 4px; }
+
+  /* CONTROLS */
+  .controls { display: flex; gap: 16px; align-items: flex-end; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; margin-bottom: 16px; flex-wrap: wrap; }
+  .ctrl { display: flex; flex-direction: column; gap: 4px; }
+  .ctrl-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-dim); }
+  .toggle-group { display: flex; gap: 4px; }
+  .toggle-btn { padding: 6px 12px; border-radius: 5px; border: 1px solid var(--border); background: var(--surface2); color: var(--text-muted); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .toggle-btn.active { background: var(--accent-dim); color: var(--accent); border-color: rgba(91,184,164,0.4); }
+
+  /* METRICS */
+  .metrics-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+  .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; }
+  .metric-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-dim); margin-bottom: 5px; }
+  .metric-value { font-size: 22px; font-weight: 700; color: var(--white); }
+  .metric-value .unit { font-size: 12px; font-weight: 400; color: var(--text-muted); margin-left: 3px; }
+  .metric-sub { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+  .metric-sub.good { color: var(--green); }
+  .metric-sub.warn { color: var(--yellow); }
+  .metric-sub.bad { color: var(--red); }
+
+  /* CHARTS */
+  .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .chart-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+  .chart-title { font-size: 14px; font-weight: 600; color: var(--white); margin-bottom: 10px; }
+  .chart-canvas-wrap { position: relative; height: 320px; }
+
+  /* TABLE */
+  .section-title { font-size: 15px; font-weight: 600; color: var(--white); margin: 24px 0 10px; }
+  .section-title .dim { color: var(--text-dim); font-weight: 400; font-size: 12px; margin-left: 8px; }
+  .init-table { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; border-collapse: separate; border-spacing: 0; overflow: hidden; font-size: 12px; }
+  .init-table th { background: var(--surface2); color: var(--text-dim); font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.6px; padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--border); cursor: pointer; user-select: none; white-space: nowrap; }
+  .init-table th:nth-child(1), .init-table th:nth-child(2), .init-table th:nth-child(3) { text-align: left; }
+  .init-table th:hover { color: var(--accent); }
+  .init-table th .sort-arrow { font-size: 9px; margin-left: 3px; color: var(--text-dim); }
+  .init-table th .sort-arrow.active { color: var(--accent); }
+  .init-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: right; color: var(--text); }
+  .init-table td:nth-child(1), .init-table td:nth-child(2), .init-table td:nth-child(3) { text-align: left; }
+  .init-table tr:last-child td { border-bottom: none; }
+  .init-table tr:hover { background: var(--surface2); }
+
+  .badge { display: inline-block; padding: 2px 7px; border-radius: 3px; font-size: 10px; font-weight: 600; }
+  .badge.low { background: rgba(76,175,80,0.15); color: var(--green); }
+  .badge.medium { background: rgba(232,168,76,0.15); color: var(--yellow); }
+  .badge.high { background: rgba(232,93,93,0.15); color: var(--red); }
+  .badge.water { background: rgba(91,143,232,0.15); color: var(--water); }
+  .badge.heat { background: rgba(232,114,76,0.15); color: var(--heat); }
+
+  .band-badge { display: inline-block; padding: 2px 7px; border-radius: 3px; font-size: 10px; font-weight: 600; }
+  .band-low { background: rgba(76,175,80,0.15); color: var(--green); }
+  .band-low_medium { background: rgba(180,200,76,0.15); color: #a8c44c; }
+  .band-medium { background: rgba(232,168,76,0.15); color: var(--yellow); }
+  .band-high { background: rgba(232,114,76,0.15); color: #e8724c; }
+  .band-extremely_high { background: rgba(232,93,93,0.15); color: var(--red); }
+
+  .footnote { font-size: 11px; color: var(--text-dim); margin-top: 16px; line-height: 1.6; }
+  .footnote strong { color: var(--text-muted); }
+
+  @media (max-width: 900px) { .chart-grid { grid-template-columns: 1fr; } .metrics-row { grid-template-columns: repeat(2, 1fr); } }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="page-header">
+    <h1 class="page-title"><span>Physical Risk</span> Explorer</h1>
+    <p class="page-subtitle">Forward-looking climate hazard scoring across 144 facilities &mdash; water stress (WRI Aqueduct 4.0) and heat stress (CMIP6)</p>
+    <div class="data-badge">WRI Aqueduct 4.0 + Open-Meteo CMIP6 | 144 facilities | SSP3-7.0 &amp; SSP5-8.5 | 2030&ndash;2035 horizons</div>
+  </div>
+
+  <!-- PORTCO SELECTOR -->
+  <div style="margin-bottom:20px;">
+    <div class="selector-group-label">Select View</div>
+    <div class="selector-row" id="portcoSelector"></div>
+  </div>
+
+  <!-- SCENARIO / HORIZON TOGGLES -->
+  <div class="controls" id="controlsBar">
+    <div class="ctrl">
+      <label class="ctrl-label">Scenario (Water)</label>
+      <div class="toggle-group" id="scenarioToggle">
+        <button class="toggle-btn active" data-val="ssp3">SSP3-7.0 (Central)</button>
+        <button class="toggle-btn" data-val="ssp5">SSP5-8.5 (High)</button>
+      </div>
+    </div>
+    <div class="ctrl">
+      <label class="ctrl-label">Horizon</label>
+      <div class="toggle-group" id="horizonToggle">
+        <button class="toggle-btn" data-val="2030">2030</button>
+        <button class="toggle-btn active" data-val="2035">2035</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- METRIC CARDS -->
+  <div class="metrics-row" id="metricsRow"></div>
+
+  <!-- CHARTS -->
+  <div class="chart-grid">
+    <div class="chart-wrap">
+      <div class="chart-title" id="chartLeftTitle">Exit EV at Risk by Portfolio Company</div>
+      <div class="chart-canvas-wrap"><canvas id="chartLeft"></canvas></div>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-title" id="chartRightTitle">Mean Hazard Score by Portfolio Company</div>
+      <div class="chart-canvas-wrap"><canvas id="chartRight"></canvas></div>
+    </div>
+  </div>
+
+  <!-- INITIATIVE TABLE -->
+  <div class="section-title">Positive-NPV Mitigation Initiatives<span class="dim" id="initCount"></span></div>
+  <table class="init-table" id="initTable">
+    <thead><tr id="initHead"></tr></thead>
+    <tbody id="initBody"></tbody>
+  </table>
+
+  <div class="footnote">
+    <strong>Methodology:</strong> Water stress scores from WRI Aqueduct 4.0 (facility-level, 0-100 scale). Heat stress = fraction of year with daily max &gt;35 &deg;C via Open-Meteo CMIP6 ensemble. EBITDA-at-risk applies sector-specific sensitivity coefficients. EV-at-risk = EBITDA-at-risk &times; exit multiple. Initiatives modeled on 7-year horizon, 8% discount rate.
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const PORTCOS = {
+  'sterling-precision-manufacturing': {
+    name: 'Sterling Precision Manufacturing', short: 'Sterling Precision', sector: 'Precision Machining / A&D',
+    fund: 'Fund I', revenue: 168, ebitda: 30.2, exitMult: 9.0, facilities: 3,
+    water: { baseline: {score:50,band:'medium'}, ssp3_2030: {score:56.7,band:'medium'}, ssp3_2035: {score:56.7,band:'medium'}, ssp5_2030: {score:56.7,band:'medium'}, ssp5_2035: {score:58.3,band:'medium'}, maxScore:90 },
+    heat: { baseline: {score:60.8,days:84.2}, '2030': {score:71.8,days:99.7}, '2035': {score:77.6,days:107.7} },
+    evRisk: { water: {ssp3_2035:9.241, ssp5_2035:9.513, ssp3_2030:8.8, ssp5_2030:8.8}, heat: {'2035':14.758, '2030':12.5} },
+    ebitdaRisk: { water: {ssp3_2035:1.027, ssp5_2035:1.057, ssp3_2030:0.978, ssp5_2030:0.978}, heat: {'2035':1.64, '2030':1.39} }
+  },
+  'harvest-ridge-foods': {
+    name: 'Harvest Ridge Foods', short: 'Harvest Ridge', sector: 'Food Manufacturing / Co-Packing',
+    fund: 'Fund II', revenue: 152, ebitda: 22.8, exitMult: 8.5, facilities: 5,
+    water: { baseline: {score:46,band:'medium'}, ssp3_2030: {score:50,band:'medium'}, ssp3_2035: {score:49,band:'medium'}, ssp5_2030: {score:50,band:'medium'}, ssp5_2035: {score:52,band:'medium'}, maxScore:90 },
+    heat: { baseline: {score:27.1,days:37.3}, '2030': {score:50.7,days:44.6}, '2035': {score:54.4,days:47.5} },
+    evRisk: { water: {ssp3_2035:7.597, ssp5_2035:8.062, ssp3_2030:7.2, ssp5_2030:7.2}, heat: {'2035':6.328, '2030':5.3} },
+    ebitdaRisk: { water: {ssp3_2035:0.894, ssp5_2035:0.949, ssp3_2030:0.847, ssp5_2030:0.847}, heat: {'2035':0.745, '2030':0.624} }
+  },
+  'clearview-environmental': {
+    name: 'Clearview Environmental', short: 'Clearview Env.', sector: 'Environmental Remediation / Testing',
+    fund: 'Fund II', revenue: 195, ebitda: 31.2, exitMult: 9.5, facilities: 12,
+    water: { baseline: {score:56.7,band:'medium'}, ssp3_2030: {score:55,band:'medium'}, ssp3_2035: {score:55,band:'medium'}, ssp5_2030: {score:55.8,band:'medium'}, ssp5_2035: {score:59.6,band:'medium'}, maxScore:90 },
+    heat: { baseline: {score:31.3,days:43.3}, '2030': {score:44.1,days:53.5}, '2035': {score:48.2,days:58.6} },
+    evRisk: { water: {ssp3_2035:6.496, ssp5_2035:7.064, ssp3_2030:6.1, ssp5_2030:6.1}, heat: {'2035':6.462, '2030':5.4} },
+    ebitdaRisk: { water: {ssp3_2035:0.684, ssp5_2035:0.744, ssp3_2030:0.642, ssp5_2030:0.642}, heat: {'2035':0.68, '2030':0.568} }
+  },
+  'pinnacle-testing': {
+    name: 'Pinnacle Testing & Inspection', short: 'Pinnacle T&I', sector: 'NDT / Industrial Inspection',
+    fund: 'Fund II', revenue: 115, ebitda: 20.1, exitMult: 8.5, facilities: 10,
+    water: { baseline: {score:40,band:'medium'}, ssp3_2030: {score:42,band:'medium'}, ssp3_2035: {score:42.5,band:'medium'}, ssp5_2030: {score:42,band:'medium'}, ssp5_2035: {score:46.5,band:'medium'}, maxScore:90 },
+    heat: { baseline: {score:40.1,days:55.4}, '2030': {score:52.8,days:64.3}, '2035': {score:58.3,days:71.0} },
+    evRisk: { water: {ssp3_2035:2.131, ssp5_2035:2.383, ssp3_2030:1.9, ssp5_2030:1.9}, heat: {'2035':5.962, '2030':5.0} },
+    ebitdaRisk: { water: {ssp3_2035:0.251, ssp5_2035:0.280, ssp3_2030:0.224, ssp5_2030:0.224}, heat: {'2035':0.701, '2030':0.588} }
+  },
+  'ridgeline-property-services': {
+    name: 'Ridgeline Property Services', short: 'Ridgeline Prop.', sector: 'Commercial Property Management',
+    fund: 'Fund II', revenue: 95, ebitda: 17.4, exitMult: 8.5, facilities: 6,
+    water: { baseline: {score:66.7,band:'high'}, ssp3_2030: {score:65,band:'high'}, ssp3_2035: {score:65,band:'high'}, ssp5_2030: {score:65,band:'high'}, ssp5_2035: {score:67.5,band:'high'}, maxScore:90 },
+    heat: { baseline: {score:68.5,days:94.8}, '2030': {score:79.5,days:107.5}, '2035': {score:84.8,days:115.0} },
+    evRisk: { water: {ssp3_2035:2.788, ssp5_2035:2.995, ssp3_2030:2.6, ssp5_2030:2.6}, heat: {'2035':10.89, '2030':9.2} },
+    ebitdaRisk: { water: {ssp3_2035:0.328, ssp5_2035:0.352, ssp3_2030:0.306, ssp5_2030:0.306}, heat: {'2035':1.281, '2030':1.082} }
+  },
+  'trident-it-solutions': {
+    name: 'Trident IT Solutions', short: 'Trident IT', sector: 'IT Managed Services / Cybersecurity',
+    fund: 'Fund I', revenue: 142, ebitda: 24.9, exitMult: 10.5, facilities: 8,
+    water: { baseline: {score:57.5,band:'medium'}, ssp3_2030: {score:60,band:'medium'}, ssp3_2035: {score:60,band:'medium'}, ssp5_2030: {score:60,band:'medium'}, ssp5_2035: {score:62.5,band:'high'}, maxScore:90 },
+    heat: { baseline: {score:31.2,days:43.2}, '2030': {score:42.2,days:52.8}, '2035': {score:45.6,days:57.7} },
+    evRisk: { water: {ssp3_2035:3.007, ssp5_2035:3.269, ssp3_2030:2.8, ssp5_2030:2.8}, heat: {'2035':7.224, '2030':6.0} },
+    ebitdaRisk: { water: {ssp3_2035:0.286, ssp5_2035:0.311, ssp3_2030:0.267, ssp5_2030:0.267}, heat: {'2035':0.688, '2030':0.571} }
+  },
+  'novacare-health-partners': {
+    name: 'NovaCare Health Partners', short: 'NovaCare', sector: 'Outpatient PT / Rehabilitation',
+    fund: 'Fund I', revenue: 175, ebitda: 28.0, exitMult: 10.0, facilities: 30,
+    water: { baseline: {score:51.3,band:'medium'}, ssp3_2030: {score:55.7,band:'medium'}, ssp3_2035: {score:55.7,band:'medium'}, ssp5_2030: {score:55.7,band:'medium'}, ssp5_2035: {score:57.5,band:'medium'}, maxScore:90 },
+    heat: { baseline: {score:22.4,days:30.9}, '2030': {score:31.5,days:39.3}, '2035': {score:34.4,days:42.9} },
+    evRisk: { water: {ssp3_2035:3.107, ssp5_2035:3.223, ssp3_2030:2.9, ssp5_2030:2.9}, heat: {'2035':4.816, '2030':4.0} },
+    ebitdaRisk: { water: {ssp3_2035:0.311, ssp5_2035:0.322, ssp3_2030:0.290, ssp5_2030:0.290}, heat: {'2035':0.482, '2030':0.400} }
+  },
+  'keystone-behavioral-health': {
+    name: 'Keystone Behavioral Health', short: 'Keystone BH', sector: 'ABA Therapy',
+    fund: 'Fund II', revenue: 138, ebitda: 24.2, exitMult: 10.0, facilities: 28,
+    water: { baseline: {score:54.3,band:'medium'}, ssp3_2030: {score:57.9,band:'medium'}, ssp3_2035: {score:57.9,band:'medium'}, ssp5_2030: {score:58.6,band:'medium'}, ssp5_2035: {score:60,band:'medium'}, maxScore:90 },
+    heat: { baseline: {score:35.7,days:49.4}, '2030': {score:47.9,days:58.5}, '2035': {score:52.5,days:64.1} },
+    evRisk: { water: {ssp3_2035:2.766, ssp5_2035:2.903, ssp3_2030:2.6, ssp5_2030:2.6}, heat: {'2035':7.7, '2030':6.4} },
+    ebitdaRisk: { water: {ssp3_2035:0.277, ssp5_2035:0.290, ssp3_2030:0.260, ssp5_2030:0.260}, heat: {'2035':0.77, '2030':0.640} }
+  },
+  'meridian-business-solutions': {
+    name: 'Meridian Business Solutions', short: 'Meridian BPO', sector: 'BPO / Managed Staffing',
+    fund: 'Fund I', revenue: 225, ebitda: 38.3, exitMult: 9.5, facilities: 16,
+    water: { baseline: {score:55,band:'medium'}, ssp3_2030: {score:60,band:'medium'}, ssp3_2035: {score:60,band:'medium'}, ssp5_2030: {score:60.6,band:'high'}, ssp5_2035: {score:61.6,band:'high'}, maxScore:90 },
+    heat: { baseline: {score:30.6,days:42.2}, '2030': {score:41.7,days:51.4}, '2035': {score:46.4,days:56.6} },
+    evRisk: { water: {ssp3_2035:2.138, ssp5_2035:2.242, ssp3_2030:2.0, ssp5_2030:2.0}, heat: {'2035':6.267, '2030':5.2} },
+    ebitdaRisk: { water: {ssp3_2035:0.225, ssp5_2035:0.236, ssp3_2030:0.211, ssp5_2030:0.211}, heat: {'2035':0.66, '2030':0.547} }
+  },
+  'patriot-staffing-solutions': {
+    name: 'Patriot Staffing Solutions', short: 'Patriot Staffing', sector: 'Light Industrial Staffing',
+    fund: 'Fund II', revenue: 310, ebitda: 23.8, exitMult: 8.5, facilities: 26,
+    water: { baseline: {score:34.6,band:'low_medium'}, ssp3_2030: {score:38.1,band:'low_medium'}, ssp3_2035: {score:38.1,band:'low_medium'}, ssp5_2030: {score:38.1,band:'low_medium'}, ssp5_2035: {score:38.8,band:'low_medium'}, maxScore:90 },
+    heat: { baseline: {score:18.6,days:25.7}, '2030': {score:26.2,days:32.0}, '2035': {score:29.1,days:35.4} },
+    evRisk: { water: {ssp3_2035:0.762, ssp5_2035:0.784, ssp3_2030:0.7, ssp5_2030:0.7}, heat: {'2035':2.894, '2030':2.4} },
+    ebitdaRisk: { water: {ssp3_2035:0.090, ssp5_2035:0.092, ssp3_2030:0.082, ssp5_2030:0.082}, heat: {'2035':0.340, '2030':0.282} }
+  }
+};
+
+const INITIATIVES = [
+  { id:'heat-action-plan', name:'Heat action plan (OSHA compliance)', portco:'sterling-precision-manufacturing', hazard:'heat_stress', difficulty:'low', capex:0.09, ebitdaSaved:0.328, npv:1.507, evProtected:2.952 },
+  { id:'shift-scheduling', name:'Shift scheduling (heat avoidance)', portco:'sterling-precision-manufacturing', hazard:'heat_stress', difficulty:'low', capex:0.0, ebitdaSaved:0.164, npv:0.798, evProtected:1.476 },
+  { id:'drought-sourcing', name:'Drought-resilient raw material sourcing', portco:'harvest-ridge-foods', hazard:'water_stress', difficulty:'low', capex:0.0, ebitdaSaved:0.142, npv:0.693, evProtected:1.209 },
+  { id:'hvac-upgrade', name:'HVAC upgrade / high-efficiency cooling', portco:'sterling-precision-manufacturing', hazard:'heat_stress', difficulty:'medium', capex:1.8, ebitdaSaved:0.492, npv:0.595, evProtected:4.427 },
+  { id:'heat-action-plan-hrf', name:'Heat action plan (OSHA compliance)', portco:'harvest-ridge-foods', hazard:'heat_stress', difficulty:'low', capex:0.15, ebitdaSaved:0.149, npv:0.575, evProtected:1.266 },
+  { id:'heat-action-plan-pt', name:'Heat action plan (OSHA compliance)', portco:'pinnacle-testing', hazard:'heat_stress', difficulty:'low', capex:0.3, ebitdaSaved:0.166, npv:0.509, evProtected:1.412 },
+  { id:'shift-scheduling-pt', name:'Shift scheduling (heat avoidance)', portco:'pinnacle-testing', hazard:'heat_stress', difficulty:'low', capex:0.0, ebitdaSaved:0.083, npv:0.404, evProtected:0.706 },
+  { id:'water-contingency', name:'Water-stress site contingency plan', portco:'sterling-precision-manufacturing', hazard:'water_stress', difficulty:'low', capex:0.15, ebitdaSaved:0.106, npv:0.365, evProtected:0.951 },
+  { id:'shift-scheduling-ce', name:'Shift scheduling (heat avoidance)', portco:'clearview-environmental', hazard:'heat_stress', difficulty:'low', capex:0.0, ebitdaSaved:0.071, npv:0.347, evProtected:0.677 },
+  { id:'heat-action-plan-ce', name:'Heat action plan (OSHA compliance)', portco:'clearview-environmental', hazard:'heat_stress', difficulty:'low', capex:0.36, ebitdaSaved:0.143, npv:0.334, evProtected:1.354 },
+  { id:'water-contingency-hrf', name:'Water-stress site contingency plan', portco:'harvest-ridge-foods', hazard:'water_stress', difficulty:'low', capex:0.25, ebitdaSaved:0.095, npv:0.212, evProtected:0.806 },
+];
+
+const PORTFOLIO = {
+  ssp3_2030: { revRisk: 27.269, ebitdaRisk: 4.450, evRisk: 40.758 },
+  ssp3_2035: { revRisk: 27.160, ebitdaRisk: 4.435, evRisk: 40.636 },
+  ssp5_2030: { revRisk: 27.628, ebitdaRisk: 4.510, evRisk: 41.302 },
+  ssp5_2035: { revRisk: 28.412, ebitdaRisk: 4.634, evRisk: 42.438 },
+  heat_2030: { revRisk: 35.909, ebitdaRisk: 5.906, evRisk: 53.991 },
+  heat_2035: { revRisk: 38.931, ebitdaRisk: 6.392, evRisk: 58.328 },
+};
+
+const KEYS = Object.keys(PORTCOS);
+
+// ============================================================
+// STATE
+// ============================================================
+let state = { selected: 'portfolio', scenario: 'ssp3', horizon: '2035', sortCol: 6, sortDir: -1 };
+
+// ============================================================
+// HELPERS
+// ============================================================
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const fmt = (v, d=1) => v.toFixed(d);
+const fmtM = v => '$' + fmt(v, 1) + 'M';
+
+function getWaterKey() { return state.scenario + '_' + state.horizon; }
+function getHeatKey() { return state.horizon; }
+
+function getWaterScore(p) {
+  const k = getWaterKey();
+  return p.water[k] || p.water.baseline;
+}
+function getHeatScore(p) {
+  const k = getHeatKey();
+  return p.heat[k] || p.heat.baseline;
+}
+
+function getWaterEV(p) {
+  const k = getWaterKey();
+  return p.evRisk.water[k] || 0;
+}
+function getHeatEV(p) {
+  const k = getHeatKey();
+  return p.evRisk.heat[k] || 0;
+}
+function getWaterEBITDA(p) {
+  const k = getWaterKey();
+  return p.ebitdaRisk.water[k] || 0;
+}
+function getHeatEBITDA(p) {
+  const k = getHeatKey();
+  return p.ebitdaRisk.heat[k] || 0;
+}
+
+function bandLabel(b) {
+  return (b||'').replace(/_/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+function bandClass(b) { return 'band-' + (b||'medium'); }
+
+// ============================================================
+// BUILD SELECTOR
+// ============================================================
+function buildSelector() {
+  const row = $('#portcoSelector');
+  let html = '<button class="selector-btn active" data-id="portfolio">Portfolio</button>';
+  KEYS.forEach(k => {
+    const p = PORTCOS[k];
+    html += `<button class="selector-btn" data-id="${k}">${p.short || p.name}<span class="fund-tag">${p.fund}</span></button>`;
+  });
+  row.innerHTML = html;
+  row.querySelectorAll('.selector-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      row.querySelectorAll('.selector-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.selected = btn.dataset.id;
+      render();
+    });
+  });
+}
+
+// ============================================================
+// TOGGLE WIRING
+// ============================================================
+function wireToggles() {
+  $('#scenarioToggle').querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      $('#scenarioToggle').querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.scenario = btn.dataset.val;
+      render();
+    });
+  });
+  $('#horizonToggle').querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      $('#horizonToggle').querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.horizon = btn.dataset.val;
+      render();
+    });
+  });
+}
+
+// ============================================================
+// METRICS
+// ============================================================
+function renderMetrics() {
+  const box = $('#metricsRow');
+  if (state.selected === 'portfolio') {
+    const wKey = state.scenario + '_' + state.horizon;
+    const hKey = 'heat_' + state.horizon;
+    const pw = PORTFOLIO[wKey];
+    const ph = PORTFOLIO[hKey];
+    const totalEbitda = pw.ebitdaRisk + ph.ebitdaRisk;
+    const totalEV = pw.evRisk + ph.evRisk;
+
+    // Find highest-risk portco
+    let maxScore = 0, maxName = '';
+    KEYS.forEach(k => {
+      const p = PORTCOS[k];
+      const ws = getWaterScore(p).score;
+      const hs = getHeatScore(p).score;
+      const combo = (ws + hs) / 2;
+      if (combo > maxScore) { maxScore = combo; maxName = p.short || p.name; }
+    });
+
+    // Positive NPV initiatives
+    const posNPV = INITIATIVES.filter(i => i.npv > 0);
+    const totalNPV = posNPV.reduce((s,i) => s + i.npv, 0);
+
+    box.innerHTML = `
+      <div class="metric-card"><div class="metric-label">Portfolio EBITDA at Risk</div><div class="metric-value">${fmtM(totalEbitda)}<span class="unit">/yr</span></div><div class="metric-sub">Water: ${fmtM(pw.ebitdaRisk)} + Heat: ${fmtM(ph.ebitdaRisk)}</div></div>
+      <div class="metric-card"><div class="metric-label">Portfolio Exit EV at Risk</div><div class="metric-value">${fmtM(totalEV)}</div><div class="metric-sub">Water: ${fmtM(pw.evRisk)} + Heat: ${fmtM(ph.evRisk)}</div></div>
+      <div class="metric-card"><div class="metric-label">Highest-Risk Portco</div><div class="metric-value" style="font-size:18px;">${maxName}</div><div class="metric-sub">Composite score: ${fmt(maxScore)}</div></div>
+      <div class="metric-card"><div class="metric-label">Positive-NPV Initiatives</div><div class="metric-value">${posNPV.length}<span class="unit">initiatives</span></div><div class="metric-sub good">Total NPV: ${fmtM(totalNPV)}</div></div>
+    `;
+  } else {
+    const p = PORTCOS[state.selected];
+    const wEbitda = getWaterEBITDA(p);
+    const hEbitda = getHeatEBITDA(p);
+    const wEV = getWaterEV(p);
+    const hEV = getHeatEV(p);
+    const ws = getWaterScore(p);
+    const hs = getHeatScore(p);
+
+    box.innerHTML = `
+      <div class="metric-card"><div class="metric-label">EBITDA at Risk</div><div class="metric-value">${fmtM(wEbitda + hEbitda)}<span class="unit">/yr</span></div><div class="metric-sub">Water: ${fmtM(wEbitda)} + Heat: ${fmtM(hEbitda)}</div></div>
+      <div class="metric-card"><div class="metric-label">Exit EV at Risk</div><div class="metric-value">${fmtM(wEV + hEV)}</div><div class="metric-sub">Water: ${fmtM(wEV)} + Heat: ${fmtM(hEV)}</div></div>
+      <div class="metric-card"><div class="metric-label">Water Stress</div><div class="metric-value">${fmt(ws.score)}<span class="unit">/ 100</span></div><div class="metric-sub"><span class="band-badge ${bandClass(ws.band)}">${bandLabel(ws.band)}</span></div></div>
+      <div class="metric-card"><div class="metric-label">Heat Stress</div><div class="metric-value">${fmt(hs.score)}<span class="unit">/ 100</span></div><div class="metric-sub">${fmt(hs.days||0,0)} days &gt;35&deg;C/yr</div></div>
+    `;
+  }
+}
+
+// ============================================================
+// CHARTS
+// ============================================================
+let chartL = null, chartR = null;
+
+function destroyCharts() {
+  if (chartL) { chartL.destroy(); chartL = null; }
+  if (chartR) { chartR.destroy(); chartR = null; }
+}
+
+const chartDefaults = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { labels: { color: '#8b8fa3', font: { size: 11, family: "'Inter', sans-serif" }, boxWidth: 12, padding: 14 } },
+    tooltip: { backgroundColor: '#1a1d27', titleColor: '#e2e4ea', bodyColor: '#8b8fa3', borderColor: '#2e3345', borderWidth: 1, padding: 10, titleFont: { family: "'Inter', sans-serif", weight: '600' }, bodyFont: { family: "'Inter', sans-serif" } }
+  }
+};
+
+function renderCharts() {
+  destroyCharts();
+
+  if (state.selected === 'portfolio') {
+    renderPortfolioCharts();
+  } else {
+    renderPortcoCharts();
+  }
+}
+
+function renderPortfolioCharts() {
+  $('#chartLeftTitle').textContent = 'Exit EV at Risk by Portfolio Company';
+  $('#chartRightTitle').textContent = 'Mean Hazard Score by Portfolio Company';
+
+  const labels = KEYS.map(k => PORTCOS[k].short || PORTCOS[k].name);
+  const waterEV = KEYS.map(k => getWaterEV(PORTCOS[k]));
+  const heatEV = KEYS.map(k => getHeatEV(PORTCOS[k]));
+  const waterScore = KEYS.map(k => getWaterScore(PORTCOS[k]).score);
+  const heatScore = KEYS.map(k => getHeatScore(PORTCOS[k]).score);
+
+  chartL = new Chart($('#chartLeft'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Water Stress EV', data: waterEV, backgroundColor: 'rgba(91,143,232,0.7)', borderColor: 'rgba(91,143,232,1)', borderWidth: 1, borderRadius: 2 },
+        { label: 'Heat Stress EV', data: heatEV, backgroundColor: 'rgba(232,114,76,0.7)', borderColor: 'rgba(232,114,76,1)', borderWidth: 1, borderRadius: 2 }
+      ]
+    },
+    options: {
+      ...chartDefaults,
+      indexAxis: 'y',
+      scales: {
+        x: { stacked: true, grid: { color: 'rgba(46,51,69,0.5)' }, ticks: { color: '#8b8fa3', font: { size: 10 }, callback: v => '$' + v + 'M' } },
+        y: { stacked: true, grid: { display: false }, ticks: { color: '#e2e4ea', font: { size: 10, family: "'Inter', sans-serif" } } }
+      },
+      plugins: { ...chartDefaults.plugins }
+    }
+  });
+
+  chartR = new Chart($('#chartRight'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Water Score', data: waterScore, backgroundColor: 'rgba(91,143,232,0.7)', borderColor: 'rgba(91,143,232,1)', borderWidth: 1, borderRadius: 2 },
+        { label: 'Heat Score', data: heatScore, backgroundColor: 'rgba(232,114,76,0.7)', borderColor: 'rgba(232,114,76,1)', borderWidth: 1, borderRadius: 2 }
+      ]
+    },
+    options: {
+      ...chartDefaults,
+      indexAxis: 'y',
+      scales: {
+        x: { grid: { color: 'rgba(46,51,69,0.5)' }, ticks: { color: '#8b8fa3', font: { size: 10 } }, max: 100 },
+        y: { grid: { display: false }, ticks: { color: '#e2e4ea', font: { size: 10, family: "'Inter', sans-serif" } } }
+      },
+      plugins: { ...chartDefaults.plugins }
+    }
+  });
+}
+
+function renderPortcoCharts() {
+  const p = PORTCOS[state.selected];
+  $('#chartLeftTitle').textContent = p.name + ' — Facility Risk Profile';
+  $('#chartRightTitle').textContent = 'Portfolio Comparison (selected highlighted)';
+
+  // Left chart: water vs heat for this portco, simulated per-facility
+  const ws = getWaterScore(p).score;
+  const hs = getHeatScore(p).score;
+  const nFac = p.facilities;
+  const facLabels = [];
+  const facWater = [];
+  const facHeat = [];
+  for (let i = 0; i < nFac; i++) {
+    facLabels.push('Facility ' + (i + 1));
+    // Spread scores around mean with some variation
+    const spread = 0.15;
+    const wVar = ws * (1 + (Math.sin(i * 2.7 + 1) * spread));
+    const hVar = hs * (1 + (Math.cos(i * 3.1 + 2) * spread));
+    facWater.push(Math.min(100, Math.max(0, wVar)));
+    facHeat.push(Math.min(100, Math.max(0, hVar)));
+  }
+
+  chartL = new Chart($('#chartLeft'), {
+    type: 'bar',
+    data: {
+      labels: facLabels,
+      datasets: [
+        { label: 'Water Score', data: facWater, backgroundColor: 'rgba(91,143,232,0.7)', borderColor: 'rgba(91,143,232,1)', borderWidth: 1, borderRadius: 2 },
+        { label: 'Heat Score', data: facHeat, backgroundColor: 'rgba(232,114,76,0.7)', borderColor: 'rgba(232,114,76,1)', borderWidth: 1, borderRadius: 2 }
+      ]
+    },
+    options: {
+      ...chartDefaults,
+      indexAxis: 'y',
+      scales: {
+        x: { grid: { color: 'rgba(46,51,69,0.5)' }, ticks: { color: '#8b8fa3', font: { size: 10 } }, max: 100 },
+        y: { grid: { display: false }, ticks: { color: '#e2e4ea', font: { size: 10, family: "'Inter', sans-serif" } } }
+      }
+    }
+  });
+
+  // Right chart: portfolio comparison with selected highlighted
+  const labels = KEYS.map(k => PORTCOS[k].short || PORTCOS[k].name);
+  const combo = KEYS.map(k => {
+    const pp = PORTCOS[k];
+    return (getWaterScore(pp).score + getHeatScore(pp).score) / 2;
+  });
+  const bgColors = KEYS.map(k => k === state.selected ? 'rgba(91,184,164,0.8)' : 'rgba(91,184,164,0.2)');
+  const brColors = KEYS.map(k => k === state.selected ? 'rgba(91,184,164,1)' : 'rgba(91,184,164,0.4)');
+
+  chartR = new Chart($('#chartRight'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Composite Score',
+        data: combo,
+        backgroundColor: bgColors,
+        borderColor: brColors,
+        borderWidth: 1,
+        borderRadius: 2
+      }]
+    },
+    options: {
+      ...chartDefaults,
+      indexAxis: 'y',
+      scales: {
+        x: { grid: { color: 'rgba(46,51,69,0.5)' }, ticks: { color: '#8b8fa3', font: { size: 10 } }, max: 100 },
+        y: { grid: { display: false }, ticks: { color: '#e2e4ea', font: { size: 10, family: "'Inter', sans-serif" }, callback: function(val, idx) { return labels[idx]; } } }
+      },
+      plugins: { ...chartDefaults.plugins, legend: { display: false } }
+    }
+  });
+}
+
+// ============================================================
+// INITIATIVE TABLE
+// ============================================================
+const INIT_COLS = [
+  { key: 'name', label: 'Initiative', align: 'left' },
+  { key: 'portcoName', label: 'Portco', align: 'left' },
+  { key: 'hazard', label: 'Hazard', align: 'left' },
+  { key: 'difficulty', label: 'Difficulty', align: 'right' },
+  { key: 'capex', label: 'Capex ($M)', align: 'right' },
+  { key: 'ebitdaSaved', label: 'EBITDA Saved/yr ($M)', align: 'right' },
+  { key: 'npv', label: '7yr NPV ($M)', align: 'right' },
+  { key: 'evProtected', label: 'Exit Value Protected ($M)', align: 'right' }
+];
+
+function renderInitTable() {
+  let rows = INITIATIVES.map(i => ({
+    ...i,
+    portcoName: PORTCOS[i.portco] ? (PORTCOS[i.portco].short || PORTCOS[i.portco].name) : i.portco
+  }));
+
+  if (state.selected !== 'portfolio') {
+    rows = rows.filter(r => r.portco === state.selected);
+  }
+
+  // Sort
+  const col = INIT_COLS[state.sortCol];
+  rows.sort((a, b) => {
+    let av = a[col.key], bv = b[col.key];
+    if (typeof av === 'string') return state.sortDir * av.localeCompare(bv);
+    return state.sortDir * (av - bv);
+  });
+
+  // Count
+  $('#initCount').textContent = rows.length + ' initiatives' + (state.selected !== 'portfolio' ? ' for ' + (PORTCOS[state.selected]?.short || '') : '');
+
+  // Head
+  $('#initHead').innerHTML = INIT_COLS.map((c, i) => {
+    const arrow = i === state.sortCol ? (state.sortDir > 0 ? ' &#9650;' : ' &#9660;') : '';
+    const cls = i === state.sortCol ? 'active' : '';
+    return `<th data-col="${i}">${c.label}<span class="sort-arrow ${cls}">${arrow}</span></th>`;
+  }).join('');
+
+  // Wire sort
+  $('#initHead').querySelectorAll('th').forEach(th => {
+    th.addEventListener('click', () => {
+      const ci = parseInt(th.dataset.col);
+      if (state.sortCol === ci) state.sortDir *= -1;
+      else { state.sortCol = ci; state.sortDir = -1; }
+      renderInitTable();
+    });
+  });
+
+  // Body
+  $('#initBody').innerHTML = rows.map(r => {
+    const hazardBadge = r.hazard === 'water_stress'
+      ? '<span class="badge water">Water</span>'
+      : '<span class="badge heat">Heat</span>';
+    const diffBadge = `<span class="badge ${r.difficulty}">${r.difficulty.charAt(0).toUpperCase() + r.difficulty.slice(1)}</span>`;
+    return `<tr>
+      <td>${r.name}</td>
+      <td>${r.portcoName}</td>
+      <td>${hazardBadge}</td>
+      <td>${diffBadge}</td>
+      <td>${fmt(r.capex, 2)}</td>
+      <td>${fmt(r.ebitdaSaved, 3)}</td>
+      <td style="color:${r.npv > 0 ? 'var(--green)' : 'var(--red)'};font-weight:600;">${fmt(r.npv, 3)}</td>
+      <td>${fmt(r.evProtected, 3)}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ============================================================
+// RENDER ALL
+// ============================================================
+function render() {
+  renderMetrics();
+  renderCharts();
+  renderInitTable();
+}
+
+// ============================================================
+// INIT
+// ============================================================
+buildSelector();
+wireToggles();
+render();
+</script>
+</body>
+</html>
