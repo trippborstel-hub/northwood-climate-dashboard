@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recommendations — Northwood Capital Partners</title>
+<style>
+  :root {
+    --bg: #0f1117; --surface: #1a1d27; --surface2: #232735; --surface3: #2a2e3f;
+    --border: #2e3345; --text: #e2e4ea; --text-muted: #8b8fa3; --text-dim: #5a5e72;
+    --accent: #5bb8a4; --accent-dim: rgba(91,184,164,0.12); --white: #fff;
+    --green: #4caf50; --yellow: #e8a84c; --red: #e85d5d; --orange: #e8724c; --blue: #58a6ff;
+    --scope1: #e8724c; --scope2: #58a6ff; --purple: #b07cf0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg); color: var(--text); height: 100vh; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 40px; border-bottom: 1px solid var(--border); background: var(--surface);
+    flex-shrink: 0;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 16px; }
+  .logo { font-size: 13px; font-weight: 700; color: var(--accent); letter-spacing: 0.5px; }
+  .logo .slash { color: var(--text-dim); margin: 0 3px; }
+  .logo .client { color: var(--white); }
+  .topbar-title { font-size: 14px; font-weight: 600; color: var(--text-muted); }
+  .topbar-right { display: flex; align-items: center; gap: 16px; font-size: 12px; color: var(--text-dim); }
+  .slide-counter { font-variant-numeric: tabular-nums; }
+
+  /* ── NAV DOTS ── */
+  .nav-dots {
+    display: flex; gap: 6px; align-items: center; padding: 10px 40px;
+    border-bottom: 1px solid var(--border); background: var(--surface); flex-shrink: 0;
+  }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--border);
+    cursor: pointer; transition: all 0.2s;
+  }
+  .dot:hover { background: var(--text-dim); }
+  .dot.active { background: var(--accent); width: 24px; border-radius: 4px; }
+  .dot-sep { width: 1px; height: 12px; background: var(--border); margin: 0 4px; }
+  .dot-label {
+    font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px;
+    color: var(--text-dim); margin-right: 4px;
+  }
+
+  /* ── SLIDE AREA ── */
+  .slide-area {
+    flex: 1; overflow: hidden; position: relative;
+  }
+  .slide {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    padding: 48px 64px 40px; overflow-y: auto;
+    opacity: 0; transform: translateX(40px); pointer-events: none;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+  .slide.active {
+    opacity: 1; transform: translateX(0); pointer-events: auto;
+  }
+  .slide.exit-left {
+    opacity: 0; transform: translateX(-40px);
+  }
+
+  /* ── SLIDE TYPOGRAPHY ── */
+  .slide-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--accent); margin-bottom: 12px;
+  }
+  .slide h1 {
+    font-size: 36px; font-weight: 700; color: var(--white); line-height: 1.15;
+    margin-bottom: 16px; max-width: 800px;
+  }
+  .slide h1 em { font-style: normal; color: var(--accent); }
+  .slide h2 {
+    font-size: 22px; font-weight: 700; color: var(--white); margin-bottom: 16px;
+  }
+  .slide h2 em { font-style: normal; color: var(--accent); }
+  .slide h3 {
+    font-size: 14px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: 0.5px; margin-bottom: 10px;
+  }
+  .slide p {
+    font-size: 15px; color: var(--text-muted); line-height: 1.65; max-width: 720px;
+    margin-bottom: 16px;
+  }
+  .slide p strong { color: var(--text); font-weight: 600; }
+  .lead {
+    font-size: 18px; color: var(--text); line-height: 1.6; max-width: 760px;
+    margin-bottom: 24px;
+  }
+
+  /* ── LAYOUT HELPERS ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .four-col { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .col-text-right { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; align-items: start; }
+  .spacer { height: 24px; }
+  .spacer-sm { height: 12px; }
+
+  /* ── CARDS ── */
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; }
+  .kpi .label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600; }
+  .kpi .value { font-size: 24px; font-weight: 700; color: var(--white); }
+  .kpi .value .unit { font-size: 12px; font-weight: 400; color: var(--text-muted); margin-left: 2px; }
+  .kpi .sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .kpi.accent-border { border-left: 3px solid var(--accent); }
+  .kpi.red-border { border-left: 3px solid var(--red); }
+  .kpi.yellow-border { border-left: 3px solid var(--yellow); }
+  .kpi.green-border { border-left: 3px solid var(--green); }
+  .kpi.blue-border { border-left: 3px solid var(--blue); }
+
+  .insight-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 20px 24px; margin-bottom: 16px;
+  }
+  .insight-card h3 { margin-bottom: 8px; }
+  .insight-card p { margin-bottom: 0; font-size: 13px; }
+
+  .callout {
+    background: var(--surface); border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0; padding: 16px 24px; margin: 20px 0;
+    font-size: 14px; line-height: 1.6;
+  }
+  .callout strong { color: var(--accent); }
+  .callout.red { border-left-color: var(--red); }
+  .callout.yellow { border-left-color: var(--yellow); }
+
+  /* ── TABLES ── */
+  .tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .tbl th {
+    padding: 10px 12px; text-align: left; font-weight: 600; color: var(--text-dim);
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border); background: var(--surface2);
+  }
+  .tbl th.r { text-align: right; }
+  .tbl td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  .tbl td.r { text-align: right; font-variant-numeric: tabular-nums; }
+  .tbl td.bold { font-weight: 600; color: var(--white); }
+  .tbl tr:last-child td { border-bottom: none; }
+  .tbl tr:hover td { background: rgba(91,184,164,0.03); }
+  .tbl-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+
+  /* ── TAGS / BADGES ── */
+  .tag { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; }
+  .tag-critical { background: rgba(232,93,93,0.15); color: var(--red); }
+  .tag-high { background: rgba(232,168,76,0.15); color: var(--yellow); }
+  .tag-moderate { background: rgba(91,184,164,0.12); color: var(--accent); }
+  .tag-low { background: rgba(76,175,80,0.12); color: var(--green); }
+  .tag-tailwind { background: rgba(88,166,255,0.12); color: var(--blue); }
+  .tag-near { background: rgba(91,184,164,0.12); color: var(--accent); }
+  .tag-medium { background: rgba(232,168,76,0.15); color: var(--yellow); }
+  .tag-long { background: rgba(176,124,240,0.12); color: var(--purple); }
+  .fund-tag { font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 3px; }
+  .fund-i { background: rgba(88,166,255,0.12); color: var(--blue); }
+  .fund-ii { background: rgba(232,168,76,0.12); color: var(--yellow); }
+
+  /* ── RISK MATRIX ── */
+  .risk-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .risk-bar-label { min-width: 160px; font-size: 12px; font-weight: 500; color: var(--text-muted); text-align: right; }
+  .risk-bar-track { flex: 1; height: 28px; background: var(--surface2); border-radius: 4px; overflow: hidden; display: flex; }
+  .risk-seg { height: 100%; transition: width 0.4s ease; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: var(--bg); min-width: 0; }
+  .risk-seg.phys { background: var(--orange); }
+  .risk-seg.trans { background: var(--yellow); }
+  .risk-val { min-width: 90px; font-size: 11px; color: var(--text-muted); text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* ── TIMELINE ── */
+  .timeline { position: relative; padding-left: 24px; }
+  .timeline::before { content: ''; position: absolute; left: 7px; top: 4px; bottom: 4px; width: 2px; background: var(--border); }
+  .tl-item { position: relative; margin-bottom: 16px; }
+  .tl-item::before {
+    content: ''; position: absolute; left: -21px; top: 5px;
+    width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--accent); background: var(--bg);
+  }
+  .tl-item.done::before { background: var(--accent); }
+  .tl-head { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 3px; }
+  .tl-body { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+  .tl-tag { margin-left: 8px; }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 40px; border-top: 1px solid var(--border); background: var(--surface);
+    flex-shrink: 0;
+  }
+  .btn {
+    padding: 8px 20px; border-radius: 6px; font-size: 12px; font-weight: 600;
+    border: 1px solid var(--border); background: var(--surface2); color: var(--text-muted);
+    cursor: pointer; transition: all 0.15s; font-family: inherit;
+  }
+  .btn:hover { background: var(--surface3); color: var(--text); border-color: var(--text-dim); }
+  .btn-primary { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .btn-primary:hover { background: #4da893; }
+  .btn:disabled { opacity: 0.3; cursor: default; }
+  .nav-hint { font-size: 11px; color: var(--text-dim); }
+
+  /* ── HORIZONTAL BARS (for risk viz) ── */
+  .hbar-group { margin-bottom: 20px; }
+  .hbar { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .hbar-label { min-width: 140px; text-align: right; font-size: 12px; color: var(--text-muted); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .hbar-track { flex: 1; height: 22px; background: var(--surface2); border-radius: 4px; overflow: hidden; position: relative; }
+  .hbar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+  .hbar-val { min-width: 70px; text-align: right; font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+
+  /* ── ACTION ITEMS ── */
+  .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .action-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 20px; border-left: 3px solid var(--accent);
+  }
+  .action-card.urgent { border-left-color: var(--red); }
+  .action-card.value { border-left-color: var(--yellow); }
+  .action-card.growth { border-left-color: var(--blue); }
+  .action-card.system { border-left-color: var(--purple); }
+  .action-title { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 4px; }
+  .action-meta { font-size: 11px; color: var(--text-dim); margin-bottom: 6px; }
+  .action-body { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+  .action-body strong { color: var(--text); }
+
+  /* ── INITIATIVE TABLE ── */
+  .init-priority { width: 4px; border-radius: 2px; }
+  .p-near { background: var(--accent); }
+  .p-med { background: var(--yellow); }
+  .p-long { background: var(--purple); }
+
+  @media (max-width: 1000px) {
+    .slide { padding: 32px 28px 28px; }
+    .two-col, .three-col, .four-col, .action-grid { grid-template-columns: 1fr; }
+    .col-text-right { grid-template-columns: 1fr; }
+    .slide h1 { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ TOP BAR ═══ -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo">KITH <span class="slash">/</span> <span class="client">NORTHWOOD</span></div>
+    <div class="topbar-title">Strategic Recommendations</div>
+  </div>
+  <div class="topbar-right">
+    <span class="slide-counter"><span id="currentSlide">1</span> / <span id="totalSlides">12</span></span>
+  </div>
+</div>
+
+<!-- ═══ NAV DOTS ═══ -->
+<div class="nav-dots" id="navDots">
+  <span class="dot-label">Context</span>
+  <div class="dot active" data-slide="0"></div>
+  <div class="dot" data-slide="1"></div>
+  <div class="dot-sep"></div>
+  <span class="dot-label">Findings</span>
+  <div class="dot" data-slide="2"></div>
+  <div class="dot" data-slide="3"></div>
+  <div class="dot" data-slide="4"></div>
+  <div class="dot" data-slide="5"></div>
+  <div class="dot-sep"></div>
+  <span class="dot-label">Actions</span>
+  <div class="dot" data-slide="6"></div>
+  <div class="dot" data-slide="7"></div>
+  <div class="dot" data-slide="8"></div>
+  <div class="dot" data-slide="9"></div>
+  <div class="dot-sep"></div>
+  <span class="dot-label">Close</span>
+  <div class="dot" data-slide="10"></div>
+  <div class="dot" data-slide="11"></div>
+</div>
+
+<!-- ═══ SLIDES ═══ -->
+<div class="slide-area">
+
+<!-- ──────────────────────────────────────────────────────────────
+     SLIDE 0 — OPENING FRAME
+     ────────────────────────────────────────────────────────────── -->
+<div class="slide active" data-idx="0">
+  <div class="slide-label">How to Think About This</div>
+  <h1>Climate Is <em>Three Things</em> You Already Manage</h1>
+  <p class="lead">
+    This isn't a sustainability report. It's a synthesis of physical risk, transition risk, and decarbonization analysis across your portfolio — translated into the language of value creation, risk management, and capital allocation.
+  </p>
+
+  <div class="three-col" style="margin-top: 32px;">
+    <div class="insight-card" style="border-left: 3px solid var(--red);">
+      <h3 style="color: var(--red);">Protect Value</h3>
+      <p><strong>Physical Risk.</strong> Heat stress and water stress are measurable at the facility level. Some of your sites face quantifiable EBITDA erosion over the hold period. This is downside protection — the same discipline as insurance or business continuity planning.</p>
+    </div>
+    <div class="insight-card" style="border-left: 3px solid var(--yellow);">
+      <h3 style="color: var(--yellow);">Position for Where the Market Is Going</h3>
+      <p><strong>Transition Risk.</strong> Carbon pricing, customer ESG requirements, and regulatory shifts are creating cost and market access risks. Your buyers, customers, and LPs are already modeling this. You should be too.</p>
+    </div>
+    <div class="insight-card" style="border-left: 3px solid var(--green);">
+      <h3 style="color: var(--green);">Create Value</h3>
+      <p><strong>Decarbonization.</strong> The same actions that reduce emissions also reduce energy costs, improve exit positioning, and build your LP narrative. Many have positive NPV and payback periods under 3 years.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ──────────────────────────────────────────────────────────────
+     SLIDE 1 — WHAT WE ASSESSED
+     ────────────────────────────────────────────────────────────── -->
+<div class="slide" data-idx="1">
+  <div class="slide-label">Scope of Analysis</div>
+  <h1>What We Assessed</h1>
+
+  <div class="kpi-row" style="margin-top: 24px;">
+    <div class="kpi accent-border">
+      <div class="label">Portfolio Companies</div>
+      <div class="value">10</div>
+      <div class="sub">Fund I (4) + Fund II (6)</div>
+    </div>
+    <div class="kpi accent-border">
+      <div class="label">Facilities Mapped</div>
+      <div class="value">144</div>
+      <div class="sub">Across 20+ states</div>
+    </div>
+    <div class="kpi accent-border">
+      <div class="label">Portfolio Revenue</div>
+      <div class="value">$1.63<span class="unit">B</span></div>
+      <div class="sub">Combined annual</div>
+    </div>
+    <div class="kpi accent-border">
+      <div class="label">Portfolio EBITDA</div>
+      <div class="value">$261<span class="unit">M</span></div>
+      <div class="sub">Combined annual</div>
+    </div>
+    <div class="kpi accent-border">
+      <div class="label">Scope 1 + 2 Emissions</div>
+      <div class="value">31,370<span class="unit">tCO2e</span></div>
+      <div class="sub">Annual baseline</div>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-top: 20px;">
+    <div class="insight-card">
+      <h3>Analysis Layers</h3>
+      <div style="font-size:13px; color:var(--text-muted); line-height:1.8;">
+        <strong style="color:var(--text);">Physical Risk</strong> — WRI Aqueduct 4.0 (water stress) + Open-Meteo CMIP6 (heat stress) at facility level. SSP3-7.0 and SSP5-8.5 scenarios, 2030 and 2035 horizons.<br>
+        <strong style="color:var(--text);">Transition Risk</strong> — Five-vector scoring: customer ESG cascade, input/supply cost, capex cycle, regulatory, exit/refi readiness. EBITDA-at-risk quantification for top 7 material risks.<br>
+        <strong style="color:var(--text);">Decarbonization</strong> — 90+ lever library across 10 portcos. Capex, opex savings, abatement, LCOA, payback. SBTi 1.5°C and WB2°C glide paths. Target and exit value optimization scenarios.<br>
+        <strong style="color:var(--text);">Carbon Inventory</strong> — Scope 1 + 2 baselines for all 10 portcos. Scope 3 screening-level materiality assessment across 15 GHG Protocol categories.
+      </div>
+    </div>
+    <div class="insight-card">
+      <h3>Data Quality</h3>
+      <div style="font-size:13px; color:var(--text-muted); line-height:1.8;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+          <span style="display:inline-block; width:22px; height:22px; background:rgba(76,175,80,0.15); color:var(--green); font-weight:700; font-size:10px; border-radius:4px; text-align:center; line-height:22px;">A</span>
+          <span><strong style="color:var(--text);">4 companies</strong> — Meridian, Sterling, Clearview, Harvest Ridge. Calculation-ready.</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+          <span style="display:inline-block; width:22px; height:22px; background:rgba(232,168,76,0.15); color:var(--yellow); font-weight:700; font-size:10px; border-radius:4px; text-align:center; line-height:22px;">B</span>
+          <span><strong style="color:var(--text);">3 companies</strong> — NovaCare, Trident, Pinnacle. Usable with caveats.</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+          <span style="display:inline-block; width:22px; height:22px; background:rgba(232,93,93,0.15); color:var(--red); font-weight:700; font-size:10px; border-radius:4px; text-align:center; line-height:22px;">C</span>
+          <span><strong style="color:var(--text);">3 companies</strong> — Keystone, Patriot, Ridgeline. Estimates in place, improving.</span>
+        </div>
+        <div style="margin-top:12px; font-size:12px; color:var(--text-dim);">
+          32 data issues identified. 5 critical errors resolved or in resolution. Baselines are defensible for capital allocation decisions today; precision improves with each quarterly update cycle.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ──────────────────────────────────────────────────────────────
+     SLIDE 2 — PHYSICAL RISK HEADLINE
+     ────────────────────────────────────────────────────────────── -->
+<div class="slide" data-idx="2">
+  <div class="slide-label">Physical Risk — What's Exposed</div>
+  <h1>Up to <em>$100M</em> in Enterprise Value at Risk from Heat and Water Stress</h1>
+
+  <div class="kpi-row" style="margin-top:20px;">
+    <div class="kpi red-border">
+      <div class="label">Heat Stress — EV at Risk</div>
+      <div class="value">$58.3<span class="unit">M</span></div>
+      <div class="sub">By 2035 · across portfolio</div>
+    </div>
+    <div class="kpi yellow-border">
+      <div class="label">Water Stress — EV at Risk</div>
+      <div class="value">$42.4<span class="unit">M</span></div>
+      <div class="sub">SSP5-8.5 · 2035</div>
+    </div>
+    <div class="kpi red-border">
+      <div class="label">Combined EBITDA Impact</div>
+      <div class="value">$11.0<span class="unit">M/yr</span></div>
+      <div class="sub">Heat $6.4M + Water $4.6M</div>
+    </div>
+    <div class="kpi accent-border">
+      <div class="label">Positive-NPV Mitigations</div>
+      <div class="value">11</div>
+      <div class="sub">$3.1M capex · $16.5M EV protected</div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:20px;">Enterprise Value at Risk by Company</h3>
+  <p style="font-size:12px; margin-bottom:12px;">Combined heat + water stress · SSP3-7.0 · 2035 horizon</p>
+
+  <div class="hbar-group">
+    <div class="hbar">
+      <div class="hbar-label">Sterling Precision</div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:52%; background: linear-gradient(90deg, var(--orange) 62%, var(--yellow) 62%);"></div></div>
+      <div class="hbar-val">$24.0M EV</div>
+    </div>
+    <div class="hbar">
+      <div class="hbar-label">Harvest Ridge</div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:30%; background: linear-gradient(90deg, var(--orange) 45%, var(--yellow) 45%);"></div></div>
+      <div class="hbar-val">$13.9M EV</div>
+    </div>
+    <div class="hbar">
+      <div class="hbar-label">Ridgeline</div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:29%; background: linear-gradient(90deg, var(--orange) 80%, var(--yellow) 80%);"></div></div>
+      <div class="hbar-val">$13.7M EV</div>
+    </div>
+    <div class="hbar">
+      <div class="hbar-label">Clearview</div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:28%; background: linear-gradient(90deg, var(--orange) 50%, var(--yellow) 50%);"></div></div>
+      <div class="hbar-val">$13.0M EV</div>
+    </div>
+    <div class="hbar">
+      <div class="hbar-label">Trident IT</div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:22%; background: linear-gradient(90deg, var(--orange) 71%, var(--yellow) 71%);"></div></div>
+      <div class="hbar-val">$10.2M EV</div>
+    </div>
+    <div class="hbar">
+      <div class="hbar-label">Keystone</div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:22%; background: linear-gradient(90deg, var(--orange) 74%, var(--yellow) 74%);"></div></div>
+      <div class="hbar-val">$10.5M EV</div>
+    </div>
+    <div class="hbar">
+      <div class="hbar-label">Pinnacle</div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:17%; background: linear-gradient(90deg, var(--orange) 74%, var(--yellow) 74%);"></div></div>
+      <div class="hbar-val">$8.1M EV</div>
+    </div>
+    <div class="hbar">
+      <div class="hbar-label">Meridian</div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:18%; background: linear-gradient(90deg, var(--orange) 75%, var(--yellow) 75%);"></div></div>
+      <div class="hbar-val">$8.4M EV</div>
+    </div>
+    <div class="hbar">
+      <div class="hbar-label">NovaCare</div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:17%; background: linear-gradient(90deg, var(--orange) 61%, var(--yellow) 61%);"></div></div>
+      <div class="hbar-val">$7.9M EV</div>
+    </div>
+    <div class="hbar">
+      <div class="hbar-label">Patriot Staffing</div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:8%; background: linear-gradient(90deg, var(--orange) 79%, var(--yellow) 79%);"></div></div>
+      <div class="hbar-val">$3.7M EV</div>
+    </div>
+  </div>
+  <div style="display:flex; gap:16px; font-size:11px; color:var(--text-dim); margin-top:8px;">
+    <span><span style="display:inline-block;width:10px;height:10px;background:var(--orange);border-radius:2px;vertical-align:middle;margin-right:4px;"></span>Heat stress</span>
+    <span><span style="display:inline-block;width:10px;height:10px;background:var(--yellow);border-radius:2px;vertical-align:middle;margin-right:4px;"></span>Water stress</span>
+  </div>
+</div>
+
+<!-- ──────────────────────────────────────────────────────────────
+     SLIDE 3 — PHYSICAL RISK — KEY EXPOSURES
+     ────────────────────────────────────────────────────────────── -->
+<div class="slide" data-idx="3">
+  <div class="slide-label">Physical Risk — Where It Matters Most</div>
+  <h1>Three Companies Need <em>Facility-Level Attention</em></h1>
+  <p>You'd never acquire a building without knowing the flood zone. This is the same discipline applied to your operating portfolio.</p>
+
+  <div class="three-col" style="margin-top:20px;">
+    <div class="insight-card" style="border-left:3px solid var(--red);">
+      <h3>Ridgeline Property Services</h3>
+      <div style="font-size:12px; color:var(--text-muted); line-height:1.7;">
+        <strong style="color:var(--white);">Highest water stress in portfolio</strong> — 66.7 baseline score (high category). Mountain West / Southwest concentration. 115 days above 35°C by 2035.<br><br>
+        <strong style="color:var(--text);">$13.7M EV at risk.</strong> Managed properties (~18M sq ft) amplify exposure beyond corporate footprint. HVAC load increases directly compress margins on fixed-fee management contracts.
+      </div>
+    </div>
+    <div class="insight-card" style="border-left:3px solid var(--red);">
+      <h3>Sterling Precision Manufacturing</h3>
+      <div style="font-size:12px; color:var(--text-muted); line-height:1.7;">
+        <strong style="color:var(--white);">Highest heat exposure in portfolio</strong> — 107.7 days above 35°C by 2035. Manufacturing operations are temperature-sensitive (precision tolerances, worker safety).<br><br>
+        <strong style="color:var(--text);">$24.0M EV at risk.</strong> But strong positive-NPV mitigations available: OSHA heat action plan ($90K capex, $328K EBITDA saved), HVAC upgrade ($1.8M capex, $492K saved), shift scheduling (zero capex).
+      </div>
+    </div>
+    <div class="insight-card" style="border-left:3px solid var(--yellow);">
+      <h3>Harvest Ridge Foods</h3>
+      <div style="font-size:12px; color:var(--text-muted); line-height:1.7;">
+        <strong style="color:var(--white);">Water dependency + cold storage</strong> — 28M gal/yr water usage. Bowling Green plant had 3 pressure drops in summer 2025 (~$280K production losses). Nashville facility has 17-year-old R-404A refrigeration system.<br><br>
+        <strong style="color:var(--text);">$13.9M EV at risk.</strong> Heat action plan ($150K capex, $149K EBITDA saved) and drought-resilient sourcing (zero capex, $142K saved) are immediate wins.
+      </div>
+    </div>
+  </div>
+
+  <div class="callout" style="margin-top:20px;">
+    <strong>The takeaway:</strong> Physical risk is concentrated, not distributed. Three companies represent 68% of portfolio EV-at-risk. Targeted interventions at these three — totaling ~$3.1M in capex — protect $16.5M in enterprise value. That's a 5.3x return on mitigation spend.
+  </div>
+</div>
+
+<!-- ──────────────────────────────────────────────────────────────
+     SLIDE 4 — TRANSITION RISK
+     ────────────────────────────────────────────────────────────── -->
+<div class="slide" data-idx="4">
+  <div class="slide-label">Transition Risk — Where the Market Is Moving</div>
+  <h1><em>$38M</em> in EBITDA Is Exposed to Customer, Regulatory, and Exit Pressures</h1>
+  <p>The cost of carbon is moving from implicit to explicit. Your customers and regulators are on a faster timeline than your portfolio companies.</p>
+
+  <div class="kpi-row" style="margin-top:20px;">
+    <div class="kpi red-border">
+      <div class="label">Critical Risk</div>
+      <div class="value">2<span class="unit">portcos</span></div>
+      <div class="sub">Harvest Ridge · Meridian</div>
+    </div>
+    <div class="kpi yellow-border">
+      <div class="label">High Risk</div>
+      <div class="value">3<span class="unit">portcos</span></div>
+      <div class="sub">Sterling · Ridgeline · Pinnacle</div>
+    </div>
+    <div class="kpi green-border">
+      <div class="label">Net Tailwind</div>
+      <div class="value">1<span class="unit">portco</span></div>
+      <div class="sub">Clearview Environmental</div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:16px;">Top Financially Material Risks</h3>
+  <div class="tbl-wrap">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th style="width:4px;"></th>
+          <th>Risk</th>
+          <th>Company</th>
+          <th>Vector</th>
+          <th class="r">EBITDA at Risk</th>
+          <th class="r">Severity</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="init-priority p-near" style="height:28px;"></div></td>
+          <td class="bold">Anchor customer loss — F500 Scope 3 mandates</td>
+          <td>Harvest Ridge <span class="fund-tag fund-ii">II</span></td>
+          <td>Customer ESG</td>
+          <td class="r bold" style="color:var(--red);">$8–12M/yr</td>
+          <td class="r"><span class="tag tag-critical">Critical</span></td>
+        </tr>
+        <tr>
+          <td><div class="init-priority p-near" style="height:28px;"></div></td>
+          <td class="bold">Exit multiple haircut — no climate data in DD</td>
+          <td>Meridian <span class="fund-tag fund-i">I</span></td>
+          <td>Exit / Refi</td>
+          <td class="r bold" style="color:var(--red);">$20–40M EV</td>
+          <td class="r"><span class="tag tag-critical">Critical</span></td>
+        </tr>
+        <tr>
+          <td><div class="init-priority p-near" style="height:28px;"></div></td>
+          <td class="bold">A&D customer ESG cascade — prime contractors pushing Tier 2/3</td>
+          <td>Sterling <span class="fund-tag fund-i">I</span></td>
+          <td>Customer ESG</td>
+          <td class="r bold" style="color:var(--yellow);">$5–8M/yr</td>
+          <td class="r"><span class="tag tag-high">High</span></td>
+        </tr>
+        <tr>
+          <td><div class="init-priority p-med" style="height:28px;"></div></td>
+          <td class="bold">Building Performance Standards — CA, NYC, Denver, Boulder</td>
+          <td>Ridgeline <span class="fund-tag fund-ii">II</span></td>
+          <td>Regulatory</td>
+          <td class="r bold" style="color:var(--yellow);">$3–5M/yr</td>
+          <td class="r"><span class="tag tag-high">High</span></td>
+        </tr>
+        <tr>
+          <td><div class="init-priority p-med" style="height:28px;"></div></td>
+          <td class="bold">Steel + process gas input cost inflation</td>
+          <td>Sterling <span class="fund-tag fund-i">I</span></td>
+          <td>Input / Supply</td>
+          <td class="r bold" style="color:var(--yellow);">$2–4M/yr</td>
+          <td class="r"><span class="tag tag-high">High</span></td>
+        </tr>
+        <tr>
+          <td><div class="init-priority p-long" style="height:28px;"></div></td>
+          <td class="bold">O&G / refining customer mix shift</td>
+          <td>Pinnacle <span class="fund-tag fund-ii">II</span></td>
+          <td>Customer ESG</td>
+          <td class="r" style="color:var(--text-muted);">$2–3M/yr</td>
+          <td class="r"><span class="tag tag-moderate">Medium</span></td>
+        </tr>
+        <tr>
+          <td><div class="init-priority p-long" style="height:28px;"></div></td>
+          <td class="bold">Sustainability-gated cyber RFPs</td>
+          <td>Trident <span class="fund-tag fund-i">I</span></td>
+          <td>Customer ESG</td>
+          <td class="r" style="color:var(--text-muted);">$1–2M/yr</td>
+          <td class="r"><span class="tag tag-moderate">Medium</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ──────────────────────────────────────────────────────────────
+     SLIDE 5 — TRANSITION RISK DETAIL
+     ────────────────────────────────────────────────────────────── -->
+<div class="slide" data-idx="5">
+  <div class="slide-label">Transition Risk — The Two That Matter Now</div>
+  <h1><em>Harvest Ridge</em> and <em>Meridian</em> Need Action Before Year-End</h1>
+
+  <div class="two-col" style="margin-top:24px;">
+    <div class="insight-card" style="border-left:3px solid var(--red);">
+      <h3 style="color:var(--red);">Harvest Ridge Foods — Customer Mandate Risk</h3>
+      <div style="font-size:13px; color:var(--text-muted); line-height:1.7;">
+        <strong style="color:var(--white);">The problem:</strong> Top-5 customers = 45% of revenue. These are F500 brands (Unilever, Nestl&eacute;, PepsiCo, General Mills) with SBTi-validated Scope 3 commitments. Three customers (~$34M revenue) have already requested supplier emissions data. One makes it mandatory by 2027.<br><br>
+        <strong style="color:var(--white);">What's at stake:</strong> $8–12M EBITDA/yr. Not because Harvest Ridge will lose these customers overnight — but because RFP scoring increasingly weights supplier sustainability data. Without it, Harvest Ridge moves from preferred to replaceable.<br><br>
+        <strong style="color:var(--white);">The action:</strong> Within 60 days, identify top-5 customer Scope 3 programs. Commission per-SKU cradle-to-gate product carbon footprints for top 3 customers. The carbon inventory baseline is already built — this extends it to the customer-facing format they need.
+      </div>
+    </div>
+    <div class="insight-card" style="border-left:3px solid var(--red);">
+      <h3 style="color:var(--red);">Meridian Business Solutions — Exit Multiple at Risk</h3>
+      <div style="font-size:13px; color:var(--text-muted); line-height:1.7;">
+        <strong style="color:var(--white);">The problem:</strong> 8-year hold. Sell-side advisor discussion on March board agenda. Buyer universe is financial services (highest SBTi-adoption sector). PE buyers now routinely include ESG in due diligence. Showing up without climate data is like showing up without a quality of earnings report.<br><br>
+        <strong style="color:var(--white);">What's at stake:</strong> 0.5–1.0x multiple compression. On $38.3M EBITDA at 9.5x, that's $19–38M in enterprise value. The cost of preparing the climate data: effectively zero — the baseline is already calculated.<br><br>
+        <strong style="color:var(--white);">The action:</strong> Pre-DD climate package within weeks: Scope 1/2 baseline, intensity metrics and trajectory, customer SBTi/CDP map, transition risk one-pager, climate section for the CIM. This is exit value protection with asymmetric upside.
+      </div>
+    </div>
+  </div>
+
+  <div class="callout" style="margin-top:16px;">
+    <strong>Both of these are time-sensitive.</strong> Meridian's exit process has a fixed timeline. Harvest Ridge's customer mandates have a fixed deadline. Unlike efficiency capex (which you can schedule), these windows close.
+  </div>
+</div>
+
+<!-- ──────────────────────────────────────────────────────────────
+     SLIDE 6 — DECARBONIZATION ROI
+     ────────────────────────────────────────────────────────────── -->
+<div class="slide" data-idx="6">
+  <div class="slide-label">Decarbonization — Where the Returns Are</div>
+  <h1>The Same Actions That Reduce Risk <em>Generate Returns</em></h1>
+  <p>You're not choosing between managing climate and making money. These are capital allocation decisions with measurable payback — the same evaluation you'd apply to any portco capex request.</p>
+
+  <div class="kpi-row" style="margin-top:20px;">
+    <div class="kpi green-border">
+      <div class="label">Negative-LCOA Levers</div>
+      <div class="value">45+</div>
+      <div class="sub">Net savings over lifetime</div>
+    </div>
+    <div class="kpi green-border">
+      <div class="label">Avg. Payback — Quick Wins</div>
+      <div class="value">&lt;3<span class="unit">years</span></div>
+      <div class="sub">LED, HVAC, compressed air, audits</div>
+    </div>
+    <div class="kpi accent-border">
+      <div class="label">Portfolio Baseline</div>
+      <div class="value">31,370<span class="unit">tCO2e</span></div>
+      <div class="sub">Scope 1: 14,720 · Scope 2: 16,650</div>
+    </div>
+    <div class="kpi accent-border">
+      <div class="label">SBTi 1.5°C Target</div>
+      <div class="value">4.2<span class="unit">%/yr</span></div>
+      <div class="sub">Linear reduction pathway</div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:16px;">Highest-Return Initiatives Across Portfolio</h3>
+  <div class="tbl-wrap">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Initiative</th>
+          <th>Companies</th>
+          <th class="r">Total Capex</th>
+          <th class="r">Annual Savings</th>
+          <th class="r">Abatement</th>
+          <th class="r">Payback</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="bold">Energy audits + benchmarking</td>
+          <td>All 10</td>
+          <td class="r">$415K</td>
+          <td class="r" style="color:var(--green);">-$123K/yr</td>
+          <td class="r">615 tCO2e</td>
+          <td class="r">3.4 yr</td>
+        </tr>
+        <tr>
+          <td class="bold">LED retrofits + lighting controls</td>
+          <td>All 10</td>
+          <td class="r">$995K</td>
+          <td class="r" style="color:var(--green);">-$284K/yr</td>
+          <td class="r">955 tCO2e</td>
+          <td class="r">3.5 yr</td>
+        </tr>
+        <tr>
+          <td class="bold">Compressed air leak survey + VFDs</td>
+          <td>Sterling</td>
+          <td class="r">$150K</td>
+          <td class="r" style="color:var(--green);">-$65K/yr</td>
+          <td class="r">220 tCO2e</td>
+          <td class="r">2.3 yr</td>
+        </tr>
+        <tr>
+          <td class="bold">HVAC controls + smart thermostats</td>
+          <td>8 portcos</td>
+          <td class="r">$535K</td>
+          <td class="r" style="color:var(--green);">-$139K/yr</td>
+          <td class="r">490 tCO2e</td>
+          <td class="r">3.9 yr</td>
+        </tr>
+        <tr>
+          <td class="bold">Route optimization + anti-idling</td>
+          <td>Clearview, Pinnacle</td>
+          <td class="r">$140K</td>
+          <td class="r" style="color:var(--green);">-$78K/yr</td>
+          <td class="r">640 tCO2e</td>
+          <td class="r">1.8 yr</td>
+        </tr>
+        <tr>
+          <td class="bold">Boiler efficiency / economizer</td>
+          <td>Harvest Ridge</td>
+          <td class="r">$180K</td>
+          <td class="r" style="color:var(--green);">-$35K/yr</td>
+          <td class="r">240 tCO2e</td>
+          <td class="r">5.1 yr</td>
+        </tr>
+        <tr>
+          <td class="bold">Refrigerant leak mgmt + low-GWP swap</td>
+          <td>Sterling, Harvest Ridge</td>
+          <td class="r">$180K</td>
+          <td class="r" style="color:var(--green);">-$35K/yr</td>
+          <td class="r">230 tCO2e</td>
+          <td class="r">5.1 yr</td>
+        </tr>
+        <tr>
+          <td class="bold">Data center cooling optimization</td>
+          <td>Trident</td>
+          <td class="r">$120K</td>
+          <td class="r" style="color:var(--green);">-$45K/yr</td>
+          <td class="r">180 tCO2e</td>
+          <td class="r">2.7 yr</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout" style="margin-top:12px;">
+    <strong>Read this table like a capital allocation memo:</strong> $2.7M in total capex across these eight initiative categories generates $804K/yr in recurring savings with an average payback of 3.4 years. That's before carbon price exposure or exit multiple benefits.
+  </div>
+</div>
+
+<!-- ──────────────────────────────────────────────────────────────
+     SLIDE 7 — NEAR TERM (0–6 MONTHS)
+     ────────────────────────────────────────────────────────────── -->
+<div class="slide" data-idx="7">
+  <div class="slide-label">Action Plan</div>
+  <h1>Near Term: <em>0–6 Months</em></h1>
+  <p>Urgent items with fixed deadlines, plus quick wins that require minimal capex and generate immediate returns.</p>
+
+  <div class="action-grid" style="margin-top:24px;">
+    <div class="action-card urgent">
+      <div class="action-title">Meridian Exit Climate Package</div>
+      <div class="action-meta">Meridian <span class="fund-tag fund-i">I</span> · Cost: ~$0 (data exists) · Protect: $19–38M EV</div>
+      <div class="action-body">Package Scope 1/2 baseline, intensity metrics, improvement trajectory, and customer SBTi/CDP map into a CIM climate section and data room exhibit. <strong>The baseline is calculated. This is formatting and narrative, not new analysis.</strong></div>
+    </div>
+    <div class="action-card urgent">
+      <div class="action-title">Harvest Ridge Customer Response Program</div>
+      <div class="action-meta">Harvest Ridge <span class="fund-tag fund-ii">II</span> · Cost: minimal · Protect: $8–12M EBITDA/yr</div>
+      <div class="action-body">Map top-5 customer Scope 3 programs. Build per-SKU product carbon footprints for 3 largest customers. <strong>One customer's mandate is binding by 2027 — the clock is running.</strong></div>
+    </div>
+    <div class="action-card value">
+      <div class="action-title">Sterling Quick-Win Bundle</div>
+      <div class="action-meta">Sterling <span class="fund-tag fund-i">I</span> · Capex: $375K · Savings: $148K/yr · Payback: 2.5 yr</div>
+      <div class="action-body">Energy audit ($75K), compressed air + VFDs ($150K), HVAC controls ($95K), refrigerant leak mgmt ($60K). All negative LCOA. Also builds the RFP-ready emissions data Sterling's defense customers are requesting.</div>
+    </div>
+    <div class="action-card value">
+      <div class="action-title">Portfolio-Wide LED Program</div>
+      <div class="action-meta">All 10 portcos · Capex: $995K · Savings: $284K/yr · Payback: 3.5 yr</div>
+      <div class="action-body">Standardized LED retrofit across all facilities. Well-understood technology, minimal operational disruption, reliable payback. Can be bid as a portfolio-wide contract for volume pricing.</div>
+    </div>
+    <div class="action-card growth">
+      <div class="action-title">EDCI Enrollment</div>
+      <div class="action-meta">Fund-level · Cost: $0 · Value: Fund III positioning</div>
+      <div class="action-body">The data system already produces the 6 core EDCI metrics (energy, emissions, renewables, board oversight, targets, incidents). <strong>Enroll for Fund II. This becomes a tangible LP talking point.</strong></div>
+    </div>
+    <div class="action-card">
+      <div class="action-title">Patriot Fleet Data Resolution</div>
+      <div class="action-meta">Patriot <span class="fund-tag fund-ii">II</span> · Cost: $0 · Blocker removal</div>
+      <div class="action-body">Fleet gasoline data is physically implausible (76K gal / 8 vehicles = 16x expected). One email to Scott Henderson for fuel card verification. <strong>This is the only true data blocker remaining in the portfolio.</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- ──────────────────────────────────────────────────────────────
+     SLIDE 8 — MEDIUM TERM (6–24 MONTHS)
+     ────────────────────────────────────────────────────────────── -->
+<div class="slide" data-idx="8">
+  <div class="slide-label">Action Plan</div>
+  <h1>Medium Term: <em>6–24 Months</em></h1>
+  <p>Systematic integration into how Northwood operates. These aren't projects — they're capabilities that compound over the hold period.</p>
+
+  <div class="action-grid" style="margin-top:24px;">
+    <div class="action-card system">
+      <div class="action-title">Quarterly Climate Reporting Cadence</div>
+      <div class="action-meta">Fund-level · Cost: marginal · Value: compounding data quality</div>
+      <div class="action-body">Add 4 climate fields to the existing monthly portco financial package (electricity kWh, natural gas therms, fuel gallons, refrigerant recharges). <strong>Portco CFOs already report monthly financials — this is 4 more rows, not a new process.</strong> The data system ingests it automatically. Quality improves every quarter.</div>
+    </div>
+    <div class="action-card value">
+      <div class="action-title">Clearview Fleet Optimization</div>
+      <div class="action-meta">Clearview <span class="fund-tag fund-ii">II</span> · Capex: $760K · Savings: $100K/yr + EV Phase 1</div>
+      <div class="action-body">Route optimization ($45K, 1.8yr payback), anti-idling program ($35K, 1.4yr payback), then EV transition for light vehicles ($680K, 450 tCO2e). Telematics already installed but not formally used. <strong>Fleet is 67% of Clearview's Scope 1 — this is the lever.</strong></div>
+    </div>
+    <div class="action-card value">
+      <div class="action-title">100-Day Plan Climate Integration</div>
+      <div class="action-meta">Keystone + Harvest Ridge <span class="fund-tag fund-ii">II</span> · Early hold = longest compounding</div>
+      <div class="action-body">Include energy audit + LED + HVAC controls in 100-day operating plans. Keystone: $155K capex, $44K/yr savings across 22 clinics. Harvest Ridge: $375K capex (audit + LED + boiler efficiency), $93K/yr savings. <strong>Earliest hold period means initiatives compound longest before exit.</strong></div>
+    </div>
+    <div class="action-card growth">
+      <div class="action-title">Ridgeline BPS Compliance Offering</div>
+      <div class="action-meta">Ridgeline <span class="fund-tag fund-ii">II</span> · Risk: $3–5M/yr · Opportunity: +5–8% repricing</div>
+      <div class="action-body">Building Performance Standards in CA, NYC, Denver, and Boulder directly affect managed properties. Turn compliance from a cost into revenue: productize benchmarking, audits, and retro-commissioning as a premium service tier. <strong>Two-sided risk: $3–5M EBITDA at risk if passive, +5–8% repricing opportunity if proactive.</strong></div>
+    </div>
+    <div class="action-card value">
+      <div class="action-title">Sterling Process Efficiency</div>
+      <div class="action-meta">Sterling <span class="fund-tag fund-i">I</span> · Capex: $720K · Savings: $125K/yr</div>
+      <div class="action-body">Building envelope + insulation ($180K), waste heat recovery ($240K), machine tool VFD upgrades ($480K). Deeper efficiency measures that require engineering scoping. <strong>$1.8M/yr energy cost means even modest efficiency gains are material.</strong></div>
+    </div>
+    <div class="action-card">
+      <div class="action-title">Physical Risk Monitoring</div>
+      <div class="action-meta">Fund-level · Annual refresh · 144 facilities</div>
+      <div class="action-body">Annual refresh of facility-level heat and water stress scores during portfolio reviews. Flag any facility that crosses a threshold. The model is built — this is a quarterly input, not a new project.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ──────────────────────────────────────────────────────────────
+     SLIDE 9 — LONG TERM (2+ YEARS)
+     ────────────────────────────────────────────────────────────── -->
+<div class="slide" data-idx="9">
+  <div class="slide-label">Action Plan</div>
+  <h1>Long Term: <em>2+ Years</em></h1>
+  <p>Strategic positioning for Fund III and portfolio-level maturity. These are the moves that differentiate Northwood in LP conversations and deal sourcing.</p>
+
+  <div class="action-grid" style="margin-top:24px;">
+    <div class="action-card system">
+      <div class="action-title">Climate Screening for New Deals</div>
+      <div class="action-meta">Fund-level · $495M remaining Fund II capacity</div>
+      <div class="action-body">Add a lightweight climate screen to the deal evaluation process: physical risk exposure (facility locations vs. hazard maps), transition risk profile (customer ESG maturity, regulatory exposure), and decarbonization opportunity (energy intensity, quick-win potential). <strong>Not a gate — a lens. Same as you'd screen for IT integration complexity or customer concentration.</strong></div>
+    </div>
+    <div class="action-card growth">
+      <div class="action-title">Fund III LP Narrative</div>
+      <div class="action-meta">Fund-level · Value: fundraising differentiation</div>
+      <div class="action-body">By this point, Northwood will have 2+ years of quarterly climate data, documented reduction trajectories, and quantified value creation from efficiency capex. <strong>This is a Fund III fundraising asset</strong> — systematic climate integration across portfolio lifecycle, demonstrated with data, not just policy language. EDCI participation + ILPA ESG Assessment readiness.</div>
+    </div>
+    <div class="action-card value">
+      <div class="action-title">Deep Decarbonization — Process Heat</div>
+      <div class="action-meta">Sterling + Harvest Ridge · Capex: $2.3M+ · Long-life assets</div>
+      <div class="action-body">Heat pump retrofits (Sterling: space heating $850K, parts wash $620K; Harvest Ridge: low-temp process heat $550K). Electric induction for Sterling heat treat ($1.1M). These are 15–20 year asset lives with strong NPV but longer payback. <strong>Schedule after quick wins are captured and baseline data is seasoned.</strong></div>
+    </div>
+    <div class="action-card value">
+      <div class="action-title">Green Tariff / VPPA for Residual Scope 2</div>
+      <div class="action-meta">Portfolio-wide · Opex: ~$633K/yr · 14,700 tCO2e abated</div>
+      <div class="action-body">After efficiency measures reduce electricity load, procure renewable energy for the remainder via virtual PPAs or green tariffs. Scale VPPA to residual Scope 2 only — efficiency first, then procurement. <strong>This is the "last mile" to a near-zero Scope 2 portfolio.</strong></div>
+    </div>
+    <div class="action-card">
+      <div class="action-title">Scope 3 Program — Material Categories</div>
+      <div class="action-meta">5–6 portcos with material Scope 3 · Phased approach</div>
+      <div class="action-body">Category 1 (purchased goods) is material for Sterling, Harvest Ridge, and Meridian. Category 8 (leased assets) for Meridian, NovaCare, Trident. Ridgeline's managed portfolio (~18M sq ft) is Category 13 — 785x larger than corporate footprint. <strong>Start with screening-level estimates, refine where customer mandates require it.</strong></div>
+    </div>
+    <div class="action-card">
+      <div class="action-title">Facility Resilience Planning</div>
+      <div class="action-meta">Ridgeline · Sterling · Harvest Ridge · Highest-exposure sites</div>
+      <div class="action-body">Site-level resilience plans for facilities exceeding risk thresholds: water contingency for Ridgeline's Mountain West properties, heat mitigation for Sterling's manufacturing floor, cold storage backup for Harvest Ridge Nashville plant. Integrate into annual capex planning.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ──────────────────────────────────────────────────────────────
+     SLIDE 10 — CLEARVIEW TAILWIND
+     ────────────────────────────────────────────────────────────── -->
+<div class="slide" data-idx="10">
+  <div class="slide-label">Opportunity Spotlight</div>
+  <h1>Clearview Is a <em>Net Beneficiary</em> of Climate Transition</h1>
+  <p>Not every climate finding is a risk. Clearview Environmental is positioned to capture upside from the same regulatory and market forces that create pressure elsewhere in the portfolio.</p>
+
+  <div class="two-col" style="margin-top:24px;">
+    <div>
+      <div class="insight-card" style="border-left:3px solid var(--blue);">
+        <h3>Demand Tailwinds</h3>
+        <div style="font-size:13px; color:var(--text-muted); line-height:1.7;">
+          <strong style="color:var(--white);">PFAS regulation</strong> — EPA final rule creates remediation demand across municipal and industrial water systems. Clearview's lab and field capabilities are directly positioned.<br><br>
+          <strong style="color:var(--white);">Infrastructure bill</strong> — Federal funding for environmental cleanup and water infrastructure. Clearview's 185-client diversified base captures this spend.<br><br>
+          <strong style="color:var(--white);">Methane regulations</strong> — Tighter leak detection and remediation requirements for O&G operators. Clearview's field operations serve this market.
+        </div>
+      </div>
+      <div class="callout" style="border-left-color:var(--blue);">
+        <strong>Exit positioning:</strong> Quantified sustainability credentials + growth-from-regulation narrative is a compelling buyer thesis. Fleet electrification feasibility study strengthens this — shows the business is practicing what its customers are paying for.
+      </div>
+    </div>
+    <div>
+      <div class="insight-card" style="border-left:3px solid var(--accent);">
+        <h3>Recommended Actions</h3>
+        <div class="timeline" style="margin-top:12px;">
+          <div class="tl-item done">
+            <div class="tl-head">Fleet telematics analysis <span class="tag tl-tag tag-near">Near</span></div>
+            <div class="tl-body">Telematics installed but unused. Route optimization ($45K) + anti-idling ($35K) = 400 tCO2e, $45K/yr savings.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-head">EV fleet Phase 1 — light vehicles <span class="tag tl-tag tag-medium">Medium</span></div>
+            <div class="tl-body">$680K capex, 450 tCO2e, $55K/yr savings. De-risks 25% of fleet emissions.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-head">ESG questionnaire response program <span class="tag tl-tag tag-near">Near</span></div>
+            <div class="tl-body">3 refinery clients sent ESG questionnaires in 2025. Standardize response with Scope 1/2 baseline data already built.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-head">EV fleet Phase 2 — medium-duty <span class="tag tl-tag tag-long">Long</span></div>
+            <div class="tl-body">$950K capex, 380 tCO2e. Timing depends on medium-duty EV availability and field ops requirements.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-head">Sustainability narrative for exit <span class="tag tl-tag tag-medium">Medium</span></div>
+            <div class="tl-body">Package demand tailwinds + fleet transition + quantified emissions data into buyer thesis.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ──────────────────────────────────────────────────────────────
+     SLIDE 11 — CLOSING / THE SYSTEM IS BUILT
+     ────────────────────────────────────────────────────────────── -->
+<div class="slide" data-idx="11">
+  <div class="slide-label">Summary</div>
+  <h1>The System Is <em>Built</em></h1>
+  <p class="lead">
+    The baselines are calculated. The risk is mapped. The initiatives are costed. This isn't a report that goes on a shelf — it's a living system that gets better every quarter.
+  </p>
+
+  <div class="three-col" style="margin-top:24px;">
+    <div class="kpi green-border">
+      <div class="label">Near Term (0–6 mo)</div>
+      <div class="value" style="font-size:18px;">6 actions</div>
+      <div class="sub" style="line-height:1.6; margin-top:8px;">
+        Meridian exit package<br>
+        Harvest Ridge customer program<br>
+        Sterling quick-win bundle<br>
+        Portfolio LED program<br>
+        EDCI enrollment<br>
+        Patriot data resolution
+      </div>
+    </div>
+    <div class="kpi yellow-border">
+      <div class="label">Medium Term (6–24 mo)</div>
+      <div class="value" style="font-size:18px;">6 actions</div>
+      <div class="sub" style="line-height:1.6; margin-top:8px;">
+        Quarterly climate reporting<br>
+        Clearview fleet optimization<br>
+        100-day plan integration<br>
+        Ridgeline BPS offering<br>
+        Sterling process efficiency<br>
+        Physical risk monitoring
+      </div>
+    </div>
+    <div class="kpi" style="border-left:3px solid var(--purple);">
+      <div class="label">Long Term (2+ yr)</div>
+      <div class="value" style="font-size:18px;">6 actions</div>
+      <div class="sub" style="line-height:1.6; margin-top:8px;">
+        Climate deal screening<br>
+        Fund III LP narrative<br>
+        Deep decarb — process heat<br>
+        Portfolio VPPA<br>
+        Scope 3 program<br>
+        Facility resilience plans
+      </div>
+    </div>
+  </div>
+
+  <div class="callout" style="margin-top:28px; font-size:15px; line-height:1.7;">
+    <strong>The building is wired.</strong> The data has somewhere to go and someone looking at it. From here, the system compounds: every quarterly update sharpens the baselines, every initiative closes the gap to the SBTi glide path, and every data point strengthens the LP narrative.<br><br>
+    The recommendations above aren't a consulting roadmap. They're the first set of decisions the system enables — prioritized by financial return, sequenced by hold period, and connected to the three value levers that matter: <strong>protecting EBITDA, positioning for exit, and building the Fund III story.</strong>
+  </div>
+
+  <div style="margin-top:32px; display:flex; gap:20px; align-items:center;">
+    <div style="font-size:13px; color:var(--accent); font-weight:600;">KITH CONSULTING</div>
+    <div style="font-size:12px; color:var(--text-dim);">Prepared for Sarah Chen, COO — Northwood Capital Partners</div>
+    <div style="font-size:12px; color:var(--text-dim);">April 2026</div>
+  </div>
+</div>
+
+</div><!-- /slide-area -->
+
+<!-- ═══ BOTTOM NAV ═══ -->
+<div class="bottom-nav">
+  <button class="btn" id="prevBtn" disabled>&larr; Previous</button>
+  <span class="nav-hint">Use arrow keys or click to navigate</span>
+  <button class="btn btn-primary" id="nextBtn">Next &rarr;</button>
+</div>
+
+<!-- ═══ SCRIPT ═══ -->
+<script>
+const slides = document.querySelectorAll('.slide');
+const dots = document.querySelectorAll('.dot[data-slide]');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const currentEl = document.getElementById('currentSlide');
+const totalEl = document.getElementById('totalSlides');
+let current = 0;
+
+totalEl.textContent = slides.length;
+
+function goTo(idx) {
+  if (idx < 0 || idx >= slides.length || idx === current) return;
+  const dir = idx > current ? 1 : -1;
+
+  // Exit current
+  slides[current].classList.remove('active');
+  slides[current].classList.add(dir > 0 ? 'exit-left' : '');
+  slides[current].style.transform = dir > 0 ? 'translateX(-40px)' : 'translateX(40px)';
+  slides[current].style.opacity = '0';
+
+  // Enter new
+  slides[idx].style.transform = dir > 0 ? 'translateX(40px)' : 'translateX(-40px)';
+  slides[idx].style.opacity = '0';
+  slides[idx].classList.add('active');
+  // Force reflow
+  void slides[idx].offsetWidth;
+  slides[idx].style.transform = 'translateX(0)';
+  slides[idx].style.opacity = '1';
+
+  // Scroll new slide to top
+  slides[idx].scrollTop = 0;
+
+  // Clean up old
+  setTimeout(() => {
+    slides.forEach((s, i) => {
+      if (i !== idx) { s.classList.remove('active', 'exit-left'); s.style.transform = ''; s.style.opacity = ''; }
+    });
+  }, 380);
+
+  // Update dots
+  dots.forEach(d => d.classList.remove('active'));
+  dots[idx]?.classList.add('active');
+
+  current = idx;
+  currentEl.textContent = idx + 1;
+  prevBtn.disabled = idx === 0;
+  nextBtn.disabled = idx === slides.length - 1;
+  nextBtn.textContent = idx === slides.length - 1 ? 'Done' : 'Next →';
+}
+
+// Dot clicks
+dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.slide)));
+
+// Button clicks
+prevBtn.addEventListener('click', () => goTo(current - 1));
+nextBtn.addEventListener('click', () => goTo(current + 1));
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End') { e.preventDefault(); goTo(slides.length - 1); }
+});
+</script>
+</body>
+</html>
