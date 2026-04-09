@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Northwood — Transition Risk (Financial)</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #232735;
+    --surface3: #2a2e3f;
+    --border: #2e3345;
+    --text: #e2e4ea;
+    --text-muted: #8b8fa3;
+    --text-dim: #5a5e72;
+    --accent: #5bb8a4;
+    --accent-dim: rgba(91,184,164,0.12);
+    --white: #fff;
+    --green: #4caf50;
+    --yellow: #e8a84c;
+    --orange: #e8724c;
+    --red: #e85d5d;
+    --blue: #5b8fe8;
+    --purple: #b07cf0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .container { max-width: 1320px; margin: 0 auto; padding: 40px 40px 80px; }
+
+  .page-header { margin-bottom: 28px; }
+  .page-title { font-size: 30px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
+  .page-title span { color: var(--accent); }
+  .page-subtitle { font-size: 14px; color: var(--text-muted); max-width: 920px; line-height: 1.6; }
+  .data-badge { display: inline-block; font-size: 11px; color: var(--yellow); background: rgba(232,168,76,0.1); border: 1px solid rgba(232,168,76,0.25); padding: 3px 10px; border-radius: 4px; margin-top: 12px; }
+
+  /* KPI metrics */
+  .metrics-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 24px 0 32px; }
+  .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; }
+  .metric-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-dim); margin-bottom: 6px; }
+  .metric-value { font-size: 26px; font-weight: 700; color: var(--white); }
+  .metric-value .unit { font-size: 12px; font-weight: 400; color: var(--text-muted); margin-left: 3px; }
+  .metric-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; line-height: 1.4; }
+
+  /* Sections */
+  .section { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px 26px; margin-bottom: 24px; }
+  .section-title { font-size: 16px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+  .section-title .dim { color: var(--text-dim); font-weight: 400; font-size: 13px; margin-left: 8px; }
+  .section-lead { font-size: 13px; color: var(--text-muted); line-height: 1.65; margin-bottom: 18px; max-width: 980px; }
+
+  /* Framework cards */
+  .framework-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .vector-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; border-left: 3px solid var(--accent); }
+  .vector-card .vname { font-size: 12px; font-weight: 700; color: var(--white); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .vector-card .vdesc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+  .vector-card.v1 { border-left-color: var(--orange); }
+  .vector-card.v2 { border-left-color: var(--yellow); }
+  .vector-card.v3 { border-left-color: var(--purple); }
+  .vector-card.v4 { border-left-color: var(--blue); }
+  .vector-card.v5 { border-left-color: var(--accent); }
+
+  /* Heatmap table */
+  .heatmap { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12px; }
+  .heatmap th { background: var(--surface2); color: var(--text-dim); font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.6px; padding: 10px 8px; text-align: center; border-bottom: 1px solid var(--border); }
+  .heatmap th.left { text-align: left; padding-left: 14px; }
+  .heatmap td { padding: 10px 8px; border-bottom: 1px solid var(--border); text-align: center; }
+  .heatmap td.portco { text-align: left; padding-left: 14px; font-weight: 600; color: var(--white); }
+  .heatmap td.fund { color: var(--text-dim); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .heatmap tr:hover td { background: rgba(91,184,164,0.04); }
+
+  .score { display: inline-block; width: 32px; height: 24px; line-height: 24px; border-radius: 4px; font-weight: 700; font-size: 12px; color: var(--white); }
+  .score.s1 { background: rgba(76,175,80,0.25); color: #7ed581; }
+  .score.s2 { background: rgba(91,184,164,0.22); color: #6fd5bd; }
+  .score.s3 { background: rgba(232,168,76,0.25); color: #f0bb5c; }
+  .score.s4 { background: rgba(232,114,76,0.28); color: #ff8c5c; }
+  .score.s5 { background: rgba(232,93,93,0.32); color: #ff6b6b; }
+
+  .overall { font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .overall.low { background: rgba(76,175,80,0.18); color: #7ed581; }
+  .overall.med { background: rgba(232,168,76,0.18); color: #f0bb5c; }
+  .overall.high { background: rgba(232,114,76,0.22); color: #ff8c5c; }
+  .overall.crit { background: rgba(232,93,93,0.25); color: #ff6b6b; }
+
+  /* Portco detail cards */
+  .portco-detail { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px; margin-bottom: 12px; }
+  .portco-detail.crit { border-left: 4px solid var(--red); }
+  .portco-detail.high { border-left: 4px solid var(--orange); }
+  .portco-detail.med  { border-left: 4px solid var(--yellow); }
+  .portco-detail.low  { border-left: 4px solid var(--green); }
+  .pd-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; flex-wrap: wrap; gap: 8px; }
+  .pd-name { font-size: 15px; font-weight: 700; color: var(--white); }
+  .pd-name .sector { color: var(--text-dim); font-weight: 400; font-size: 12px; margin-left: 8px; }
+  .pd-meta { font-size: 11px; color: var(--text-muted); }
+  .pd-meta b { color: var(--text); }
+  .pd-thesis { font-size: 13px; color: var(--text-muted); line-height: 1.65; margin-top: 8px; }
+  .pd-thesis b { color: var(--text); }
+  .pd-action { font-size: 12px; color: var(--accent); margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
+  .pd-action b { color: var(--white); text-transform: uppercase; font-size: 10px; letter-spacing: 0.6px; margin-right: 6px; }
+
+  /* Top risks bar list */
+  .risk-list { list-style: none; }
+  .risk-row { display: grid; grid-template-columns: 220px 1fr 120px; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .risk-row:last-child { border-bottom: none; }
+  .risk-name { font-size: 13px; font-weight: 600; color: var(--white); }
+  .risk-name .sub { display: block; font-size: 11px; color: var(--text-dim); font-weight: 400; margin-top: 2px; }
+  .bar-track { background: var(--surface3); border-radius: 4px; height: 22px; position: relative; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 10px; font-size: 11px; font-weight: 600; color: var(--white); }
+  .bar-fill.crit { background: linear-gradient(90deg, var(--red), #c44545); }
+  .bar-fill.high { background: linear-gradient(90deg, var(--orange), #c45a3a); }
+  .bar-fill.med  { background: linear-gradient(90deg, var(--yellow), #c4892b); }
+  .risk-amt { text-align: right; font-size: 13px; font-weight: 700; color: var(--white); }
+  .risk-amt .sub { display: block; font-size: 10px; color: var(--text-dim); font-weight: 400; }
+
+  /* Monitored callout */
+  .monitor-box { background: rgba(91,143,232,0.06); border: 1px solid rgba(91,143,232,0.25); border-radius: 8px; padding: 16px 20px; }
+  .monitor-box h4 { font-size: 12px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; }
+  .monitor-box p { font-size: 12px; color: var(--text-muted); line-height: 1.65; margin-bottom: 6px; }
+  .monitor-box ul { margin: 8px 0 0 18px; font-size: 12px; color: var(--text-muted); line-height: 1.7; }
+  .monitor-box ul b { color: var(--text); }
+
+  .footnote { font-size: 11px; color: var(--text-dim); margin-top: 16px; line-height: 1.7; }
+  .footnote strong { color: var(--text-muted); }
+
+  @media (max-width: 900px) { .risk-row { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="page-header">
+    <h1 class="page-title">Transition Risk — <span>Financial Materiality View</span></h1>
+    <p class="page-subtitle">
+      Where transition forces — customer procurement, input costs, asset replacement cycles, regulation, and exit diligence — bend EBITDA or valuation lines for Northwood portfolio companies over a 7-year horizon (2026–2033). Carbon pricing is monitored, not modeled as material — see footnote.
+    </p>
+    <div class="data-badge">v0.1 — Scoring is judgment-weighted from portco financials, sector exposure, and customer mix. Refine each thesis with portco IR before board use.</div>
+  </div>
+
+  <!-- ─── KPI ROW ─── -->
+  <div class="metrics-row">
+    <div class="metric-card">
+      <div class="metric-label">Portfolio EBITDA</div>
+      <div class="metric-value">$261<span class="unit">M</span></div>
+      <div class="metric-sub">10 active portcos · Funds I + II</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">EBITDA at Material Risk</div>
+      <div class="metric-value" style="color:var(--orange)">~$38<span class="unit">M / yr by 2030</span></div>
+      <div class="metric-sub">Aggregate downside if top transition vectors land unmitigated</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Critical Portcos</div>
+      <div class="metric-value" style="color:var(--red)">2</div>
+      <div class="metric-sub">Harvest Ridge, Meridian (exit prep)</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">High-Risk Portcos</div>
+      <div class="metric-value" style="color:var(--orange)">3</div>
+      <div class="metric-sub">Sterling, Ridgeline, Pinnacle</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Net Tailwind</div>
+      <div class="metric-value" style="color:var(--green)">1</div>
+      <div class="metric-sub">Clearview (transition demand-driven)</div>
+    </div>
+  </div>
+
+  <!-- ─── FRAMEWORK ─── -->
+  <div class="section">
+    <div class="section-title">Five Vectors That Move EBITDA <span class="dim">why these, and why not carbon price</span></div>
+    <p class="section-lead">
+      Standard TCFD transition categories (policy / legal / technology / market / reputation) are too abstract for a mid-market US PE LP. We rescore against the five vectors below — each one ties to a P&L line or to exit DD. A score of 1 = immaterial; 5 = financially material within 7 years if unmitigated.
+    </p>
+    <div class="framework-grid">
+      <div class="vector-card v1">
+        <div class="vname">1 · Customer ESG Pressure</div>
+        <div class="vdesc">Top customers are F500/public/regulated and have SBTi or Scope 3 commitments that will cascade as procurement requirements (PCFs, CDP, emissions thresholds). Risk = lost contracts or margin compression.</div>
+      </div>
+      <div class="vector-card v2">
+        <div class="vname">2 · Input / Supply Cost</div>
+        <div class="vdesc">Exposure to commodities or inputs whose price/availability bends under transition — steel, cement, diesel, refrigerants, ag commodities. Not the abstract carbon price — actual supply economics.</div>
+      </div>
+      <div class="vector-card v3">
+        <div class="vname">3 · Capex Cycle Cliff</div>
+        <div class="vdesc">ICE fleets, gas process heat, HFC refrigeration, aging HVAC. 7 years covers at least one major replacement cycle for most equipment classes — is the transition-compliant version budgeted?</div>
+      </div>
+      <div class="vector-card v4">
+        <div class="vname">4 · Regulatory Exposure</div>
+        <div class="vdesc">Not federal carbon pricing — the rules actually landing: CA SB 253/261, EU CBAM (if exporters), SEC climate (if exit to public acquirer), state Building Performance Standards, F-gas, methane.</div>
+      </div>
+      <div class="vector-card v5">
+        <div class="vname">5 · Exit / Refi Readiness</div>
+        <div class="vdesc">Most underrated. In 7 years every portco hits exit or refi. Strategic acquirers and lenders are pricing climate diligence. A portco that can't answer basic Scope 1/2 + transition questions takes a multiple haircut or loses bidders.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── HEATMAP ─── -->
+  <div class="section">
+    <div class="section-title">Portfolio Heatmap <span class="dim">scores 1–5 per vector · overall = max(vectors), weighted by exit timing</span></div>
+    <p class="section-lead">Sorted by overall transition risk. Hover any row for context; details below.</p>
+    <table class="heatmap">
+      <thead>
+        <tr>
+          <th class="left">Portco</th>
+          <th>Fund</th>
+          <th>EBITDA<br>($M)</th>
+          <th>Customer<br>ESG</th>
+          <th>Input /<br>Supply</th>
+          <th>Capex<br>Cycle</th>
+          <th>Reg<br>Exposure</th>
+          <th>Exit /<br>Refi</th>
+          <th>Overall</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="portco">Harvest Ridge Foods <span style="color:var(--text-dim);font-weight:400;font-size:11px;">· co-packing</span></td>
+          <td class="fund">II</td><td>22.8</td>
+          <td><span class="score s5">5</span></td><td><span class="score s4">4</span></td><td><span class="score s3">3</span></td><td><span class="score s2">2</span></td><td><span class="score s3">3</span></td>
+          <td><span class="overall crit">Critical</span></td>
+        </tr>
+        <tr>
+          <td class="portco">Meridian Business Solutions <span style="color:var(--text-dim);font-weight:400;font-size:11px;">· BPO/staffing</span></td>
+          <td class="fund">I</td><td>38.3</td>
+          <td><span class="score s4">4</span></td><td><span class="score s1">1</span></td><td><span class="score s1">1</span></td><td><span class="score s2">2</span></td><td><span class="score s5">5</span></td>
+          <td><span class="overall crit">Critical</span></td>
+        </tr>
+        <tr>
+          <td class="portco">Sterling Precision <span style="color:var(--text-dim);font-weight:400;font-size:11px;">· A&D machining</span></td>
+          <td class="fund">I</td><td>30.2</td>
+          <td><span class="score s5">5</span></td><td><span class="score s4">4</span></td><td><span class="score s4">4</span></td><td><span class="score s3">3</span></td><td><span class="score s3">3</span></td>
+          <td><span class="overall high">High</span></td>
+        </tr>
+        <tr>
+          <td class="portco">Ridgeline Property Services <span style="color:var(--text-dim);font-weight:400;font-size:11px;">· comm. PM</span></td>
+          <td class="fund">II</td><td>17.4</td>
+          <td><span class="score s4">4</span></td><td><span class="score s2">2</span></td><td><span class="score s3">3</span></td><td><span class="score s4">4</span></td><td><span class="score s2">2</span></td>
+          <td><span class="overall high">High</span></td>
+        </tr>
+        <tr>
+          <td class="portco">Pinnacle Testing <span style="color:var(--text-dim);font-weight:400;font-size:11px;">· NDT/inspection</span></td>
+          <td class="fund">II</td><td>20.1</td>
+          <td><span class="score s4">4</span></td><td><span class="score s2">2</span></td><td><span class="score s2">2</span></td><td><span class="score s2">2</span></td><td><span class="score s2">2</span></td>
+          <td><span class="overall high">High</span></td>
+        </tr>
+        <tr>
+          <td class="portco">Trident IT Solutions <span style="color:var(--text-dim);font-weight:400;font-size:11px;">· IT/cyber MSP</span></td>
+          <td class="fund">I</td><td>24.9</td>
+          <td><span class="score s3">3</span></td><td><span class="score s1">1</span></td><td><span class="score s1">1</span></td><td><span class="score s2">2</span></td><td><span class="score s3">3</span></td>
+          <td><span class="overall med">Moderate</span></td>
+        </tr>
+        <tr>
+          <td class="portco">Patriot Staffing <span style="color:var(--text-dim);font-weight:400;font-size:11px;">· light industrial</span></td>
+          <td class="fund">II</td><td>23.8</td>
+          <td><span class="score s3">3</span></td><td><span class="score s2">2</span></td><td><span class="score s1">1</span></td><td><span class="score s2">2</span></td><td><span class="score s4">4</span></td>
+          <td><span class="overall med">Moderate</span></td>
+        </tr>
+        <tr>
+          <td class="portco">NovaCare Health Partners <span style="color:var(--text-dim);font-weight:400;font-size:11px;">· PT clinics</span></td>
+          <td class="fund">I</td><td>28.0</td>
+          <td><span class="score s1">1</span></td><td><span class="score s2">2</span></td><td><span class="score s2">2</span></td><td><span class="score s2">2</span></td><td><span class="score s3">3</span></td>
+          <td><span class="overall low">Low</span></td>
+        </tr>
+        <tr>
+          <td class="portco">Keystone Behavioral Health <span style="color:var(--text-dim);font-weight:400;font-size:11px;">· ABA therapy</span></td>
+          <td class="fund">II</td><td>24.2</td>
+          <td><span class="score s1">1</span></td><td><span class="score s1">1</span></td><td><span class="score s1">1</span></td><td><span class="score s2">2</span></td><td><span class="score s1">1</span></td>
+          <td><span class="overall low">Low</span></td>
+        </tr>
+        <tr>
+          <td class="portco">Clearview Environmental <span style="color:var(--text-dim);font-weight:400;font-size:11px;">· remediation/testing</span></td>
+          <td class="fund">II</td><td>31.2</td>
+          <td><span class="score s2">2</span></td><td><span class="score s2">2</span></td><td><span class="score s3">3</span></td><td><span class="score s1">1</span></td><td><span class="score s2">2</span></td>
+          <td><span class="overall low">Tailwind</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ─── TOP RANKED RISKS ─── -->
+  <div class="section">
+    <div class="section-title">Top 7 Financially Material Risks <span class="dim">ranked by estimated EBITDA / valuation impact through 2033</span></div>
+    <p class="section-lead">Bar widths show estimated impact relative to the largest. Dollar figures are first-order estimates from current EBITDA × exposure × likelihood — directional, not forecast.</p>
+    <ul class="risk-list">
+
+      <li class="risk-row">
+        <div class="risk-name">Harvest Ridge — anchor customer loss<span class="sub">CPG brand offtake risk if Scope 3 PCF requirement tightens</span></div>
+        <div class="bar-track"><div class="bar-fill crit" style="width:100%">Critical · 5–9% revenue at risk</div></div>
+        <div class="risk-amt">$8–12M<br><span class="sub">EBITDA / yr</span></div>
+      </li>
+
+      <li class="risk-row">
+        <div class="risk-name">Meridian — exit multiple haircut<span class="sub">Buyer ESG DD with no answers → 0.5–1.0x multiple compression</span></div>
+        <div class="bar-track"><div class="bar-fill crit" style="width:88%">Critical · multiple compression on exit</div></div>
+        <div class="risk-amt">$20–40M<br><span class="sub">enterprise value</span></div>
+      </li>
+
+      <li class="risk-row">
+        <div class="risk-name">Sterling — A&D customer ESG cascade<span class="sub">Prime contractor SBTi requirements flowing into supplier RFPs (3 already seen Q4 '25)</span></div>
+        <div class="bar-track"><div class="bar-fill high" style="width:72%">High · 4–7% revenue / margin</div></div>
+        <div class="risk-amt">$5–8M<br><span class="sub">EBITDA / yr</span></div>
+      </li>
+
+      <li class="risk-row">
+        <div class="risk-name">Ridgeline — Building Performance Standards<span class="sub">CA, NYC, Denver, Boulder BPS hit managed properties → owner-passed compliance work or churn</span></div>
+        <div class="bar-track"><div class="bar-fill high" style="width:55%">High · 2-sided (risk + revenue opportunity)</div></div>
+        <div class="risk-amt">$3–5M<br><span class="sub">EBITDA / yr</span></div>
+      </li>
+
+      <li class="risk-row">
+        <div class="risk-name">Sterling — input cost (steel, process gas)<span class="sub">CBAM-adjacent steel price drift + gas-fired heat treat exposure</span></div>
+        <div class="bar-track"><div class="bar-fill high" style="width:50%">High · margin compression</div></div>
+        <div class="risk-amt">$2–4M<br><span class="sub">EBITDA / yr</span></div>
+      </li>
+
+      <li class="risk-row">
+        <div class="risk-name">Pinnacle — O&G / refining customer transition<span class="sub">NDT demand softening for legacy refining assets; offset by H2/CCS infra ramp</span></div>
+        <div class="bar-track"><div class="bar-fill med" style="width:42%">Medium · revenue mix shift</div></div>
+        <div class="risk-amt">$2–3M<br><span class="sub">EBITDA / yr</span></div>
+      </li>
+
+      <li class="risk-row">
+        <div class="risk-name">Trident — sustainability-gated cyber RFPs<span class="sub">Enterprise customers adding ESG clauses to MSP contracts</span></div>
+        <div class="bar-track"><div class="bar-fill med" style="width:30%">Medium · contract renewal friction</div></div>
+        <div class="risk-amt">$1–2M<br><span class="sub">EBITDA / yr</span></div>
+      </li>
+
+    </ul>
+  </div>
+
+  <!-- ─── PORTCO DETAIL ─── -->
+  <div class="section">
+    <div class="section-title">Portco Risk Theses <span class="dim">what specifically bends, and what Northwood can do at the LP / board level</span></div>
+
+    <div class="portco-detail crit">
+      <div class="pd-head">
+        <div class="pd-name">Harvest Ridge Foods <span class="sector">· Specialty food co-packing · Fund II · entered Apr 2025</span></div>
+        <div class="pd-meta">EBITDA <b>$22.8M</b> · top-5 customer concentration <b>45%</b> · KY plant</div>
+      </div>
+      <div class="pd-thesis">
+        <b>Why this is the #1 transition risk in the portfolio.</b> Co-packing customers in specialty/natural CPG are disproportionately F500 brands with the most aggressive Scope 3 commitments in the consumer sector (Unilever, Nestlé, PepsiCo, General Mills all SBTi-validated). With 45% revenue from the top 5, even one anchor customer adopting a supplier emissions threshold or product carbon footprint (PCF) requirement is an existential customer-retention event, not a procurement annoyance. Bowling Green facility also has water-availability flag (physical-risk overlap). Founder/CEO transition compounds execution risk.
+      </div>
+      <div class="pd-action"><b>Action</b>Within 60 days: identify which top-5 customers have published Scope 3 / supplier programs; commission a facility-level Scope 1+2 baseline + a per-SKU cradle-to-gate PCF for the top 3 customers' top SKUs. This is a defensive contract-retention spend, not an ESG project.</div>
+    </div>
+
+    <div class="portco-detail crit">
+      <div class="pd-head">
+        <div class="pd-name">Meridian Business Solutions <span class="sector">· BPO / managed staffing · Fund I · in active exit prep</span></div>
+        <div class="pd-meta">EBITDA <b>$38.3M</b> · 8-year hold · sell-side advisor selection on Mar-12 board agenda</div>
+      </div>
+      <div class="pd-thesis">
+        <b>Risk is the buyer's diligence questionnaire, not Meridian's operations.</b> Direct transition exposure is low (asset-light services). But the customer base concentrates in financial services — the single highest-SBTi-adoption sector — and any strategic or sponsor-to-sponsor buyer in 2026–27 will run a structured climate DD pass. With nothing to hand them, the realistic outcome is either a 0.5–1.0x multiple haircut (well-modeled in 2024–25 PE secondary data) or a narrower bidder field. On $42M of '26E EBITDA, every 0.5x is ~$21M of enterprise value.
+      </div>
+      <div class="pd-action"><b>Action</b>Pre-DD pack in <b>weeks, not months</b>: Scope 1/2 baseline, customer-by-customer SBTi/CDP map, transition risk one-pager, climate-section talking points for the CIM. This is the highest-leverage spend in the portfolio because the timing window closes when sell-side launches.</div>
+    </div>
+
+    <div class="portco-detail high">
+      <div class="pd-head">
+        <div class="pd-name">Sterling Precision Manufacturing <span class="sector">· A&D precision machining · Fund I</span></div>
+        <div class="pd-meta">EBITDA <b>$30.2M</b> · top customer 16% · 3 RFPs in Q4 '25 included emissions/ESG asks</div>
+      </div>
+      <div class="pd-thesis">
+        <b>The cascade has already started.</b> Defense primes (LMT, RTX, GD, NOC) are SBTi-validated and pushing emissions reporting + reduction commitments down to Tier 2/3 suppliers. Sterling has three concrete data points already (Q4 '25 RFPs). Add input cost exposure (steel pricing under CBAM-adjacent dynamics + gas-fired process heat) and capex cliff (heat treat, machining centers due for refresh in horizon). Sterling already has the decarbonization planner pilot built — extend it into a customer-facing sustainability response capability.
+      </div>
+      <div class="pd-action"><b>Action</b>Convert the Sterling decarb planner into a customer-RFP response asset: standardize the Scope 1/2 baseline, build a "supplier sustainability one-pager" that wins ESG-gated RFPs. Treat decarb capex as revenue defense, not ESG.</div>
+    </div>
+
+    <div class="portco-detail high">
+      <div class="pd-head">
+        <div class="pd-name">Ridgeline Property Services <span class="sector">· Commercial property mgmt · Fund II · entered Jul 2025</span></div>
+        <div class="pd-meta">EBITDA <b>$17.4M</b> · Mountain West / SW · 92% client retention</div>
+      </div>
+      <div class="pd-thesis">
+        <b>Two-sided risk that is mostly an opportunity.</b> Building Performance Standards are live in CA, NYC, Denver, Boulder — all in Ridgeline's footprint. Institutional CRE owners (Ridgeline's core client) have NZAOA-style portfolio commitments and need their PM partner to deliver compliance, not just throw the regulation back at them. The risk is losing accounts to competitors offering bundled sustainability services; the upside is repricing the management contract +5–8% by adding a sustainability-services line. Already on the Apr-23 board agenda as "sustainability services opportunity."
+      </div>
+      <div class="pd-action"><b>Action</b>Build the BPS-compliance service offering as a productized add-on (energy benchmarking, audit coordination, retro-commissioning project mgmt). This is a revenue line, not a cost.</div>
+    </div>
+
+    <div class="portco-detail high">
+      <div class="pd-head">
+        <div class="pd-name">Pinnacle Testing & Inspection <span class="sector">· NDT / industrial inspection · Fund II</span></div>
+        <div class="pd-meta">EBITDA <b>$20.1M</b> · top customer 14% · early integration phase</div>
+      </div>
+      <div class="pd-thesis">
+        <b>Customer-mix transition is the story — not Pinnacle's own operations.</b> NDT demand is heavily tied to refineries, pipelines, and aging fossil infrastructure. Some of that softens through 2033; some accelerates (methane rules driving inspection mandates, hydrogen pipeline build-out, CCS infrastructure all need NDT). The risk isn't a cliff — it's that the revenue mix shifts and Pinnacle has to reposition technician deployment and certifications to follow demand.
+      </div>
+      <div class="pd-action"><b>Action</b>Map customer mix by asset type (legacy refining vs. midstream methane vs. emerging H2/CCS). Get ahead of cert pipeline for the growth segments. Use this in next add-on screening criteria.</div>
+    </div>
+
+    <div class="portco-detail med">
+      <div class="pd-head">
+        <div class="pd-name">Trident IT Solutions <span class="sector">· IT MSP / cybersecurity · Fund I</span></div>
+        <div class="pd-meta">EBITDA <b>$24.9M</b> · top customer 8% · diversified base</div>
+      </div>
+      <div class="pd-thesis">
+        Manageable. Two customer RFPs in recent quarters included sustainability questions. Direct operations are low-impact (asset-light, cloud-leveraged). Real exposure is the contract renewal cycle (3-yr terms) intersecting with enterprise customers' tightening procurement criteria. Manageable with a basic ESG response capability.
+      </div>
+      <div class="pd-action"><b>Action</b>Standard ESG-RFP response template + Scope 1/2 baseline. Low-cost insurance.</div>
+    </div>
+
+    <div class="portco-detail med">
+      <div class="pd-head">
+        <div class="pd-name">Patriot Staffing Solutions <span class="sector">· Light industrial staffing · Fund II · below plan</span></div>
+        <div class="pd-meta">EBITDA <b>$23.8M</b> · margin recovery underway · workers comp issues</div>
+      </div>
+      <div class="pd-thesis">
+        Direct transition risk is low. The transition concern is exit-readiness compounding existing underperformance: a portco already below plan has the least bandwidth to absorb buyer ESG-DD friction at exit. Carries moderate score because of the operational fragility, not the transition vector itself.
+      </div>
+      <div class="pd-action"><b>Action</b>Defer climate work until margin recovery is on track; queue a lightweight pre-DD pack 12 months before exit.</div>
+    </div>
+
+    <div class="portco-detail low">
+      <div class="pd-head">
+        <div class="pd-name">NovaCare Health Partners <span class="sector">· Multi-site PT clinics · Fund I</span></div>
+        <div class="pd-meta">EBITDA <b>$28.0M</b> · 28 clinics · patient-based revenue</div>
+      </div>
+      <div class="pd-thesis">
+        Low transition risk. Distributed clinic footprint, patient-based revenue (no F500 customer pressure), reimbursement-driven economics. Exit DD will ask but answers are simple.
+      </div>
+      <div class="pd-action"><b>Action</b>Roll into standard pre-exit pack 12 months before sale.</div>
+    </div>
+
+    <div class="portco-detail low">
+      <div class="pd-head">
+        <div class="pd-name">Keystone Behavioral Health <span class="sector">· ABA therapy · Fund II</span></div>
+        <div class="pd-meta">EBITDA <b>$24.2M</b> · 1,250+ patients · 100-day plan phase</div>
+      </div>
+      <div class="pd-thesis">
+        Lowest transition risk in the portfolio. Healthcare services with reimbursement-driven economics, no concentrated commercial customer base, no transition-exposed inputs. Monitor only.
+      </div>
+      <div class="pd-action"><b>Action</b>No active transition workstream needed. Reassess at 24-month mark.</div>
+    </div>
+
+    <div class="portco-detail low">
+      <div class="pd-head">
+        <div class="pd-name">Clearview Environmental Services <span class="sector">· Remediation / testing · Fund II</span></div>
+        <div class="pd-meta">EBITDA <b>$31.2M</b> · PFAS/EPA tailwind · diversified (185 customers)</div>
+      </div>
+      <div class="pd-thesis">
+        <b>Net beneficiary, not risk.</b> Environmental services demand is structurally lifted by transition policy (PFAS rule, infrastructure bill, methane regs). The only meaningful transition exposure is fleet diesel (modest) and field-equipment electrification capex over the cycle. Story to tell at exit is upside, not defense.
+      </div>
+      <div class="pd-action"><b>Action</b>Fleet electrification feasibility study to capture the upside narrative for the eventual exit story.</div>
+    </div>
+
+  </div>
+
+  <!-- ─── MONITORED NOT MATERIAL ─── -->
+  <div class="section">
+    <div class="monitor-box">
+      <h4>Monitored, Not Material — Why Carbon Pricing Is Not Modeled</h4>
+      <p>Carbon pricing scores high on TCFD frameworks and low on financial materiality for unregulated US mid-market PE. The portfolio has no exposure to mandatory cap-and-trade or carbon taxes through 2033 under any plausible US federal policy path. We track the following as <b>monitored watchlist</b> items rather than modeled scenarios:</p>
+      <ul>
+        <li><b>Federal carbon pricing</b> — no plausible enactment in 7-year horizon under any current political configuration</li>
+        <li><b>EU CBAM</b> — only relevant if Sterling materially exports machined components to EU customers; currently negligible</li>
+        <li><b>RGGI / California cap-and-trade extensions</b> — none of the portcos operate covered facilities</li>
+        <li><b>SEC climate disclosure (final rule)</b> — relevant only at exit if buyer is an SEC registrant; flagged in Meridian DD prep</li>
+        <li><b>State-level carbon disclosure (CA SB 253/261)</b> — applies to entities &gt;$1B revenue; only reaches the portfolio indirectly via large customers (which is captured under Customer ESG vector)</li>
+      </ul>
+      <p style="margin-top:10px;">If any of these change posture (e.g., a federal pricing proposal advances), this list moves into the modeled risk section above.</p>
+    </div>
+  </div>
+
+  <div class="footnote">
+    <strong>Methodology.</strong> Vector scores 1–5 are judgment-weighted from portco financial data (<code>portco-financials/tmp_portcos.json</code>), sector-level exposure benchmarks, and customer-mix indicators where disclosed. Overall risk = max(vectors), elevated by exit/refi proximity. Dollar impact estimates are first-order: current EBITDA × exposure share × likelihood-weighted impact, intended for prioritization, not for forecasting. Each portco thesis should be pressure-tested with the deal lead and management team before board use. <strong>What's not in this view yet:</strong> debt covenant transition triggers (need to read the credit agreements), supplier-side Scope 3 (need procurement data), and customer-by-customer SBTi mapping (the next sprint).
+  </div>
+
+</div>
+</body>
+</html>
