@@ -93,6 +93,22 @@
   .gap-pos { color: var(--red); }
   .gap-neg { color: var(--green); }
 
+  .materiality-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-bottom: 12px; }
+  .materiality-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; position: relative; }
+  .materiality-card.good { border-left: 3px solid var(--green); }
+  .materiality-card.watch { border-left: 3px solid var(--yellow); }
+  .materiality-card.alert { border-left: 3px solid var(--red); }
+  .materiality-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-dim); margin-bottom: 6px; }
+  .materiality-headline { font-size: 22px; font-weight: 700; color: var(--white); line-height: 1.1; }
+  .materiality-headline .unit { font-size: 12px; font-weight: 400; color: var(--text-muted); margin-left: 3px; }
+  .materiality-denom { font-size: 11px; color: var(--text-muted); margin-top: 5px; }
+  .materiality-tag { position: absolute; top: 12px; right: 14px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 2px 7px; border-radius: 3px; }
+  .tag-good { background: rgba(76,175,80,0.15); color: var(--green); }
+  .tag-watch { background: rgba(232,168,76,0.15); color: var(--yellow); }
+  .tag-alert { background: rgba(232,93,93,0.15); color: var(--red); }
+  .materiality-verdict { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 14px 20px; margin-bottom: 28px; font-size: 13px; color: var(--text); line-height: 1.55; }
+  .materiality-verdict strong { color: var(--accent); }
+
   .footnote { font-size: 11px; color: var(--text-dim); margin-top: 16px; line-height: 1.6; }
   .footnote strong { color: var(--text-muted); }
 
@@ -137,6 +153,11 @@
   <!-- METRICS -->
   <div class="metrics-row" id="metrics"></div>
 
+  <!-- FINANCIAL MATERIALITY -->
+  <div class="section-title">Financial Materiality <span class="dim">program sized against <span id="fmPortcoName">Sterling Precision</span> financials</span></div>
+  <div class="materiality-grid" id="materialityPanel"></div>
+  <div class="materiality-verdict" id="materialityVerdict"></div>
+
   <!-- CHARTS -->
   <div class="chart-grid">
     <div class="chart-wrap">
@@ -177,7 +198,7 @@
   <table class="budget-table" id="budgetTable"></table>
 
   <div class="footnote">
-    <strong>Methodology notes.</strong> Baseline emissions (S1=4,200 / S2=3,100 tCO2e) sourced from <code>bau-targets.html</code>. LCOA computed as levelized cost over lever lifetime at the user discount rate, net of energy savings, before any carbon price. Payback is simple (capex ÷ |annual opex savings|). The "Min Compliance" preset selects lowest-LCOA levers until the cumulative abatement closes the gap to the target line in the target year. "NPV-Optimal" selects all levers with negative or near-zero LCOA. "Exit-Value Max" selects levers whose payback fits within the horizon and whose opex savings flow to EBITDA before exit. Scope 2 abatement assumes the user-set grid decarbonization rate is netted from on-site electricity emissions over time. Scope 3 levers (supplier engagement, embodied steel/aluminum) are out of scope for this S1+S2 planner — track separately.
+    <strong>Methodology notes.</strong> Baseline emissions (S1=4,200 / S2=3,100 tCO2e) sourced from <code>bau-targets.html</code>. LCOA computed as levelized cost over lever lifetime at the user discount rate, net of energy savings, before any carbon price. Payback is simple (capex ÷ |annual opex savings|). <strong>Target Optimization</strong> finds the minimum-cost lever set that meets the SBTi target at the final planning year by greedily adding levers in LCOA order, then trimming the most expensive removable levers to eliminate overshoot. <strong>Exit Value Optimization</strong> selects all levers whose simple payback fits within the horizon, so opex savings flow to EBITDA before sale. Scope 2 abatement assumes the user-set grid decarbonization rate is netted from on-site electricity emissions over time, and efficiency levers reduce the load that renewable procurement (green tariff) then fills. Scope 3 levers are out of scope for this S1+S2 planner. Financial materiality panel: maintenance capex estimated at 1.5% of revenue (industry default for precision machining) — replace with vendor/portco actuals when available.
   </div>
 
 </div>
@@ -188,6 +209,22 @@
 // ─────────────────────────────────────────────────────────────────
 
 const BASELINE = { scope1: 4200, scope2: 3100 }; // tCO2e from bau-targets.html
+
+// ─── PORTCO FINANCIAL CONTEXT ────────────────────────────────────
+// Sourced from northwood/portco-financials/tmp_portcos.json (Sterling Precision).
+// When templating this tool across the portfolio, replace this inline object
+// with:  fetch('data/portcos.json').then(r=>r.json()).then(data => PORTCO = data[slug])
+// and re-call render() from the .then callback.
+const PORTCO = {
+  name: 'Sterling Precision Manufacturing',
+  revenue: 168.0,          // $M — current
+  ebitda: 30.2,            // $M — current
+  debt: 32.0,              // $M — current
+  exitMultiple: 9.0,       // from exit_multiple_assumption
+  equityInvested: 90.0,    // $M — equity_invested_total
+  maintCapexPctRevenue: 0.015, // industry default for precision machining (1.5%)
+  sector: 'Precision Machining / A&D'
+};
 
 // Lever library — sized for ~7,300 tCO2e Sterling baseline
 // Cost benchmarks: RMI Industrial Decarb, ACEEE, NREL ATB 2024, IEA Industry
@@ -360,20 +397,43 @@ function selectedEmissions(y) {
 
 // ─── PRESET LOGIC ────────────────────────────────────────────────
 function presetMin() {
-  // "SBTi-compliant minimum cost" — add levers in LCOA order until target is met
-  // in the target year, AFTER accounting for 3-year ramp. Pulls start years forward
-  // if needed so ramped abatement is fully online by target year.
+  // Target Optimization: minimum-cost lever set that JUST meets the SBTi target
+  // in the final planning year (horizonEnd). Two phases:
+  //   1) Greedy add in LCOA order until the gap closes
+  //   2) Trim: try removing each selected lever (most expensive first); if the
+  //      target is still met after removal, drop it. Repeat until no more drops.
+  // This prevents overshoot from a single oversized lever (e.g. green tariff).
   state.selected.clear();
-  // Pull all start years forward to give full ramp by target year
+  // Pull all start years forward so levers are fully ramped by horizonEnd
   LEVERS.forEach(l => {
-    state.startYear[l.id] = Math.min(state.startYear[l.id], state.targetYear - 2);
+    state.startYear[l.id] = Math.min(state.startYear[l.id], state.horizonEnd - 2);
     if (state.startYear[l.id] < 2026) state.startYear[l.id] = 2026;
   });
-  const sorted = [...LEVERS].sort((a,b) => lcoa(a) - lcoa(b));
-  const target = targetEmissions(state.targetYear);
-  for (const lev of sorted) {
+  const checkYear = state.horizonEnd;
+  const target = targetEmissions(checkYear);
+  const ascLCOA = [...LEVERS].sort((a,b) => lcoa(a) - lcoa(b));
+
+  // Phase 1 — greedy add
+  for (const lev of ascLCOA) {
     state.selected.add(lev.id);
-    if (selectedEmissions(state.targetYear) <= target) break;
+    if (selectedEmissions(checkYear) <= target) break;
+  }
+
+  // Phase 2 — trim most expensive levers first
+  let changed = true;
+  while (changed) {
+    changed = false;
+    const selectedByCostDesc = [...state.selected]
+      .map(id => LEVERS.find(l => l.id === id))
+      .sort((a,b) => lcoa(b) - lcoa(a)); // most expensive first
+    for (const lev of selectedByCostDesc) {
+      state.selected.delete(lev.id);
+      if (selectedEmissions(checkYear) <= target) {
+        changed = true; // keep it removed, try again
+      } else {
+        state.selected.add(lev.id); // put it back
+      }
+    }
   }
   render();
 }
@@ -394,6 +454,7 @@ let glideChart, maccChart;
 
 function render() {
   renderMetrics();
+  renderMateriality();
   renderLeverTable();
   renderBudgetTable();
   renderGlide();
@@ -401,13 +462,107 @@ function render() {
   renderLeverBudgetTable();
 }
 
+function renderMateriality() {
+  const sel = [...state.selected].map(id => LEVERS.find(l => l.id === id));
+  const totalCapex = sel.reduce((s,l) => s + l.capex, 0) / 1000;   // $M
+  const annualOpex = sel.reduce((s,l) => s + l.opex, 0) / 1000;    // $M/yr (negative = savings)
+  const ebitdaUplift = -annualOpex;                                // $M/yr
+  const horizonYrs = state.horizonEnd - 2026 + 1;
+
+  // Peak single-year capex
+  const years = [];
+  for (let y = 2026; y <= state.horizonEnd; y++) years.push(y);
+  const capexByYear = years.map(y => sel.reduce((s,l) => s + (state.startYear[l.id]===y ? l.capex : 0), 0) / 1000);
+  const peakCapex = Math.max(0, ...capexByYear);
+
+  // Denominators
+  const annualMaintCapex = PORTCO.revenue * PORTCO.maintCapexPctRevenue;   // $M/yr
+  const cumulativeMaintCapex = annualMaintCapex * horizonYrs;              // $M
+  const currentEV = PORTCO.ebitda * PORTCO.exitMultiple;                   // $M
+
+  // Metrics
+  const pctOfCumMaintCapex = (totalCapex / cumulativeMaintCapex) * 100;
+  const pctOfAnnualMaintCapex = (peakCapex / annualMaintCapex) * 100;
+  const ebitdaUpliftPct = (ebitdaUplift / PORTCO.ebitda) * 100;   // %
+  const ebitdaUpliftBps = ebitdaUpliftPct * 100;                  // bps
+  const exitValueImpact = ebitdaUplift * PORTCO.exitMultiple;     // $M
+  const exitValueImpactPct = (exitValueImpact / currentEV) * 100; // %
+  const momOnCapex = totalCapex > 0 ? exitValueImpact / totalCapex : 0;
+
+  // Tier helpers
+  const tier = (v, goodMax, watchMax) => v <= goodMax ? 'good' : (v <= watchMax ? 'watch' : 'alert');
+  const tagLabel = t => t === 'good' ? 'Immaterial' : (t === 'watch' ? 'Meaningful' : 'Significant');
+
+  const tierCapex = tier(pctOfCumMaintCapex, 15, 40);
+  const tierPeak = tier(pctOfAnnualMaintCapex, 30, 80);
+  const tierEbitda = ebitdaUplift >= 0 ? 'good' : tier(-ebitdaUpliftPct, 1, 3);
+  const tierExit = exitValueImpact >= 0 ? 'good' : 'alert';
+
+  // "Moves the needle" framing for EBITDA & exit — positive is good, not bad
+  const ebitdaTag = ebitdaUplift >= 0
+    ? (ebitdaUpliftPct > 2 ? 'Strong uplift' : (ebitdaUpliftPct > 0.5 ? 'Modest uplift' : 'Neutral'))
+    : 'EBITDA drag';
+  const ebitdaTagClass = ebitdaUpliftPct > 2 ? 'tag-good' : (ebitdaUpliftPct > 0.5 ? 'tag-good' : (ebitdaUpliftPct >= 0 ? 'tag-watch' : 'tag-alert'));
+
+  const momTag = momOnCapex >= 2 ? 'Strong MoM' : (momOnCapex >= 1 ? 'Positive MoM' : (momOnCapex >= 0 ? 'Marginal' : 'Destructive'));
+  const momTagClass = momOnCapex >= 2 ? 'tag-good' : (momOnCapex >= 1 ? 'tag-good' : (momOnCapex >= 0 ? 'tag-watch' : 'tag-alert'));
+
+  document.getElementById('fmPortcoName').textContent = PORTCO.name;
+
+  document.getElementById('materialityPanel').innerHTML = `
+    <div class="materiality-card ${tierCapex}">
+      <div class="materiality-tag tag-${tierCapex}">${tagLabel(tierCapex)}</div>
+      <div class="materiality-label">Program Capex vs. Maint. Capex</div>
+      <div class="materiality-headline">${pctOfCumMaintCapex.toFixed(1)}<span class="unit">%</span></div>
+      <div class="materiality-denom">$${totalCapex.toFixed(1)}M of ~$${cumulativeMaintCapex.toFixed(0)}M ${horizonYrs}-yr maintenance capex</div>
+    </div>
+    <div class="materiality-card ${tierPeak}">
+      <div class="materiality-tag tag-${tierPeak}">${tagLabel(tierPeak)}</div>
+      <div class="materiality-label">Peak Year Capex vs. Annual Maint.</div>
+      <div class="materiality-headline">${pctOfAnnualMaintCapex.toFixed(0)}<span class="unit">%</span></div>
+      <div class="materiality-denom">$${peakCapex.toFixed(1)}M peak vs. $${annualMaintCapex.toFixed(1)}M/yr budget</div>
+    </div>
+    <div class="materiality-card ${ebitdaUplift>=0?'good':'alert'}">
+      <div class="materiality-tag ${ebitdaTagClass}">${ebitdaTag}</div>
+      <div class="materiality-label">EBITDA Impact at Full Ramp</div>
+      <div class="materiality-headline">${ebitdaUplift>=0?'+':'−'}${Math.abs(ebitdaUpliftBps).toFixed(0)}<span class="unit">bps</span></div>
+      <div class="materiality-denom">${ebitdaUplift>=0?'+':'−'}$${Math.abs(ebitdaUplift*1000).toFixed(0)}k/yr on $${PORTCO.ebitda}M EBITDA</div>
+    </div>
+    <div class="materiality-card ${exitValueImpact>=0?'good':'alert'}">
+      <div class="materiality-tag ${momTagClass}">${momTag}</div>
+      <div class="materiality-label">MoM on Decarb Capex</div>
+      <div class="materiality-headline">${momOnCapex.toFixed(1)}<span class="unit">×</span></div>
+      <div class="materiality-denom">+$${exitValueImpact.toFixed(1)}M exit value @ ${PORTCO.exitMultiple}x ÷ $${totalCapex.toFixed(1)}M capex</div>
+    </div>
+    <div class="materiality-card good">
+      <div class="materiality-tag tag-good">Context</div>
+      <div class="materiality-label">Exit Value Impact vs. Current EV</div>
+      <div class="materiality-headline">${exitValueImpactPct>=0?'+':''}${exitValueImpactPct.toFixed(2)}<span class="unit">%</span></div>
+      <div class="materiality-denom">$${currentEV.toFixed(0)}M current EV @ ${PORTCO.exitMultiple}x</div>
+    </div>
+  `;
+
+  // Verdict sentence
+  let verdict = '';
+  if (sel.length === 0) {
+    verdict = `<strong>No levers selected.</strong> Pick a scenario above to see the financial impact.`;
+  } else {
+    const capexPhrase = tierCapex === 'good' ? 'immaterial' : (tierCapex === 'watch' ? 'meaningful but manageable' : 'significant');
+    const ebitdaPhrase = ebitdaUpliftPct > 1 ? `a ${ebitdaUpliftBps.toFixed(0)}bps EBITDA uplift` : (ebitdaUpliftPct > 0 ? 'a modest EBITDA benefit' : 'flat EBITDA impact');
+    const exitPhrase = momOnCapex >= 2 ? `${momOnCapex.toFixed(1)}× MoM on the incremental capex` : (momOnCapex >= 1 ? `positive MoM on the decarb spend` : 'limited exit value uplift');
+    verdict = `Program is <strong>${capexPhrase}</strong> to ${PORTCO.name.split(' ')[0]}'s financials (${pctOfCumMaintCapex.toFixed(1)}% of ${horizonYrs}-yr maintenance capex, ${exitValueImpactPct.toFixed(2)}% of current EV) while delivering ${ebitdaPhrase} and <strong>${exitPhrase}</strong>.`;
+  }
+  document.getElementById('materialityVerdict').innerHTML = verdict;
+}
+
 function renderMetrics() {
   const sel = [...state.selected].map(id => LEVERS.find(l => l.id === id));
   const totalCapex = sel.reduce((s,l) => s + l.capex, 0);
   const totalOpex = sel.reduce((s,l) => s + l.opex, 0); // $k/yr at full ramp
   const totalAbate = sel.reduce((s,l) => s + l.abate, 0);
-  const targetEm = targetEmissions(state.targetYear);
-  const projEm = selectedEmissions(state.targetYear);
+  const checkYear = state.horizonEnd;
+  const targetEm = targetEmissions(checkYear);
+  const projEm = selectedEmissions(checkYear);
   const gap = projEm - targetEm;
   const horizonYrs = state.horizonEnd - 2026 + 1;
   const totalNPV = sel.reduce((s,l) => s + npv(l, horizonYrs), 0);
@@ -420,7 +575,7 @@ function renderMetrics() {
     <div class="metric-card"><div class="metric-label">Total Capex</div><div class="metric-value">$${(totalCapex/1000).toFixed(1)}<span class="unit">M</span></div><div class="metric-sub">${sel.length} levers selected</div></div>
     <div class="metric-card"><div class="metric-label">Annual Opex Δ (full ramp)</div><div class="metric-value ${totalOpex<0?'':''}">${totalOpex<0?'−':'+'}$${Math.abs(totalOpex).toFixed(0)}<span class="unit">k/yr</span></div><div class="metric-sub ${totalOpex<0?'good':'bad'}">${totalOpex<0?'EBITDA uplift':'EBITDA drag'}</div></div>
     <div class="metric-card"><div class="metric-label">Abatement at Full Ramp</div><div class="metric-value">${totalAbate.toLocaleString()}<span class="unit">tCO2e/yr</span></div><div class="metric-sub">${(totalAbate/baselineTotal()*100).toFixed(0)}% of baseline</div></div>
-    <div class="metric-card"><div class="metric-label">Gap to Target ${state.targetYear}</div><div class="metric-value ${gap>0?'gap-pos':'gap-neg'}">${gap>0?'+':''}${Math.round(gap).toLocaleString()}<span class="unit">tCO2e</span></div><div class="metric-sub">${gap>0?'short of target':'target met'}</div></div>
+    <div class="metric-card"><div class="metric-label">Gap to Target ${checkYear}</div><div class="metric-value ${gap>0?'gap-pos':'gap-neg'}">${gap>0?'+':''}${Math.round(gap).toLocaleString()}<span class="unit">tCO2e</span></div><div class="metric-sub">${gap>0?'short of target':'target met'}</div></div>
     <div class="metric-card"><div class="metric-label">Program NPV @ ${(state.discount*100).toFixed(0)}%</div><div class="metric-value">${totalNPV<0?'−':''}$${Math.abs(totalNPV/1000).toFixed(1)}<span class="unit">M</span></div><div class="metric-sub">over ${horizonYrs}-yr horizon</div></div>
     <div class="metric-card"><div class="metric-label">Est. Exit Value Impact</div><div class="metric-value">${exitValueImpact>=0?'+':'−'}$${Math.abs(exitValueImpact).toFixed(1)}<span class="unit">M</span></div><div class="metric-sub">at ${exitMultiple}x EBITDA</div></div>
   `;
@@ -624,111 +779,54 @@ function renderGlide() {
   });
 }
 
-// Classic McKinsey MACC layout: vertical rectangles sorted cheapest→most expensive
-// left-to-right along x (cumulative abatement), with bar WIDTH = abatement potential
-// and bar HEIGHT = LCOA ($/tCO2e). Negative LCOA bars extend below the zero line.
-// Implemented via a custom Chart.js plugin since Chart.js native bars don't support
-// variable widths on a linear axis.
-const maccPlugin = {
-  id: 'maccPlugin',
-  afterDatasetsDraw(chart, args, opts) {
-    const { ctx, chartArea, scales } = chart;
-    const sorted = opts.sorted || [];
-    if (!sorted.length) return;
-    const xScale = scales.x, yScale = scales.y;
-    const y0 = yScale.getPixelForValue(0);
-
-    ctx.save();
-    ctx.font = '9px Inter, sans-serif';
-    ctx.textAlign = 'center';
-
-    let cum = 0;
-    sorted.forEach(lev => {
-      const x1 = xScale.getPixelForValue(cum);
-      const x2 = xScale.getPixelForValue(cum + lev.abate);
-      const lc = lcoa(lev);
-      const yTop = yScale.getPixelForValue(Math.max(lc, 0));
-      const yBot = yScale.getPixelForValue(Math.min(lc, 0));
-      const w = x2 - x1;
-      const h = yBot - yTop;
-
-      // Fill
-      ctx.fillStyle = opts.selected.has(lev.id)
-        ? (lc < 0 ? 'rgba(91,184,164,0.85)' : 'rgba(91,143,232,0.85)')
-        : (lc < 0 ? 'rgba(91,184,164,0.30)' : 'rgba(91,143,232,0.30)');
-      ctx.fillRect(x1, yTop, w, h);
-      // Border
-      ctx.strokeStyle = opts.selected.has(lev.id) ? '#ffffff' : 'rgba(139,143,163,0.5)';
-      ctx.lineWidth = opts.selected.has(lev.id) ? 1.5 : 0.5;
-      ctx.strokeRect(x1, yTop, w, h);
-
-      // Label above the zero line for negative bars, above the top for positive
-      const cx = (x1 + x2) / 2;
-      const labelY = lc < 0 ? y0 - 4 : yTop - 4;
-      ctx.fillStyle = '#e2e4ea';
-      const name = lev.name.length > 18 ? lev.name.slice(0,16) + '…' : lev.name;
-
-      // Only draw label if bar is wide enough
-      if (w > 28) {
-        ctx.save();
-        ctx.translate(cx, labelY);
-        ctx.rotate(-Math.PI / 2.5);
-        ctx.textAlign = 'left';
-        ctx.fillText(name, 0, 3);
-        ctx.restore();
-      }
-    });
-
-    // Zero line
-    ctx.beginPath();
-    ctx.strokeStyle = '#5a5e72';
-    ctx.lineWidth = 1;
-    ctx.moveTo(chartArea.left, y0);
-    ctx.lineTo(chartArea.right, y0);
-    ctx.stroke();
-
-    ctx.restore();
-  }
-};
-
 function renderMacc() {
+  // Horizontal bar layout: bar length = abatement potential, sorted cheapest→
+  // most expensive top-to-bottom, color-tiered by LCOA, LCOA shown in labels,
+  // selected levers outlined in white.
   const sorted = [...LEVERS].sort((a,b) => lcoa(a) - lcoa(b));
-  const totalAbate = sorted.reduce((s,l) => s + l.abate, 0);
-  const lcoas = sorted.map(lcoa);
-  const yMin = Math.min(0, Math.min(...lcoas) * 1.1);
-  const yMax = Math.max(10, Math.max(...lcoas) * 1.1);
+  const labels = sorted.map(l => {
+    const lc = Math.round(lcoa(l));
+    const lcStr = lc < 0 ? `−$${Math.abs(lc)}` : `$${lc}`;
+    const name = l.name.length > 28 ? l.name.slice(0,26)+'…' : l.name;
+    return `${name}  (${lcStr}/t)`;
+  });
+  const data = sorted.map(l => l.abate);
+  const tierColor = lc => {
+    if (lc < 0)   return 'rgba(91,184,164,0.85)';   // negative — green
+    if (lc < 50)  return 'rgba(91,143,232,0.85)';   // cheap — blue
+    if (lc < 150) return 'rgba(232,168,76,0.85)';   // moderate — yellow
+    return 'rgba(232,93,93,0.85)';                   // expensive — red
+  };
+  const bg = sorted.map(l => tierColor(lcoa(l)));
+  const borders = sorted.map(l => state.selected.has(l.id) ? '#ffffff' : 'transparent');
+  const borderWidths = sorted.map(l => state.selected.has(l.id) ? 2 : 0);
 
   if (maccChart) maccChart.destroy();
   maccChart = new Chart(document.getElementById('maccChart'), {
-    type: 'scatter',
-    data: { datasets: [{ data: [] }] }, // no native data — plugin draws everything
+    type: 'bar',
+    data: { labels, datasets: [{
+      data,
+      backgroundColor: bg,
+      borderColor: borders,
+      borderWidth: borderWidths,
+      borderRadius: 3,
+    }]},
     options: {
-      responsive: true, maintainAspectRatio: false,
-      animation: false,
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
       plugins: {
         legend: { display: false },
-        tooltip: { enabled: false },
-        maccPlugin: { sorted, selected: state.selected }
+        tooltip: { callbacks: {
+          label: ctx => {
+            const lev = sorted[ctx.dataIndex];
+            return [`Abatement: ${lev.abate.toLocaleString()} tCO2e/yr`, `LCOA: $${Math.round(lcoa(lev))}/tCO2e`, `Capex: $${lev.capex}k`];
+          }
+        }}
       },
       scales: {
-        x: {
-          type: 'linear',
-          min: 0,
-          max: totalAbate,
-          ticks: { color: '#5a5e72', callback: v => v.toLocaleString() },
-          grid: { color: '#2e3345' },
-          title: { display: true, text: 'Cumulative abatement potential (tCO2e/yr)', color: '#8b8fa3', font: { size: 11 } }
-        },
-        y: {
-          min: yMin,
-          max: yMax,
-          ticks: { color: '#5a5e72', callback: v => (v<0?'−$':'$') + Math.abs(v) },
-          grid: { color: '#2e3345' },
-          title: { display: true, text: '$/tCO2e abated (LCOA)', color: '#8b8fa3', font: { size: 11 } }
-        }
+        x: { beginAtZero: true, ticks: { color: '#5a5e72', callback: v => v.toLocaleString() }, grid: { color: '#2e3345' }, title: { display: true, text: 'Abatement potential (tCO2e/yr) — sorted cheapest to most expensive top→bottom', color: '#5a5e72', font: { size: 10 } } },
+        y: { ticks: { color: '#8b8fa3', font: { size: 10 } }, grid: { display: false } }
       }
-    },
-    plugins: [maccPlugin]
+    }
   });
 }
 
