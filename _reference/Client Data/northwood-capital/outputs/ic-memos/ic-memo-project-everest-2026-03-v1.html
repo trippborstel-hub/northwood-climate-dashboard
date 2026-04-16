@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IC Memo — Project Everest | Northwood Capital</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* === Base Layout === */
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 60px;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #ffffff;
+        }
+        /* === Typography === */
+        h1 { font-size: 28px; font-weight: 700; color: #1B2A3D; margin: 0 0 16px 0; line-height: 1.3; }
+        h2 { font-size: 22px; font-weight: 600; color: #1B2A3D; margin: 40px 0 16px 0; padding-bottom: 8px; border-bottom: 2px solid #dee2e6; }
+        h3 { font-size: 18px; font-weight: 600; color: #2C4A6E; margin: 28px 0 12px 0; }
+        h4 { font-size: 15px; font-weight: 600; color: #2C4A6E; margin: 20px 0 8px 0; }
+        p { margin: 0 0 12px 0; }
+        strong { font-weight: 600; }
+        ul, ol { margin: 0 0 14px 0; padding-left: 24px; }
+        li { margin-bottom: 4px; }
+        blockquote { border-left: 3px solid #2C4A6E; margin: 16px 0; padding: 8px 16px; background: #f8f9fa; color: #333; font-style: italic; }
+        hr { border: none; border-top: 1px solid #dee2e6; margin: 32px 0; }
+        /* === Tables === */
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 13px; }
+        th { background-color: #1B2A3D; color: #ffffff; font-weight: 600; text-align: left; padding: 10px 14px; border: 1px solid #1B2A3D; }
+        td { padding: 8px 14px; border: 1px solid #dee2e6; vertical-align: top; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+        /* === Metric Cards === */
+        .metric-cards { display: flex; gap: 20px; margin: 25px 0; flex-wrap: wrap; }
+        .metric-card { flex: 1; min-width: 200px; background: #f8f9fa; border-left: 4px solid #0D6EAA; padding: 16px 20px; }
+        .metric-label { font-size: 12px; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
+        .metric-value { font-size: 32px; font-weight: 700; color: #1B2A3D; margin: 4px 0; }
+        .metric-sub { font-size: 13px; color: #555; }
+        /* === Thesis Pillar Boxes === */
+        .pillar-box { border-left: 4px solid #0D6EAA; background: #f8f9fa; padding: 20px 24px; margin: 20px 0 28px 0; }
+        .pillar-box h3 { margin-top: 0; color: #1B2A3D; }
+        .pillar-box p:last-child { margin-bottom: 0; }
+        /* === Risk Badges === */
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; letter-spacing: 0.3px; vertical-align: middle; }
+        .badge-critical { background: #c62828; color: #ffffff; }
+        .badge-high { background: #f8d7da; color: #721c24; }
+        .badge-medium { background: #fff3cd; color: #856404; }
+        .badge-low { background: #d1ecf1; color: #0c5460; }
+        .badge-likely { background: #f8d7da; color: #721c24; }
+        .badge-possible { background: #fff3cd; color: #856404; }
+        .badge-remote { background: #d1ecf1; color: #0c5460; }
+        .badge-proceed { background: #0D6EAA; color: #ffffff; padding: 6px 16px; font-size: 14px; border-radius: 5px; }
+        /* === Risk Section === */
+        .risk-header { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+        .risk-header h3 { margin: 0; flex-shrink: 0; }
+        .risk-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+        /* === Coversheet === */
+        .coversheet { background: #1B2A3D; color: #ffffff; padding: 40px; margin: -40px -60px 40px -60px; }
+        .coversheet-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; color: #8ab4d6; margin-bottom: 12px; }
+        .coversheet h1 { color: #ffffff; font-size: 32px; margin: 0 0 4px 0; }
+        .coversheet-subtitle { font-size: 18px; color: #b0c4d8; margin-bottom: 28px; }
+        .coversheet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 40px; font-size: 14px; margin-bottom: 28px; }
+        .coversheet-grid dt { color: #8ab4d6; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+        .coversheet-grid dd { margin: 0 0 12px 0; color: #ffffff; }
+        .coversheet-rec { display: flex; align-items: center; gap: 16px; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2); }
+        .coversheet-rec-badge { background: #2E7D5B; color: #ffffff; padding: 8px 20px; border-radius: 5px; font-weight: 700; font-size: 15px; letter-spacing: 0.5px; }
+        .coversheet-rec-text { color: #b0c4d8; font-size: 14px; }
+        .coversheet-conf { font-size: 11px; color: #8ab4d6; margin-top: 24px; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 14px; }
+        /* === Sensitivity Matrix === */
+        .sensitivity-base { font-weight: 700; background: #e8f0fe !important; border: 2px solid #0D6EAA; }
+        /* === TOC Sidebar === */
+        .toc-sidebar { position: fixed; left: 0; top: 0; width: 260px; height: 100vh; background: #1B2A3D; color: #ffffff; padding: 20px 0; overflow-y: auto; z-index: 1000; transform: translateX(-260px); transition: transform 0.3s ease; }
+        .toc-sidebar.open { transform: translateX(0); }
+        .toc-toggle { position: fixed; left: 12px; top: 12px; z-index: 1001; background: #1B2A3D; color: #ffffff; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-family: 'Inter', sans-serif; font-weight: 600; }
+        .toc-toggle:hover { background: #2C4A6E; }
+        .toc-sidebar h4 { color: #8ab4d6; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; padding: 0 20px; margin: 0 0 12px 0; }
+        .toc-sidebar a { display: block; padding: 7px 20px; color: #b0c4d8; text-decoration: none; font-size: 13px; transition: background 0.15s, color 0.15s; }
+        .toc-sidebar a:hover { background: rgba(255,255,255,0.1); color: #ffffff; }
+        /* === Callout Box === */
+        .callout { background: #f8f9fa; border-left: 4px solid #2C4A6E; padding: 16px 20px; margin: 16px 0; }
+        .callout p:last-child { margin-bottom: 0; }
+        /* === Sources & Uses === */
+        .sources-uses { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin: 20px 0; }
+        .sources-uses > div { background: #f8f9fa; padding: 20px; }
+        .sources-uses h4 { margin-top: 0; color: #1B2A3D; }
+        .su-line { display: flex; justify-content: space-between; padding: 4px 0; font-size: 13px; }
+        .su-line.total { border-top: 2px solid #1B2A3D; font-weight: 700; margin-top: 8px; padding-top: 8px; }
+        /* === Print === */
+        @media print {
+            body { padding: 20px; max-width: 100%; }
+            table { page-break-inside: avoid; }
+            h2 { page-break-after: avoid; }
+            .no-print, .toc-sidebar, .toc-toggle { display: none !important; }
+            .coversheet { margin: -20px -20px 20px -20px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- TOC Toggle Button -->
+<button class="toc-toggle no-print" onclick="document.querySelector('.toc-sidebar').classList.toggle('open'); this.textContent = document.querySelector('.toc-sidebar').classList.contains('open') ? '\u2715 Close' : '\u2630 Contents';">&#9776; Contents</button>
+
+<!-- TOC Sidebar -->
+<nav class="toc-sidebar no-print">
+    <h4>Table of Contents</h4>
+    <a href="#sec1">1. Executive Summary</a>
+    <a href="#sec2">2. Company Overview</a>
+    <a href="#sec3">3. Market &amp; Competitive Landscape</a>
+    <a href="#sec4">4. Financial Analysis</a>
+    <a href="#sec5">5. Investment Thesis</a>
+    <a href="#sec6">6. Value Creation Plan</a>
+    <a href="#sec7">7. Transaction Summary</a>
+    <a href="#sec8">8. Returns Analysis</a>
+    <a href="#sec9">9. Key Risks &amp; Mitigants</a>
+    <a href="#sec10">10. Due Diligence Status</a>
+    <a href="#sec11">11. Recommendation</a>
+    <a href="#qa">QA Summary</a>
+    <a href="#revision">Revision History</a>
+</nav>
+
+<!-- ============================================================ -->
+<!-- COVERSHEET                                                    -->
+<!-- ============================================================ -->
+<div class="coversheet">
+    <div class="coversheet-label">Northwood Capital Partners &mdash; Investment Committee Memorandum</div>
+    <h1>Project Everest</h1>
+    <div class="coversheet-subtitle">Specialty Chemical Solutions Inc.</div>
+
+    <dl class="coversheet-grid">
+        <div>
+            <dt>Date</dt>
+            <dd>February 5, 2026</dd>
+        </div>
+        <div>
+            <dt>IC Meeting</dt>
+            <dd>February 5, 2026 | 9:00 AM CT | Chicago, IL</dd>
+        </div>
+        <div>
+            <dt>Deal Lead</dt>
+            <dd>James Harrison, Managing Partner &amp; Co-Founder</dd>
+        </div>
+        <div>
+            <dt>Deal Team</dt>
+            <dd>Andrew Walsh, Principal; Thomas Chen, Senior Associate</dd>
+        </div>
+        <div>
+            <dt>Fund</dt>
+            <dd>Northwood Capital Fund II, L.P.</dd>
+        </div>
+        <div>
+            <dt>Classification</dt>
+            <dd>Confidential &mdash; Internal Only</dd>
+        </div>
+    </dl>
+
+    <div class="coversheet-rec">
+        <span class="coversheet-rec-badge">PROCEED</span>
+        <span class="coversheet-rec-text">Authorize LOI submission at $155.0M (8.6x LTM Adj. EBITDA)</span>
+    </div>
+
+    <div class="coversheet-conf">
+        This memorandum is confidential and intended solely for the Investment Committee of Northwood Capital Partners. Do not distribute or reproduce without authorization.
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 1: EXECUTIVE SUMMARY                                  -->
+<!-- ============================================================ -->
+<h2 id="sec1">Section 1: Executive Summary</h2>
+
+<div class="metric-cards">
+    <div class="metric-card">
+        <div class="metric-label">Enterprise Value</div>
+        <div class="metric-value">$155.0M</div>
+        <div class="metric-sub">8.6x LTM Adj. EBITDA</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">LTM Adj. EBITDA</div>
+        <div class="metric-value">$18.0M</div>
+        <div class="metric-sub">9.7% margin</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Base Case Returns</div>
+        <div class="metric-value">~18% / 2.3x</div>
+        <div class="metric-sub">IRR / MOIC &mdash; 5-year hold</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Entry Leverage</div>
+        <div class="metric-value">3.4x</div>
+        <div class="metric-sub">$62.0M Senior Term Loan</div>
+    </div>
+</div>
+
+<table>
+    <tr><th colspan="2" style="text-align:center;">Company Snapshot</th></tr>
+    <tr><td style="width:40%;"><strong>Company</strong></td><td>Specialty Chemical Solutions Inc. ("SCS" or the "Company")</td></tr>
+    <tr><td><strong>Headquarters</strong></td><td>Cincinnati, OH</td></tr>
+    <tr><td><strong>Sector</strong></td><td>Industrial Technology / Specialty Chemical Distribution</td></tr>
+    <tr><td><strong>Founded</strong></td><td>1985 (founder Richard Hoffman, age 63, full exit)</td></tr>
+    <tr><td><strong>LTM Revenue</strong></td><td class="num">$185.0M (LTM as of January 31, 2026)</td></tr>
+    <tr><td><strong>LTM Adj. EBITDA</strong></td><td class="num">$18.0M (9.7% margin)</td></tr>
+    <tr><td><strong>Proj. Revenue (Year 1)</strong></td><td class="num">$195.0M</td></tr>
+    <tr><td><strong>Proj. EBITDA (Year 1)</strong></td><td class="num">$19.5M (10.0% margin; 10.8% by Year 5)</td></tr>
+    <tr><td><strong>Enterprise Value</strong></td><td class="num">$155.0M (8.6x LTM Adj. EBITDA &mdash; LOI price, midpoint of $145&ndash;165M range)</td></tr>
+    <tr><td><strong>Total Equity</strong></td><td class="num">$93.0M</td></tr>
+    <tr><td><strong>&nbsp;&nbsp;Fund Equity (80%)</strong></td><td class="num">$74.4M</td></tr>
+    <tr><td><strong>&nbsp;&nbsp;Mgmt Rollover (20%)</strong></td><td class="num">$18.6M</td></tr>
+    <tr><td><strong>Entry Leverage</strong></td><td class="num">3.4x (Term Loan $62.0M / LTM Adj. EBITDA $18.0M)</td></tr>
+    <tr><td><strong>Base Case Returns</strong></td><td class="num">~18% IRR / 2.3x MOIC &mdash; 5-year hold, organic only</td></tr>
+    <tr><td><strong>Upside Case Returns</strong></td><td class="num">~29% IRR / 3.6x MOIC &mdash; 5-year hold, 2 add-on acquisitions</td></tr>
+    <tr><td><strong>Downside Case Returns</strong></td><td class="num">~4% IRR / 1.2x MOIC &mdash; flat revenue, margin compression</td></tr>
+    <tr><td><strong>Fund II Remaining Capacity</strong></td><td class="num">$495.0M (post-investment: $420.6M remaining)</td></tr>
+</table>
+
+<p><strong>Thesis:</strong> SCS is a 40-year-old specialty chemical distributor with essential products, inelastic demand, 85%+ customer retention, and 5 identified add-on targets in a $35&ndash;40B fragmented market. The base case thesis is platform professionalization &mdash; installing a CEO, building institutional management infrastructure, and improving commercial execution on a business that has outgrown its founder. The upside thesis is geographic consolidation through 2 tuck-in acquisitions at 5&ndash;7x (versus 8.6x entry), creating meaningful multiple arbitrage and accelerating returns to fund-hurdle levels. Northwood's Industrial expertise (James Harrison, David Okafor) is directly applicable.</p>
+
+<div class="callout">
+    <p><strong>Note on base case returns:</strong> Organic-only base case returns (~18% IRR / 2.3x MOIC) are below Northwood's 20%+ IRR / 2.5x+ MOIC hurdle. The deal team's underwriting view is that the organic base case is conservative and that the platform consolidation strategy (upside case) is executable and well-supported by identified targets and market structure. Approval is conditional on the team's commitment to initiating add-on execution within 18 months of close.</p>
+</div>
+
+<p><strong>Recommendation:</strong> <span class="badge badge-proceed">PROCEED</span> &mdash; Authorize LOI submission at $155.0M (8.6x). Subject to exclusivity grant and confirmatory due diligence, with conditions specified in Section 11.</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<!-- SECTION 2: COMPANY OVERVIEW                                   -->
+<!-- ============================================================ -->
+<h2 id="sec2">Section 2: Company Overview</h2>
+
+<h3>2.1 Business History and Founding Narrative</h3>
+
+<p>Specialty Chemical Solutions was founded in 1985 by Richard Hoffman, then 22 years old, after three years as a technical sales engineer for a major chemical manufacturer. Hoffman identified that mid-market industrial customers were systematically underserved &mdash; national distributors prioritized their large accounts, and local distributors lacked technical expertise. He started with water treatment chemicals for industrial cooling systems, making deliveries himself from a rented 5,000 sq ft warehouse in Cincinnati. Revenue reached $8M by 1992 with 15 employees.</p>
+
+<p>The Company has grown through four distinct phases: Foundation (1985&ndash;1992), Product Diversification (1993&ndash;2000), Regional Expansion (2001&ndash;2008), and Platform Maturity (2016&ndash;present). Key milestones include expansion into metalworking fluids, food-grade processing chemicals, and agricultural inputs; construction of a 25,000 sq ft custom blending facility; opening of four regional distribution warehouses; and the 2017 hire of Karen Walsh (VP Sales) to professionalize the commercial organization. SCS is now the largest independent specialty chemical distributor in the Ohio Valley region with $185.0M in LTM revenue.</p>
+
+<p>Hoffman's decision to sell is straightforward: he is 63, has no children in the business, and has no identified successor. His wife's health is a secondary motivator for his stated 6&ndash;9 month exit timeline. This is a clean founder exit &mdash; no rollover, no part-time role. Hoffman has agreed to a 12&ndash;18 month post-close transition advisory arrangement covering customer relationship introductions and institutional knowledge transfer, compensated separately from transaction proceeds.</p>
+
+<h3>2.2 Business Model</h3>
+
+<p>SCS generates revenue through two mechanisms:</p>
+
+<p><strong>Distributed Products (80% of revenue):</strong> SCS acts as an authorized distributor for major chemical manufacturers (BASF, Dow, Ashland) &mdash; purchasing bulk chemicals and reselling in packaged formats to industrial customers. Gross margins on distributed products range 20&ndash;28% by category, with water treatment and food-grade at the high end and agricultural at the low end.</p>
+
+<p><strong>Custom and Private-Label Blends (20% of revenue):</strong> SCS formulates customer-specific chemical blends at its Cincinnati blending facility, using proprietary formulations developed in partnership with customers over years of technical engagement. Margins on custom blends are 400&ndash;600bps above distributed products. Critically, custom blends create formulation lock-in &mdash; switching requires customer re-qualification and testing, a process that takes 3&ndash;6 months and creates meaningful switching costs.</p>
+
+<p>Revenue is predominantly repeat purchase (not contractually recurring). The Company operates on purchase order terms with annual master service agreements for its largest accounts. Renewal rates among the top 50 customers exceed 98%. Repeat purchase patterns are highly predictable &mdash; specialty chemicals are consumed in customers' daily manufacturing operations and represent essential process inputs.</p>
+
+<p><strong>Gross margin by product category:</strong></p>
+<ul>
+    <li>Custom blends: 32&ndash;35%</li>
+    <li>Water treatment: 27&ndash;28%</li>
+    <li>Food &amp; beverage: 25&ndash;27%</li>
+    <li>Metalworking: 24&ndash;26%</li>
+    <li>Institutional: 23&ndash;25%</li>
+    <li>Agricultural: 20&ndash;22%</li>
+</ul>
+
+<h3>2.3 Product and Revenue Mix</h3>
+
+<table>
+    <thead>
+        <tr><th>Category</th><th class="num">% Revenue</th><th>Cyclicality</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Water Treatment Chemicals</td><td class="num">28%</td><td>Low &mdash; essential utility</td></tr>
+        <tr><td>Metalworking Fluids &amp; Lubricants</td><td class="num">22%</td><td>Moderate &mdash; GDP-sensitive</td></tr>
+        <tr><td>Food &amp; Beverage Processing</td><td class="num">18%</td><td>Low &mdash; non-discretionary</td></tr>
+        <tr><td>Institutional &amp; Industrial Cleaning</td><td class="num">17%</td><td>Low &mdash; essential facility</td></tr>
+        <tr><td>Agricultural Chemicals</td><td class="num">15%</td><td>Moderate &mdash; seasonal</td></tr>
+    </tbody>
+</table>
+
+<p>Approximately 63% of revenue is from low-cyclicality end markets. This distribution contributed to SCS's resilience in the 2008&ndash;2009 recession &mdash; revenue declined only 12%, well below industrial distribution peers, and recovered within 18 months.</p>
+
+<h3>2.4 Distribution Infrastructure</h3>
+
+<table>
+    <thead>
+        <tr><th>Facility</th><th>Location</th><th class="num">Sq Ft</th><th>Function</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>HQ &amp; Blending</td><td>Cincinnati, OH</td><td class="num">150,000</td><td>HQ, blending, primary distribution (~80% utilized)</td></tr>
+        <tr><td>Regional Warehouse</td><td>Indianapolis, IN</td><td class="num">35,000</td><td>Distribution</td></tr>
+        <tr><td>Regional Warehouse</td><td>Columbus, OH</td><td class="num">30,000</td><td>Distribution</td></tr>
+        <tr><td>Regional Warehouse</td><td>Pittsburgh, PA</td><td class="num">25,000</td><td>Distribution</td></tr>
+        <tr><td>Regional Warehouse</td><td>Louisville, KY</td><td class="num">20,000</td><td>Distribution (opened 2019)</td></tr>
+    </tbody>
+</table>
+
+<p>Fleet: 42 owned delivery trucks, average age 5 years, well-maintained. Same-day or next-day delivery within a 400-mile radius of Cincinnati. Chemical supply interruption halts customer manufacturing operations &mdash; delivery speed and reliability are non-negotiable service attributes and a core competitive barrier versus national distributors offering 3&ndash;5 day lead times.</p>
+
+<p>Blending facility: 70% utilized, 3 chemists and 8 operators, 8 mixing tanks (500&ndash;5,000 gallon capacity), on-site quality control lab. Capacity supports growth to 30%+ of revenue in custom blends without capital investment.</p>
+
+<div class="callout">
+    <p><strong>Roof risk:</strong> Aging roof sections at the Cincinnati HQ facility are projected to require replacement within 3&ndash;5 years. Schmidt estimates $1.5&ndash;2.0M in capital expenditure. Flagged as a DD open item &mdash; Phase I/II inspection to include structural review.</p>
+</div>
+
+<h3>2.5 Customer Base and Concentration</h3>
+
+<p>SCS serves approximately 450 active customers. The customer base is concentrated at the top:</p>
+
+<table>
+    <thead>
+        <tr><th>Customer Rank</th><th>Industry</th><th class="num">Revenue %</th><th>Tenure</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Customer 1</td><td>Automotive Manufacturing</td><td class="num">9%</td><td>22 years</td></tr>
+        <tr><td>Customer 2</td><td>Steel Processing</td><td class="num">8%</td><td>28 years</td></tr>
+        <tr><td>Customer 3</td><td>Food Processing</td><td class="num">6%</td><td>18 years</td></tr>
+        <tr><td>Customer 4</td><td>Water Utility</td><td class="num">5%</td><td>15 years</td></tr>
+        <tr><td>Customer 5</td><td>Paper Manufacturing</td><td class="num">4%</td><td>20 years</td></tr>
+        <tr style="font-weight:700; background:#f0f4f8 !important;"><td>Top 5 Total</td><td></td><td class="num">32%</td><td></td></tr>
+        <tr><td>Top 10 Total</td><td></td><td class="num">48%</td><td></td></tr>
+        <tr><td>Top 20 Total</td><td></td><td class="num">62%</td><td></td></tr>
+    </tbody>
+</table>
+
+<p>No single customer exceeds 9% of revenue. All top 10 customers have tenures of 10+ years. Among the top 50, retention exceeds 98%. All churn in the broader base is attributable to customer business closure, facility relocation, or in-sourcing &mdash; not competitive displacement in the past 5 years.</p>
+
+<div class="callout">
+    <p><strong>Adversarial review &mdash; customer concentration:</strong> The CIM presents customers as independent entities. The deal team will require independent verification of corporate family trees (D&amp;B/Capital IQ) for the top 20 customers to identify any hidden concentration through common ownership or related entities. This is a confirmatory DD workstream. No flags raised at screening stage based on available information.</p>
+</div>
+
+<h3>2.6 Management Team Assessment</h3>
+
+<table>
+    <thead>
+        <tr><th>Name</th><th>Role</th><th>Tenure</th><th>Assessment</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Richard Hoffman</td><td>CEO &amp; Founder</td><td>40 years</td><td>Exiting. Critical knowledge risk. 12&ndash;18 month transition advisory secured.</td></tr>
+        <tr><td>David Schmidt</td><td>CFO</td><td>18 years</td><td>Strong. Deep institutional financial knowledge. Requires PE mentorship on reporting cadence and board format. Not a CEO candidate. Will retain.</td></tr>
+        <tr><td>Karen Walsh</td><td>VP Sales</td><td>9 years</td><td>Strong commercial leader. Transformed the sales organization (Salesforce CRM, defined territories, performance management). Has visited every top-50 customer quarterly. Identified 5 add-on targets with preliminary founder relationships. Potential CCO trajectory. Will retain with expanded role.</td></tr>
+        <tr><td>Robert Chen</td><td>VP Operations</td><td>12 years</td><td>Manages logistics, fleet, warehouse, blending. Execution-oriented. Will retain.</td></tr>
+        <tr><td>Angela Torres</td><td>Director, Quality &amp; Compliance</td><td>8 years</td><td>Critical for regulatory compliance (EPA, DOT, OSHA). Will retain.</td></tr>
+    </tbody>
+</table>
+
+<div class="callout">
+    <p><strong>CEO succession &mdash; critical path:</strong> This is the defining execution issue. Hoffman has no succession plan. There is no internal candidate with the breadth or aspiration for the CEO role. Walsh could develop toward CCO; Schmidt is a CFO who knows it. An external CEO hire must commence during the DD period and close within 30 days of transaction signing. Target profile: distribution or industrial executive, 20+ years experience, prior PE-backed CEO role preferred, Midwest-based or willing to relocate. David Okafor (Northwood Operating Partner, 25 years industrial operations, former CEO) will provide day-to-day operational continuity in the transition period and serve as interim board-level operational resource.</p>
+</div>
+
+<p><strong>Management quality score: 2/5</strong> at deal entry (departing CEO, no succession plan). Increases to 3/5 contingent on CEO hire; to 4/5 upon CEO demonstrating effectiveness at 12 months.</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<!-- SECTION 3: MARKET & COMPETITIVE LANDSCAPE                     -->
+<!-- ============================================================ -->
+<h2 id="sec3">Section 3: Market &amp; Competitive Landscape</h2>
+
+<h3>3.1 Market Size and Growth</h3>
+
+<p>The U.S. specialty chemical distribution market is estimated at $35&ndash;40B. Northwood underwrites the Ohio Valley and adjacent regional market as the Serviceable Addressable Market &mdash; approximately $3&ndash;5B, based on the 10&ndash;12% share of U.S. industrial production concentrated in the Ohio Valley corridor.</p>
+
+<p>Market growth: 4&ndash;6% annually, driven by:</p>
+<ul>
+    <li><strong>Industrial onshoring tailwind</strong> &mdash; U.S. manufacturing reshoring is increasing domestic chemical consumption, particularly in metalworking and process chemicals</li>
+    <li><strong>Water treatment demand</strong> &mdash; aging infrastructure and EPA PFAS enforcement timeline are driving increased municipal and industrial water treatment spending</li>
+    <li><strong>Regulatory complexity</strong> &mdash; increasing chemical management compliance requirements are pushing mid-market manufacturers to outsource to technical distributors rather than manage internally</li>
+    <li><strong>Food safety regulation</strong> &mdash; FDA requirements for food-grade processing chemicals are driving demand growth in SCS's 18% food segment</li>
+</ul>
+
+<p>Market growth has been 4&ndash;6% annually over the past decade [IBISWorld, Specialty Chemical Distribution in the US, Q4 2025]. SCS's 5-year revenue CAGR of ~5.4% is in line with market growth, indicating stable market share rather than gain or loss.</p>
+
+<h3>3.2 Market Structure</h3>
+
+<p>The specialty chemical distribution market is highly fragmented. The top 10 distributors collectively hold less than 25% market share. Hundreds of regional independent distributors operate in niche product categories and geographies. This fragmentation creates the consolidation opportunity that underpins the add-on thesis.</p>
+
+<p><strong>Key fragmentation dynamics:</strong></p>
+<ul>
+    <li>Founder-owned regional independents ($10&ndash;100M revenue) represent the majority of the market</li>
+    <li>Geographic barriers: same-day/next-day delivery economics limit effective radius to 300&ndash;500 miles from distribution nodes</li>
+    <li>Product expertise barriers: specialty and technical categories require application knowledge that commodity-focused players lack</li>
+    <li>Consolidation has accelerated: PE-backed platforms are acquiring regional distributors at 5&ndash;7x EBITDA, creating meaningful arbitrage to platform multiples of 9&ndash;10x</li>
+</ul>
+
+<h3>3.3 Competitive Landscape</h3>
+
+<table>
+    <thead>
+        <tr><th>Competitor</th><th>Est. Revenue</th><th>Geography</th><th>Competitive Overlap</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Univar Solutions</td><td>$9.5B</td><td>National/Global</td><td>Broadline; competes in commodity segments, not SCS's technical niche</td></tr>
+        <tr><td>Brenntag</td><td>$14.5B</td><td>National/Global</td><td>#2 globally; less technical service than SCS in regional markets</td></tr>
+        <tr><td>Azelis</td><td>$4.0B</td><td>National/Global</td><td>Specialty-focused PE-backed platform; potential acquirer of SCS at premium to sponsor</td></tr>
+        <tr><td>Hawkins Inc.</td><td>$900M</td><td>Upper Midwest</td><td>Water treatment and industrial; most direct regional overlap; public company</td></tr>
+        <tr><td>Regional independents (50+)</td><td>$10&ndash;100M</td><td>Local/Regional</td><td>Primary competitive set AND primary add-on targets</td></tr>
+    </tbody>
+</table>
+
+<p>SCS competes primarily against regional independents on technical expertise, delivery speed, and relationship depth &mdash; not against national broadline players on price. National players offer 3&ndash;5 day lead times versus SCS's same-day/next-day. This delivery advantage is structurally defensible because no national distributor can economically match 400-mile radius next-day service without a local distribution node.</p>
+
+<p><strong>SCS competitive advantages:</strong></p>
+<ol>
+    <li><strong>Technical depth:</strong> 12 application specialists provide on-site customer support that regional and national commodity competitors cannot replicate at SCS's price point</li>
+    <li><strong>Custom blending lock-in:</strong> 20% of revenue from proprietary formulations requiring re-qualification to switch &mdash; a structural moat that commodity distributors cannot replicate without capital investment</li>
+    <li><strong>Delivery speed:</strong> Same-day/next-day within 400-mile radius. National distributors cannot match this without local infrastructure.</li>
+    <li><strong>40-year relationship equity:</strong> Average customer tenure exceeds 15 years. The customer base has been built through continuous technical service, not price competition.</li>
+</ol>
+
+<p><strong>Disruption assessment:</strong> E-commerce is not a material threat. Specialty chemicals require technical support, compliance documentation, same-day delivery, and custom formulation &mdash; characteristics that cannot be disintermediated by digital ordering. The deal team concurs.</p>
+
+<h3>3.4 Comparable Transactions</h3>
+
+<table>
+    <thead>
+        <tr><th>Transaction</th><th class="num">Year</th><th class="num">Multiple</th><th>Context</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Azelis (EQT Partners)</td><td class="num">2021</td><td class="num">~12x</td><td>Large specialty platform, global scale &mdash; premium for size and diversification</td></tr>
+        <tr><td>Nexeo / Univar (merger)</td><td class="num">2019</td><td class="num">~9x</td><td>Broadline consolidation &mdash; lower multiple for commodity exposure</td></tr>
+        <tr><td>Regional specialty distributors (avg)</td><td class="num">2023&ndash;2025</td><td class="num">6&ndash;8x</td><td>PE-backed roll-up acquisitions at platform level</td></tr>
+        <tr><td>Small independent distributors</td><td class="num">2024&ndash;2025</td><td class="num">4&ndash;6x</td><td>Tuck-in acquisitions of founder-owned regionals</td></tr>
+    </tbody>
+</table>
+
+<p>Platform-level specialty distributors ($100M+ revenue) transact at 8&ndash;10x. SCS at 8.6x entry is within market range for a platform with $185M revenue, 40-year history, and custom blending capability. Exit at 9.0x is supported by comparable transaction data for platforms of this scale. Multiple expansion to 9.5&ndash;10.0x is achievable with add-on acquisitions increasing platform scale ($250M+ revenue post-add-ons).</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<!-- SECTION 4: FINANCIAL ANALYSIS                                 -->
+<!-- ============================================================ -->
+<h2 id="sec4">Section 4: Financial Analysis</h2>
+
+<h3>4.1 Historical Performance</h3>
+
+<table>
+    <thead>
+        <tr><th>Metric</th><th class="num">FY 2022</th><th class="num">FY 2023</th><th class="num">FY 2024</th><th class="num">LTM Jan 2026</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Revenue</td><td class="num">$158.0M</td><td class="num">$168.0M</td><td class="num">$178.0M</td><td class="num">$185.0M</td></tr>
+        <tr><td>Revenue Growth</td><td class="num">5.5%</td><td class="num">6.3%</td><td class="num">6.0%</td><td class="num">3.9%</td></tr>
+        <tr><td>Gross Profit</td><td class="num">$39.5M</td><td class="num">$42.8M</td><td class="num">$46.0M</td><td class="num">$48.1M</td></tr>
+        <tr><td>Gross Margin</td><td class="num">25.0%</td><td class="num">25.5%</td><td class="num">25.8%</td><td class="num">26.0%</td></tr>
+        <tr><td>Adjusted EBITDA</td><td class="num">$13.5M</td><td class="num">$15.2M</td><td class="num">$16.8M</td><td class="num">$18.0M</td></tr>
+        <tr><td>EBITDA Margin</td><td class="num">8.5%</td><td class="num">9.0%</td><td class="num">9.4%</td><td class="num">9.7%</td></tr>
+        <tr><td>Headcount</td><td class="num">305</td><td class="num">315</td><td class="num">330</td><td class="num">340</td></tr>
+    </tbody>
+</table>
+
+<p>Revenue CAGR (FY 2022 to LTM): ~5.4%. EBITDA CAGR (FY 2022 to LTM): ~10.1%.</p>
+
+<p>EBITDA growing faster than revenue reflects deliberate margin expansion: product mix shift toward custom blending (higher margins), procurement optimization, and operating leverage on the fixed-cost distribution infrastructure. This pattern is credible and validated by the gross margin expansion (25.0% to 26.0%) alongside EBITDA margin expansion (8.5% to 9.7%). The two metrics confirm each other &mdash; margin expansion is not the result of cost-cutting that harms the business, but of improved product mix and procurement.</p>
+
+<div class="callout">
+    <p><strong>LTM revenue deceleration (5.4% CAGR vs. 3.9% LTM growth):</strong> The deceleration is primarily attributable to the agricultural segment (15% of revenue), which experienced a weather-related demand softening in the spring 2025 planting season. Core segments (water treatment, metalworking, food processing) continue to grow at 5&ndash;7%. The deal team views the LTM deceleration as seasonal/cyclical, not structural. Confirmatory DD should include monthly revenue by product category for the trailing 18 months. [RC Assumption &mdash; attribution based on management call January 8, 2026.]</p>
+</div>
+
+<h3>4.2 EBITDA Adjustment Bridge</h3>
+
+<table>
+    <thead>
+        <tr><th>Item</th><th class="num">Amount</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Reported EBITDA (LTM Jan 2026)</td><td class="num">$16.5M</td></tr>
+        <tr><td>(+) Owner compensation normalization</td><td class="num">$1.0M</td></tr>
+        <tr><td>(+) Owner perquisites and discretionary expenses</td><td class="num">$0.2M</td></tr>
+        <tr><td>(+) One-time facility consolidation costs (Louisville buildout)</td><td class="num">$0.3M</td></tr>
+        <tr style="font-weight:700; background:#e8f0fe !important;"><td><strong>Adjusted EBITDA</strong></td><td class="num"><strong>$18.0M</strong></td></tr>
+    </tbody>
+</table>
+
+<p>All three adjustments are straightforward and defensible:</p>
+<ul>
+    <li><strong>Owner comp normalization ($1.0M):</strong> Hoffman pays himself above-market. Replacement CEO compensation is estimated at $450&ndash;500K base + bonus. Adjustment represents normalization to market-rate CEO compensation. [Mgmt Call, January 8, 2026, Schmidt confirmed.]</li>
+    <li><strong>Owner perquisites ($0.2M):</strong> Vehicle, personal insurance, discretionary professional memberships charged to the company. Standard founder-led business item. [Mgmt Call, January 8, 2026.]</li>
+    <li><strong>Louisville buildout ($0.3M):</strong> One-time facility consolidation costs associated with opening the Louisville warehouse in 2019 &mdash; this item has already normalized and is not recurring. [Historical &mdash; confirmed by Schmidt.]</li>
+</ul>
+
+<p>QofE will be required to independently validate these adjustments. The deal team's assessment: adjustments are modest (9% of Reported EBITDA) and conservative &mdash; the owner comp normalization likely understates the true adjustment if the replacement CEO commands $500K+ in total compensation.</p>
+
+<h3>4.3 Revenue Quality Assessment</h3>
+
+<p><strong>Recurring vs. project revenue:</strong> Approximately 70% of revenue is "repeat purchase" &mdash; chemicals consumed in ongoing manufacturing operations with predictable reorder patterns. This is not contractually recurring, but behavioral recurrence is high: no major customer (top 50) has been lost to a competitor in 5 years. The remaining 30% includes project-based environmental remediation chemicals and seasonal agricultural inputs.</p>
+
+<p><strong>Revenue by segment cyclicality:</strong></p>
+<ul>
+    <li>Non-cyclical (water treatment, food, institutional): 63% of revenue</li>
+    <li>Moderately cyclical (metalworking, agricultural): 37% of revenue</li>
+</ul>
+
+<p>The 2008&ndash;2009 recession provides the best stress test: SCS revenue declined 12%, well below the 20&ndash;30% declines experienced by industrial distribution peers more exposed to manufacturing capex.</p>
+
+<h3>4.4 Working Capital Analysis</h3>
+
+<table>
+    <thead>
+        <tr><th>Metric</th><th class="num">LTM</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Inventory</td><td class="num">$35.5M</td></tr>
+        <tr><td>Accounts Receivable</td><td class="num">$28.0M</td></tr>
+        <tr><td>Accounts Payable</td><td class="num">$22.0M</td></tr>
+        <tr><td>Net Working Capital</td><td class="num">$41.5M</td></tr>
+        <tr><td>NWC as % of Revenue</td><td class="num">22.4%</td></tr>
+        <tr><td>DSO</td><td class="num">55 days</td></tr>
+        <tr><td>DIO</td><td class="num">70 days</td></tr>
+        <tr><td>DPO</td><td class="num">43 days</td></tr>
+        <tr><td>Cash Conversion Cycle</td><td class="num">82 days</td></tr>
+    </tbody>
+</table>
+
+<p><strong>Working capital is elevated and represents a structural characteristic of this business model.</strong> The $35.5M inventory balance reflects three structural requirements: (1) safety stock for specialty and hazardous chemicals (30&ndash;60 day supply required by regulatory and customer service obligations), (2) batch-specific inventory with product-specific shelf life and quality requirements, and (3) regulatory requirements for hazardous material segregation and secondary containment. These are not discretionary working capital investments &mdash; they are necessary to operate the business safely and maintain the service delivery model.</p>
+
+<p><strong>Optimization opportunity:</strong> Schmidt and the deal team have identified $3&ndash;5M in inventory reduction achievable through SKU rationalization (eliminating slow-moving and obsolete SKUs), improved demand planning (better forecasting reduces safety stock requirements), and supplier consignment arrangements (shifting inventory ownership to suppliers for select bulk chemicals). This would reduce NWC as % of revenue from 22.4% to approximately 18&ndash;20%. The model assumes this optimization occurs in Year 1 and produces a one-time $3&ndash;5M working capital release. [RC Assumption &mdash; management identified opportunity; confirmed plausible by deal team; subject to QofE validation.]</p>
+
+<p><strong>Seasonal pattern:</strong> Inventory peaks in February&ndash;March ($38&ndash;40M) ahead of the spring agricultural season and troughs in October&ndash;November ($32&ndash;33M). AR peaks in July&ndash;August (agricultural customers on extended payment terms) and normalizes by October. The $15.0M revolving credit facility (undrawn at close) manages intra-year working capital volatility.</p>
+
+<h3>4.5 Capital Expenditure</h3>
+
+<table>
+    <thead>
+        <tr><th>Metric</th><th class="num">LTM</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Total Capex</td><td class="num">$4.5M (2.4% of revenue)</td></tr>
+        <tr><td>Maintenance Capex</td><td class="num">$2.5M (fleet, facility, equipment)</td></tr>
+        <tr><td>Growth Capex</td><td class="num">$2.0M (warehouse expansion, blending equipment)</td></tr>
+        <tr><td>Cash Conversion (FCF / Adj. EBITDA)</td><td class="num">~60%</td></tr>
+    </tbody>
+</table>
+
+<p>Maintenance capex of $2.5M reflects a well-maintained asset base. Fleet (42 trucks, avg 5 years) is in good condition. No deferred maintenance was observed during the January 8 site visit. The 60% cash conversion ratio is structural &mdash; working capital intensity limits FCF relative to EBITDA. For comparison, asset-light services businesses convert at 75&ndash;85%. This is reflected in the entry equity check (larger than EBITDA alone would suggest) and the returns model.</p>
+
+<p>Growth capex of $2.0M annually (Years 1&ndash;3) is budgeted for blending capacity expansion, warehouse improvements, and fleet additions. The blending facility runs at 70% capacity &mdash; meaningful growth is achievable without new building construction.</p>
+
+<div class="callout">
+    <p><strong>Note:</strong> Roof replacement at Cincinnati HQ is flagged as a potential $1.5&ndash;2.0M capital expenditure within 3&ndash;5 years. This item is not yet in the model. Structural assessment during environmental Phase I/II DD will confirm timing and cost.</p>
+</div>
+
+<hr>
+
+<!-- ============================================================ -->
+<!-- SECTION 5: INVESTMENT THESIS                                  -->
+<!-- ============================================================ -->
+<h2 id="sec5">Section 5: Investment Thesis</h2>
+
+<!-- Pillar 1 -->
+<div class="pillar-box">
+    <h3>Thesis Pillar 1: Essential Products, Inelastic Demand, Recession-Resistant Revenue</h3>
+
+    <p><strong>What we believe:</strong> Specialty chemicals are consumed in customers' daily manufacturing and facility operations &mdash; they represent less than 3% of customer COGS but are critical process inputs without substitutes. Demand is structurally inelastic.</p>
+
+    <p><strong>Evidence:</strong></p>
+    <ul>
+        <li>SCS revenue declined only 12% in the 2008&ndash;2009 recession vs. 20&ndash;30% for industrial distribution peers with greater capex exposure</li>
+        <li>63% of revenue from water treatment, food processing, and institutional markets &mdash; essential services that do not discretionarily reduce chemical consumption</li>
+        <li>The cash conversion cycle (82 days) reflects consumption-based reorder patterns, not project-based demand</li>
+        <li>40-year operating history through multiple economic cycles without a negative year above 12% revenue decline</li>
+    </ul>
+
+    <p><strong>Why we're right:</strong> The market often prices specialty chemical distributors at discounts to specialty services because "distribution" connotes commodity exposure. SCS's 40-year retention track record and recession performance demonstrate that the business behaves more like a specialty services company than a commodity distributor. We are buying this at 8.6x &mdash; consistent with chemical distribution &mdash; when the retention characteristics justify a services premium.</p>
+
+    <p><strong>Value creation mechanism:</strong> Inelastic demand supports revenue visibility, which supports leverage at 3.4x with comfortable coverage. Debt paydown from FCF (projected $45M over 5 years) is high-confidence.</p>
+
+    <p><strong>Key assumption to monitor:</strong> End market concentration in metalworking and agricultural (37% combined) creates moderate cyclicality exposure. Monitor monthly revenue by segment against prior-year trend.</p>
+</div>
+
+<!-- Pillar 2 -->
+<div class="pillar-box">
+    <h3>Thesis Pillar 2: Founder Succession as Alpha &mdash; Professionalization Opportunity</h3>
+
+    <p><strong>What we believe:</strong> Hoffman's departure creates the primary risk and the primary value creation opportunity simultaneously. The business has under-invested in management infrastructure because Hoffman was the infrastructure. Installing a professional CEO, building institutional processes, and deploying Northwood's operational playbook will unlock value that founder-dependency has suppressed.</p>
+
+    <p><strong>Evidence:</strong></p>
+    <ul>
+        <li>Pricing decisions, credit approvals above $50K, new product decisions, and supplier negotiations all funnel through Hoffman informally. There is no governance infrastructure around these decisions.</li>
+        <li>Walsh professionalized the sales organization from scratch after joining in 2017 &mdash; the gap between pre-Walsh and post-Walsh commercial operations demonstrates how much value professionalization creates at SCS.</li>
+        <li>EBITDA margins have expanded from 8.5% to 9.7% organically, primarily driven by Walsh's pricing discipline. Further expansion to 10&ndash;11% is achievable with systematic pricing management across all product categories.</li>
+        <li>Comparable distribution businesses with professional CEO and systematic commercial execution achieve 11&ndash;13% EBITDA margins vs. SCS at 9.7%. Closing this gap is worth $2&ndash;4M in EBITDA.</li>
+    </ul>
+
+    <p><strong>Why we're right:</strong> James Harrison and David Okafor are the right team for this transition. Harrison has executed 3 prior PE-backed CEO transitions in industrial businesses. Okafor's 25 years of industrial operations experience and prior CEO background provide credibility with the SCS operating team and customer base. Northwood's differentiated bid is not price &mdash; it's the specificity of our transition plan relative to sponsors without a defined operational playbook.</p>
+
+    <p><strong>Value creation mechanism:</strong> Year 1 management action (CEO hire + Walsh expanded role) sets the foundation. EBITDA margin expansion from 9.7% to 10.8% by Year 5 driven by pricing discipline, procurement optimization, and SG&amp;A leverage &mdash; worth approximately $4&ndash;5M in incremental EBITDA at exit.</p>
+
+    <p><strong>Key assumption to monitor:</strong> CEO quality and cultural fit. The wrong CEO hire in a relationship-intensive distribution business can accelerate customer attrition rather than prevent it. The CEO search must be deeply informed by customer retention requirements, not just operational credentials.</p>
+</div>
+
+<!-- Pillar 3 -->
+<div class="pillar-box">
+    <h3>Thesis Pillar 3: Add-On Platform with Identified Targets and Multiple Arbitrage</h3>
+
+    <p><strong>What we believe:</strong> The specialty chemical distribution market is highly fragmented ($35&ndash;40B, top 10 players at &lt;25% market share), consolidation is active, and SCS's existing infrastructure can absorb geographic tuck-ins at 5&ndash;7x versus the 8.6x platform entry multiple.</p>
+
+    <p><strong>Evidence:</strong></p>
+    <ul>
+        <li>5 identified acquisition targets ($10&ndash;25M revenue, $0.8&ndash;2.5M EBITDA) in Cleveland, St. Louis, Detroit, Nashville, and Charlotte</li>
+        <li>Walsh has preliminary relationships with 2 of the 5 founders &mdash; reducing process friction and competitive bidding risk</li>
+        <li>PE-backed platforms are acquiring regional independents at 4&ndash;7x EBITDA currently (Baird comparable transaction data, Q4 2025)</li>
+        <li>SCS's distribution infrastructure (5 facilities, 42-truck fleet, blending capability) can absorb tuck-ins without proportional overhead additions &mdash; integration requires customer migration to SCS's ERP and sales management system, not new facility construction</li>
+    </ul>
+
+    <p><strong>Why we're right:</strong> The multiple arbitrage is real: buying at 5&ndash;7x and consolidating into an 8&ndash;10x platform creates $1&ndash;2M of value per acquisition at the portfolio company level before any operational synergy. With $25&ndash;35M in FCF over a 5-year hold and access to incremental term debt, 2 add-ons are financeable without additional equity contributions.</p>
+
+    <p><strong>Value creation mechanism:</strong> Upside case adds $40M in combined revenue (2 acquisitions at ~$20M each) at blended 10&ndash;12% EBITDA margins. Combined with procurement synergies and sales force deployment, the add-ons are projected to contribute $4&ndash;5M in incremental EBITDA by Year 3 of the hold, supporting an exit EV of $342.0M at 9.5x vs. base case $229.5M at 9.0x. Upside returns of ~29% IRR / 3.6x MOIC exceed fund hurdles.</p>
+
+    <p><strong>Key assumption to monitor:</strong> Target availability and pricing. Walsh has preliminary conversations but no signed LOIs. Independent validation of target founder motivation and timeline is required before the upside case is incorporated into the underwriting. The base case does not include add-ons.</p>
+</div>
+
+<!-- Pillar 4 -->
+<div class="pillar-box">
+    <h3>Thesis Pillar 4: Custom Blending as Structural Moat</h3>
+
+    <p><strong>What we believe:</strong> SCS's custom blending business (20% of revenue, 400&ndash;600bps above average margins) creates formulation lock-in that fundamentally differentiates SCS from commodity distributors and supports long-term customer retention.</p>
+
+    <p><strong>Evidence:</strong></p>
+    <ul>
+        <li>Switching from a SCS custom blend requires 3&ndash;6 months of re-qualification and testing &mdash; a significant operational disruption for customers</li>
+        <li>No customer using SCS custom blends has been lost to a competitor in 10+ years (management claim; to be validated in customer calls during DD)</li>
+        <li>The blending facility is operating at 70% capacity &mdash; meaning custom blend revenue can grow to 30%+ of total revenue without capital investment</li>
+        <li>Custom blend margins are 32&ndash;35% gross vs. 20&ndash;28% for distributed products &mdash; growing this mix is directly margin-accretive</li>
+    </ul>
+
+    <p><strong>Why we're right:</strong> Most chemical distributors at SCS's size do not invest in blending capability because it requires capital, technical expertise, and regulatory compliance infrastructure. This barrier &mdash; already built &mdash; represents 40 years of competitive investment that a new entrant cannot replicate quickly.</p>
+
+    <p><strong>Value creation mechanism:</strong> Growing custom blends from 20% to 25&ndash;30% of revenue over the hold period adds 50&ndash;100bps to blended gross margins. At $185M revenue scaled to $237M by Year 5, this is worth $1.0&ndash;2.4M in incremental EBITDA.</p>
+
+    <p><strong>Key assumption to monitor:</strong> Custom blend revenue growth requires sustained investment in technical sales capacity (application specialists). Headcount risk if Hoffman's departure disrupts the technical team.</p>
+</div>
+
+<hr>
+
+<!-- ============================================================ -->
+<!-- SECTION 6: VALUE CREATION PLAN                                -->
+<!-- ============================================================ -->
+<h2 id="sec6">Section 6: Value Creation Plan</h2>
+
+<h3>6.1 100-Day Priorities</h3>
+
+<table>
+    <thead>
+        <tr><th>Priority</th><th>Owner</th><th>Target</th><th>EBITDA Impact</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>CEO hire and onboarding</td><td>Harrison / Northwood</td><td>Within 30 days post-close</td><td>Foundation for all other initiatives</td></tr>
+        <tr><td>Hoffman transition activation</td><td>Harrison + new CEO</td><td>Days 1&ndash;100</td><td>Preserve top-20 customer relationships</td></tr>
+        <tr><td>Walsh CCO elevation</td><td>New CEO + Board</td><td>Within 60 days</td><td>Commercial leadership continuity</td></tr>
+        <tr><td>Board and governance stand-up</td><td>Harrison (Board chair)</td><td>Week 1</td><td>Monthly reporting, KPI cadence, 90-day operating review</td></tr>
+        <tr><td>Inventory optimization scoping</td><td>Schmidt + new Supply Chain Director (hire)</td><td>Days 1&ndash;60</td><td>$3&ndash;5M one-time working capital release</td></tr>
+        <tr><td>Retain 3 sales reps identified for replacement</td><td>Walsh</td><td>Days 30&ndash;60</td><td>Revenue protection during transition</td></tr>
+    </tbody>
+</table>
+
+<h3>6.2 Operational Improvements (12&ndash;36 Months)</h3>
+
+<h4>Pricing discipline ($1.0&ndash;1.5M EBITDA impact, Year 2&ndash;3)</h4>
+<p>Walsh has begun systematic price management but has been constrained by Hoffman's reluctance to push pricing increases with long-tenured customers. Post-close, with a professional CEO and Walsh as CCO, systematic annual price increases of 2&ndash;3% across all product categories (currently implemented inconsistently) will add $1.0&ndash;1.5M in annual EBITDA by Year 2&ndash;3. [RC Assumption &mdash; based on gap between Walsh's identified pricing opportunity and current realization; to be validated in commercial DD.]</p>
+
+<h4>Procurement optimization ($1.5&ndash;2.0M EBITDA impact, Year 1&ndash;2)</h4>
+<p>Hoffman managed supplier negotiations personally and informally. Professional procurement management &mdash; consolidating purchasing volume across categories, renegotiating terms with top 10 suppliers, and implementing formal bid processes &mdash; is projected to deliver $1.5&ndash;2.0M in annual EBITDA benefit by Year 2. David Okafor will advise on procurement strategy based on prior industrial distribution experience. [RC Assumption &mdash; estimate based on typical procurement optimization impact in distribution businesses of this size; specific savings subject to QofE and DD.]</p>
+
+<h4>Working capital optimization ($3&ndash;5M one-time, Year 1)</h4>
+<p>SKU rationalization, demand planning improvement, and supplier consignment will release $3&ndash;5M in inventory over Year 1. This is a one-time FCF benefit, not a recurring EBITDA improvement. It improves the cash conversion ratio from ~60% to ~65&ndash;70% on an ongoing basis.</p>
+
+<h4>Sales team rationalization and upgrade (revenue protection)</h4>
+<p>3 legacy below-standard sales reps identified by Walsh are to be exited post-close once the overall transition has stabilized (Days 60&ndash;90). Replacement with 3 new high-performers by Month 6. Net impact: revenue neutral with upside potential from improved territory coverage.</p>
+
+<h4>Custom blend mix shift (50&ndash;100bps gross margin, Year 2&ndash;4)</h4>
+<p>Drive custom blend revenue from 20% to 25% of total revenue through dedicated application specialist time and CCO (Walsh)-directed sales focus on custom blend opportunities. The blending facility's 70% utilization rate provides headroom. No capital investment required. [RC Assumption &mdash; assumes Walsh-led commercial execution; timeline is 2&ndash;3 years.]</p>
+
+<h3>6.3 Add-On Acquisition Strategy</h3>
+
+<p><strong>5 identified targets:</strong></p>
+
+<table>
+    <thead>
+        <tr><th>Target</th><th>Location</th><th class="num">Est. Revenue</th><th class="num">Est. EBITDA</th><th>Fit</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Target A</td><td>Cleveland, OH</td><td class="num">$25M</td><td class="num">$2.5M</td><td>Industrial chemicals, water treatment &mdash; natural geographic extension</td></tr>
+        <tr><td>Target B</td><td>St. Louis, MO</td><td class="num">$18M</td><td class="num">$1.8M</td><td>Metalworking and industrial cleaners &mdash; product capability extension</td></tr>
+        <tr><td>Target C</td><td>Detroit, MI</td><td class="num">$15M</td><td class="num">$1.5M</td><td>Automotive process chemicals &mdash; automotive vertical depth</td></tr>
+        <tr><td>Target D</td><td>Nashville, TN</td><td class="num">$12M</td><td class="num">$1.0M</td><td>Food processing &mdash; geographic extension southward</td></tr>
+        <tr><td>Target E</td><td>Charlotte, NC</td><td class="num">$10M</td><td class="num">$0.8M</td><td>Institutional cleaning, water treatment &mdash; southeastern expansion</td></tr>
+    </tbody>
+</table>
+
+<p>Target acquisition multiples: 5&ndash;7x EBITDA for founder-owned regionals (consistent with current market). Multiple arbitrage to SCS's 8.6x entry multiple (and projected 9.0&ndash;9.5x exit multiple) generates $1&ndash;2M of immediate value per transaction before operational synergy.</p>
+
+<p><strong>Integration playbook:</strong></p>
+<ul>
+    <li>Migrate customer accounts to SCS ERP and Salesforce CRM (30&ndash;60 days)</li>
+    <li>Transfer technical service responsibility to SCS application specialists</li>
+    <li>Consolidate procurement volume with SCS suppliers (immediate cost reduction)</li>
+    <li>Retain acquired sales force on SCS compensation structure &mdash; these are relationship businesses; sales retention is non-negotiable</li>
+</ul>
+
+<p><strong>Base case models 0 add-ons.</strong> Upside case models 2 add-ons (Targets A and B &mdash; Cleveland and St. Louis &mdash; nearest geographically and most aligned with existing product capabilities), acquired in Years 2 and 3. Total acquisition cost: approximately $28M ($13.0M for Target A at 5.2x, $15.0M for Target B at 8.3x [RC Assumption on pricing]), funded from FCF ($18M available over Years 1&ndash;2) and incremental revolver draws.</p>
+
+<h3>6.4 Management Actions</h3>
+
+<table>
+    <thead>
+        <tr><th>Action</th><th>Timeline</th><th>Owner</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>External CEO search engagement</td><td>During DD period (March 2026)</td><td>Harrison</td></tr>
+        <tr><td>CEO hire</td><td>Pre-close or within 30 days post-close</td><td>Harrison</td></tr>
+        <tr><td>Walsh elevation to CCO</td><td>Within 60 days post-close</td><td>New CEO + Board</td></tr>
+        <tr><td>Schmidt PE transition support (board prep, reporting)</td><td>Beginning Day 1</td><td>Harrison (Board)</td></tr>
+        <tr><td>Okafor Operating Partner assignment</td><td>Day 1</td><td>Harrison</td></tr>
+        <tr><td>Management equity plan design</td><td>Month 1 post-close</td><td>Board + Harrison</td></tr>
+        <tr><td>Legacy sales rep exits</td><td>Days 60&ndash;90</td><td>Walsh</td></tr>
+        <tr><td>VP Corporate Development hire</td><td>Month 3&ndash;6</td><td>New CEO</td></tr>
+        <tr><td>Director of Supply Chain hire</td><td>Month 1&ndash;3</td><td>New CEO + Okafor</td></tr>
+    </tbody>
+</table>
+
+<p><strong>Board composition:</strong> James Harrison (Board Chair), Catherine Zhao (observer), 1 independent director (to be identified during DD &mdash; target: specialty distribution or industrial executive).</p>
+
+<p><strong>Management equity plan (MIP):</strong> Schmidt, Walsh, and Chen (Operations) to receive equity participation in the management pool (20% of fully diluted equity, to be issued from the management rollover pool). Vesting: 4-year vesting with 1-year cliff. Hurdle: return of invested capital plus preferred return. Standard Northwood leaver provisions.</p>
+
+<h3>6.5 Value Creation Bridge (Base Case)</h3>
+
+<table>
+    <thead>
+        <tr><th>Driver</th><th class="num">% of Total Value Created</th><th>Commentary</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>EBITDA growth</td><td class="num">54%</td><td>~5% revenue CAGR + 110bps margin expansion; volume, pricing, mix shift</td></tr>
+        <tr><td>Deleveraging</td><td class="num">38%</td><td>Entry debt $62M to $17M at exit; accelerated by D&amp;A tax shield</td></tr>
+        <tr><td>Multiple expansion</td><td class="num">8%</td><td>8.6x entry to 9.0x exit; professionalization, scale, platform optionality</td></tr>
+    </tbody>
+</table>
+
+<p>Entry EBITDA: $18.0M. Exit EBITDA (base case, Year 5): $25.5M. EBITDA CAGR: ~7.2%.</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<!-- SECTION 7: TRANSACTION SUMMARY                                -->
+<!-- ============================================================ -->
+<h2 id="sec7">Section 7: Transaction Summary</h2>
+
+<h3>7.1 Sources &amp; Uses</h3>
+
+<div class="sources-uses">
+    <div>
+        <h4>Sources</h4>
+        <div class="su-line"><span>Senior Term Loan</span><span>$62.0M</span></div>
+        <div class="su-line"><span>Revolving Credit</span><span>$0.0M (undrawn)</span></div>
+        <div class="su-line" style="color:#555; font-size:12px;"><span>&nbsp;&nbsp;Total Debt</span><span>$62.0M</span></div>
+        <div class="su-line"><span>Fund Equity (80%)</span><span>$74.4M</span></div>
+        <div class="su-line"><span>Mgmt Rollover (20%)</span><span>$18.6M</span></div>
+        <div class="su-line" style="color:#555; font-size:12px;"><span>&nbsp;&nbsp;Total Equity</span><span>$93.0M</span></div>
+        <div class="su-line total"><span>Total Sources</span><span>$155.0M</span></div>
+    </div>
+    <div>
+        <h4>Uses</h4>
+        <div class="su-line"><span>Enterprise Value</span><span>$155.0M</span></div>
+        <div class="su-line"><span>Financing Fees</span><span>$2.5M</span></div>
+        <div class="su-line"><span>Legal &amp; Advisory Fees</span><span>$1.5M</span></div>
+        <div class="su-line"><span>Accounting / QofE</span><span>$0.5M</span></div>
+        <div class="su-line"><span>D&amp;O / Insurance</span><span>$0.5M</span></div>
+        <div class="su-line"><span>Working Capital Adj.</span><span>TBD</span></div>
+        <div class="su-line total"><span>Total Uses</span><span>~$160.0M</span></div>
+    </div>
+</div>
+
+<p style="font-size:12px; color:#555; font-style: italic;">Note: Transaction fees (~$5.0M) are capitalized and funded from the equity contribution. Sources &amp; Uses balance at $155.0M enterprise value plus fee financing from equity.</p>
+
+<h3>7.2 Capital Structure</h3>
+
+<table>
+    <thead>
+        <tr><th>Metric</th><th>Value</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Senior Secured Term Loan</td><td>$62.0M</td></tr>
+        <tr><td>Pricing</td><td>SOFR + 500&ndash;550bps (indicative; target lender close at SOFR+525bps)</td></tr>
+        <tr><td>All-in interest rate</td><td>~8.0% (at current SOFR)</td></tr>
+        <tr><td>Maturity</td><td>7 years</td></tr>
+        <tr><td>Amortization</td><td>1% per annum ($0.6M)</td></tr>
+        <tr><td>Revolving Credit Facility</td><td>$15.0M (undrawn at close)</td></tr>
+        <tr><td>Total leverage at close</td><td class="num">3.4x (Term Loan / LTM Adj. EBITDA)</td></tr>
+        <tr><td>Interest coverage at entry</td><td class="num">3.6x (EBITDA / Cash Interest)</td></tr>
+    </tbody>
+</table>
+
+<p><strong>Lender relationships:</strong> Ares Capital (lead) and Golub Capital (participant) &mdash; both existing Northwood Fund II relationships with prior transactions. Preliminary interest expressed; exclusivity grant triggers formal CIM sharing and term sheet process. Indicative terms received; formal commitments expected by April 22, 2026.</p>
+
+<p><strong>Covenant structure (preliminary, to be finalized):</strong> Total leverage covenant (estimated at 5.0x initial, stepping down 0.5x per year). Fixed charge coverage covenant (estimated at 1.15x). Capex limitation (~$7.0M annually). All preliminary &mdash; subject to lender underwriting and negotiation.</p>
+
+<p><strong>Leverage context:</strong> 3.4x entry leverage is within Northwood's 3.0&ndash;4.0x target range and appropriate for a distribution business with 60% cash conversion. EBITDA / Interest coverage of 3.6x provides meaningful covenant cushion. The downside case (revenue decline, margin compression) reduces EBITDA to $17.0M &mdash; coverage falls to ~3.3x, still well above typical covenant floors.</p>
+
+<h3>7.3 Key Transaction Terms</h3>
+
+<table>
+    <thead>
+        <tr><th>Term</th><th>Detail</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Transaction structure</td><td>100% equity acquisition (stock purchase)</td></tr>
+        <tr><td>CEO transition</td><td>12&ndash;18 month advisory agreement (Hoffman), part-time, focused on customer relationship introductions</td></tr>
+        <tr><td>CFO retention</td><td>Schmidt &mdash; equity participation (20% MIP pool), market base/bonus, PE mentorship</td></tr>
+        <tr><td>VP Sales retention</td><td>Walsh &mdash; equity participation, CCO trajectory, operational autonomy</td></tr>
+        <tr><td>Non-compete</td><td>3-year, geographic scope covering Company's territory, customers, and employees (Hoffman)</td></tr>
+        <tr><td>R&amp;W insurance</td><td>To be underwritten &mdash; recommended given environmental exposure at 5 chemical storage facilities</td></tr>
+        <tr><td>Working capital</td><td>NWC target $32&ndash;35M (17&ndash;19% of LTM revenue); dollar-for-dollar adjustment at close; 90-day post-close true-up</td></tr>
+        <tr><td>Indemnification</td><td>Standard escrow (10% / 18 months), basket (0.5% of EV / $0.8M), cap (20% of EV / $31M) &mdash; subject to negotiation</td></tr>
+    </tbody>
+</table>
+
+<h3>7.4 Transaction Timeline</h3>
+
+<table>
+    <thead>
+        <tr><th>Milestone</th><th>Target Date</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>LOI submission</td><td>February 10, 2026</td><td>Pending IC approval</td></tr>
+        <tr><td>Exclusivity decision</td><td>February 25, 2026</td><td>Pending</td></tr>
+        <tr><td>DD launch (all workstreams)</td><td>March 1, 2026</td><td>Contingent on exclusivity</td></tr>
+        <tr><td>QofE engagement</td><td>March 1, 2026</td><td>Scoping complete</td></tr>
+        <tr><td>Environmental site assessments</td><td>March 3&ndash;21, 2026</td><td>Consultant identified</td></tr>
+        <tr><td>CEO search firm engagement</td><td>March 3, 2026</td><td>Search firm scoped</td></tr>
+        <tr><td>DD completion</td><td>April 15, 2026</td><td>Target</td></tr>
+        <tr><td>IC final approval</td><td>April 18, 2026</td><td>Target</td></tr>
+        <tr><td>Debt commitment</td><td>April 22, 2026</td><td>Target</td></tr>
+        <tr><td>Purchase agreement</td><td>May 1, 2026</td><td>Target</td></tr>
+        <tr><td>Close</td><td>May&ndash;June 2026</td><td>Target (regulatory clearance dependent)</td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<!-- ============================================================ -->
+<!-- SECTION 8: RETURNS ANALYSIS                                   -->
+<!-- ============================================================ -->
+<h2 id="sec8">Section 8: Returns Analysis</h2>
+
+<h3>8.1 Three-Case Returns Framework</h3>
+
+<table>
+    <thead>
+        <tr><th>Metric</th><th class="num">Downside</th><th class="num">Base Case</th><th class="num">Upside</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Revenue CAGR</td><td class="num">0% (flat)</td><td class="num">~5%</td><td class="num">~11% (organic + 2 add-ons)</td></tr>
+        <tr><td>Exit EBITDA</td><td class="num">$17.0M</td><td class="num">$25.5M</td><td class="num">$36.0M</td></tr>
+        <tr><td>Exit EBITDA Margin</td><td class="num">9.2%</td><td class="num">10.8%</td><td class="num">12.4%</td></tr>
+        <tr><td>Exit Multiple</td><td class="num">8.0x</td><td class="num">9.0x</td><td class="num">9.5x</td></tr>
+        <tr><td>Implied Exit EV</td><td class="num">$136.0M</td><td class="num">$229.5M</td><td class="num">$342.0M</td></tr>
+        <tr><td>Net Debt at Exit</td><td class="num">($22.8M)</td><td class="num">($17.0M)</td><td class="num">($8.6M)</td></tr>
+        <tr><td>Exit Equity Value</td><td class="num">$113.2M</td><td class="num">$212.5M</td><td class="num">$333.4M</td></tr>
+        <tr style="font-weight:700; background: #f0f4f8 !important;"><td><strong>Gross IRR</strong></td><td class="num"><strong>~4%</strong></td><td class="num"><strong>~18%</strong></td><td class="num"><strong>~29%</strong></td></tr>
+        <tr style="font-weight:700; background: #f0f4f8 !important;"><td><strong>Gross MOIC</strong></td><td class="num"><strong>1.2x</strong></td><td class="num"><strong>2.3x</strong></td><td class="num"><strong>3.6x</strong></td></tr>
+        <tr><td>Hold Period</td><td class="num">5 years</td><td class="num">5 years</td><td class="num">5 years</td></tr>
+    </tbody>
+</table>
+
+<p><strong>Case assumptions:</strong></p>
+
+<p><strong>Base Case:</strong> Organic growth of ~5% annually. EBITDA margin expansion from 9.7% to 10.8% through pricing discipline, procurement optimization, and mix shift. CEO hired within 30 days post-close. No customer loss from founder transition. No add-on acquisitions. Exit at 9.0x &mdash; conservative relative to comparable platform transactions ($229.5M at 8&ndash;10x market range). D&amp;A tax shield (2% of revenue) accelerates deleveraging &mdash; exit debt of $17.0M versus entry debt of $62.0M.</p>
+
+<p><strong>Downside Case:</strong> Revenue declines to ~$180M, recovers to $185M by exit. Margin compresses to 9.0&ndash;9.2% at exit. Top 1&ndash;2 customers lost during founder transition. Exit at 8.0x (compression from platform to sub-platform multiple). Debt remains serviceable &mdash; EBITDA covers interest ~3.3x even in downside. Capital preservation scenario (1.2x), not loss scenario.</p>
+
+<p><strong>Upside Case:</strong> Organic growth of ~6% plus 2 add-on acquisitions in Years 2&ndash;3 ($40M combined revenue at $4&ndash;5M EBITDA). Pro forma revenue of ~$290M at exit. EBITDA margin expansion to 12.4% via procurement scale and custom blend mix. Exit at 9.5x (platform scale supports premium to base case). Add-ons financed from FCF and incremental debt; no additional equity contribution required.</p>
+
+<div class="callout">
+    <p><strong>Note on base case returns vs. fund hurdle:</strong> Base case IRR of ~18% and MOIC of 2.3x are below Northwood's 20%+ / 2.5x+ hurdle. The deal team recommends approval on the basis that: (1) the base case organic projection is deliberately conservative, (2) the upside case (~29% / 3.6x with add-ons) is well-supported by identified targets and proven multiple arbitrage, and (3) even the base case represents 2.3x return on $93.0M equity with a defensible thesis. Condition on IC approval: deal team commits to add-on execution initiation within 18 months of close.</p>
+</div>
+
+<h3>8.2 Sensitivity Analysis</h3>
+
+<p><strong>Gross MOIC &mdash; Exit EBITDA x Exit Multiple (Base Case Hold Period, 5 Years)</strong></p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Exit Multiple \ Exit EBITDA</th>
+            <th class="num">$20.4M</th>
+            <th class="num">$22.9M</th>
+            <th class="num">$25.5M</th>
+            <th class="num">$28.1M</th>
+            <th class="num">$30.6M</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td><strong>7.0x</strong></td><td class="num">1.4x</td><td class="num">1.5x</td><td class="num">1.7x</td><td class="num">1.9x</td><td class="num">2.1x</td></tr>
+        <tr><td><strong>8.0x</strong></td><td class="num">1.6x</td><td class="num">1.8x</td><td class="num">2.0x</td><td class="num">2.2x</td><td class="num">2.4x</td></tr>
+        <tr><td><strong>8.5x</strong></td><td class="num">1.7x</td><td class="num">1.9x</td><td class="num">2.1x</td><td class="num">2.4x</td><td class="num">2.6x</td></tr>
+        <tr><td><strong>9.0x</strong></td><td class="num">1.8x</td><td class="num">2.0x</td><td class="num sensitivity-base">2.3x</td><td class="num">2.5x</td><td class="num">2.8x</td></tr>
+        <tr><td><strong>9.5x</strong></td><td class="num">1.9x</td><td class="num">2.2x</td><td class="num">2.4x</td><td class="num">2.7x</td><td class="num">2.9x</td></tr>
+        <tr><td><strong>10.0x</strong></td><td class="num">2.0x</td><td class="num">2.3x</td><td class="num">2.6x</td><td class="num">2.8x</td><td class="num">3.1x</td></tr>
+    </tbody>
+</table>
+
+<p>The base case (highlighted) represents the intersection of $25.5M exit EBITDA and 9.0x exit multiple. The deal reaches 2.5x+ MOIC at either (a) 9.5x exit at base case EBITDA, or (b) $28M+ EBITDA at 9.0x. Both scenarios are achievable &mdash; (a) with modest multiple re-rating from platform build, (b) from add-on contribution.</p>
+
+<h3>8.3 Value Creation Attribution (Base Case)</h3>
+
+<table>
+    <thead>
+        <tr><th>Value Driver</th><th class="num">% of Total Value Created</th><th>Commentary</th></tr>
+    </thead>
+    <tbody>
+        <tr><td><strong>EBITDA growth</strong></td><td class="num">54%</td><td>~5% revenue CAGR + 110bps margin expansion; volume, pricing, mix shift</td></tr>
+        <tr><td><strong>Deleveraging</strong></td><td class="num">38%</td><td>Entry debt $62M to $17M at exit; accelerated by D&amp;A tax shield</td></tr>
+        <tr><td><strong>Multiple expansion</strong></td><td class="num">8%</td><td>8.6x entry to 9.0x exit; professionalization, scale, platform optionality</td></tr>
+        <tr style="font-weight:700; background: #f0f4f8 !important;"><td><strong>Total</strong></td><td class="num"><strong>100%</strong></td><td><strong>2.3x Gross MOIC</strong></td></tr>
+    </tbody>
+</table>
+
+<p>Value creation is weighted toward EBITDA growth (54%), consistent with Northwood's target of &gt;50%. Deleveraging at 38% reflects strong FCF conversion in Years 4&ndash;5 after growth capex ceases, accelerated by the D&amp;A tax shield. Multiple expansion at 8% is well below the &lt;20% threshold &mdash; not underwriting to expansion per investment philosophy.</p>
+
+<h3>8.4 Comparable Exit Transactions</h3>
+
+<table>
+    <thead>
+        <tr><th>Transaction</th><th class="num">Year</th><th class="num">EV Multiple</th><th>Revenue</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Azelis (EQT Partners)</td><td class="num">2021</td><td class="num">~12x</td><td>$4.0B</td><td>Large-scale platform; premium for global diversification</td></tr>
+        <tr><td>Brenntag / Univar consolidation</td><td class="num">2019</td><td class="num">~9x</td><td>National</td><td>Broadline; lower multiple for commodity exposure</td></tr>
+        <tr><td>PE platform specialty distributors</td><td class="num">2023&ndash;2025</td><td class="num">8&ndash;10x</td><td>$100&ndash;500M</td><td>Most directly comparable &mdash; platforms at scale</td></tr>
+        <tr><td>Small regional independents</td><td class="num">2024&ndash;2025</td><td class="num">5&ndash;7x</td><td>$10&ndash;50M</td><td>Tuck-in level; sub-scale</td></tr>
+    </tbody>
+</table>
+
+<p>The 9.0x base case exit multiple is supported by the comparable set for specialty chemical platforms at $200M+ revenue. If the add-on strategy is executed, the 9.5x upside exit multiple is well-supported &mdash; $250M+ revenue platforms with custom blending and technical depth command at the high end of the 8&ndash;10x range.</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<!-- SECTION 9: KEY RISKS & MITIGANTS                              -->
+<!-- ============================================================ -->
+<h2 id="sec9">Section 9: Key Risks &amp; Mitigants</h2>
+
+<!-- Risk 1 -->
+<div style="margin-bottom: 32px;">
+    <div class="risk-header">
+        <h3 style="margin: 0;">Risk 1: Founder/CEO Transition &mdash; Key Person Dependency</h3>
+        <div class="risk-meta">
+            <span class="badge badge-critical">Critical</span>
+            <span class="badge badge-likely">Likely</span>
+        </div>
+    </div>
+    <p style="font-size:13px; color:#555; margin-bottom:12px;">Priority: Tier 1 &mdash; must be managed before and at close</p>
+
+    <p><strong>Description:</strong> Richard Hoffman is the primary relationship holder for the top 10 accounts. Top 5 customers (32% of revenue) have direct, personal relationships with Hoffman spanning 15&ndash;22 years. He has no successor and is making a clean exit. The business has operated for 40 years with one leader whose departure creates simultaneous risks: customer relationship transfer failure, institutional knowledge loss, and cultural disruption.</p>
+
+    <p><strong>Mitigants:</strong></p>
+    <ul>
+        <li>12&ndash;18 month transition advisory agreement (Hoffman): Contractually obligates customer relationship introductions and knowledge transfer. Compensation structured separately from transaction proceeds to align incentives.</li>
+        <li>Joint customer visit plan: Hoffman + new CEO + Walsh will conduct structured joint visits with all top-20 accounts within the first 30 days post-close. The introduction of the new CEO under Hoffman's sponsorship is the highest-ROI activity in Year 1.</li>
+        <li>CEO profile aligned to relationship requirements: External CEO search will target distribution executives with existing relationships in the Ohio Valley industrial market &mdash; ideally someone known to one or more of SCS's top 10 customers.</li>
+        <li>Walsh as continuity bridge: Walsh has visited every top-50 customer at least quarterly for 9 years. She has the operating-level relationships; Hoffman has the C-suite relationships. Coordinated hand-off covers both levels.</li>
+        <li>David Okafor (Operating Partner) on-site during transition: Okafor's industrial background and CEO experience provides day-to-day operational credibility with the management team and workforce.</li>
+    </ul>
+
+    <p><strong>Residual risk:</strong> Even with these mitigants, some customer attrition is possible in Year 1. The model's downside case assumes loss of top 1&ndash;2 customers (9&ndash;17% of revenue), reducing EBITDA by $2.5&ndash;4.5M. This reduces returns to 1.2x / ~4% &mdash; capital preservation, not loss. Debt service remains covered in this scenario. [RC Assumption &mdash; customer loss estimate based on management call; Hoffman stated that top 5 customers "call me first." Walsh acknowledged the gap at C-suite level.]</p>
+
+    <p><strong>Monitoring trigger:</strong> Customer churn rate among top 20 accounts; monthly revenue by customer in first 6 months post-close.</p>
+</div>
+
+<!-- Risk 2 -->
+<div style="margin-bottom: 32px;">
+    <div class="risk-header">
+        <h3 style="margin: 0;">Risk 2: Working Capital Intensity Compresses Returns</h3>
+        <div class="risk-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="badge badge-possible">Possible</span>
+        </div>
+    </div>
+
+    <p><strong>Description:</strong> NWC of $41.5M (22.4% of revenue) is elevated relative to asset-light comparables. This creates a larger equity check and compresses cash conversion to ~60%. If working capital optimization does not materialize, the revolver may be drawn more heavily than modeled, deleveraging slows, and exit equity is lower.</p>
+
+    <p><strong>Mitigants:</strong></p>
+    <ul>
+        <li>$3&ndash;5M optimization opportunity identified by Schmidt with specific mechanisms (SKU rationalization, demand planning, supplier consignment)</li>
+        <li>Revolver ($15.0M undrawn at close) provides intra-year liquidity buffer for seasonal peaks</li>
+        <li>QofE workstream specifically scoping working capital normalization &mdash; will provide independent validation of optimization opportunity</li>
+        <li>Director of Supply Chain hire (Month 1&ndash;3) will lead inventory optimization implementation</li>
+    </ul>
+
+    <p><strong>Residual risk:</strong> If no optimization is achieved, working capital remains at ~22% of revenue. Annual FCF is reduced by $1&ndash;2M relative to model. At base case EBITDA, this reduces deleveraging by ~10% over the hold, compressing exit equity by $2&ndash;3M. Returns impact: approximately (0.1x) MOIC. Not thesis-changing. [RC Assumption &mdash; sensitivity estimate based on model rework with and without optimization.]</p>
+
+    <p><strong>Monitoring trigger:</strong> Monthly inventory balance vs. model; DSO/DIO trends in first 6 months post-close.</p>
+</div>
+
+<!-- Risk 3 -->
+<div style="margin-bottom: 32px;">
+    <div class="risk-header">
+        <h3 style="margin: 0;">Risk 3: Customer Concentration &mdash; Hidden or Overt</h3>
+        <div class="risk-meta">
+            <span class="badge badge-high">High</span>
+            <span class="badge badge-possible">Possible</span>
+        </div>
+    </div>
+
+    <p><strong>Description:</strong> Top 5 customers represent 32% of revenue, with the top customer at 9%. The CIM presents customers as independent entities. The deal team has not yet validated corporate family trees for all top 20 accounts. A hidden concentration risk (related entities consolidated under common ownership) would materially change the concentration profile.</p>
+
+    <p><strong>Mitigants:</strong></p>
+    <ul>
+        <li>Commercial DD workstream will include corporate family tree analysis (D&amp;B/Capital IQ) for all top 20 accounts, requiring independent validation before final bid submission</li>
+        <li>All top 10 customers have been with SCS for 10+ years with 98%+ retention &mdash; churn risk is low even at the current concentration level</li>
+        <li>Customer tenures of 15&ndash;22 years and custom blend lock-in reduce the practical risk of sudden concentration-driven revenue loss</li>
+    </ul>
+
+    <p><strong>Residual risk:</strong> If hidden concentration is discovered (e.g., top 2 customers are subsidiaries of the same parent), effective top concentration increases meaningfully. This would trigger renegotiation of price or structure, not deal abandonment, given the custom blend lock-in and customer tenure. [RC Assessment &mdash; must resolve before final bid.]</p>
+
+    <p><strong>Monitoring trigger:</strong> Commercial DD finding; any customer identified as a subsidiary of a top-10 account.</p>
+</div>
+
+<!-- Risk 4 -->
+<div style="margin-bottom: 32px;">
+    <div class="risk-header">
+        <h3 style="margin: 0;">Risk 4: Environmental / Regulatory Exposure &mdash; Chemical Storage and Handling</h3>
+        <div class="risk-meta">
+            <span class="badge badge-high">High (potential)</span>
+            <span class="badge badge-possible">Remote to Possible</span>
+        </div>
+    </div>
+
+    <p><strong>Description:</strong> SCS operates 5 facilities storing and distributing specialty chemicals, including hazardous, flammable, food-grade, and agricultural products. The Cincinnati HQ (150,000 sq ft, 40 years of operations) has the highest exposure risk. No pending regulatory actions or known liabilities, but a Phase I/II has not yet been conducted.</p>
+
+    <p><strong>Mitigants:</strong></p>
+    <ul>
+        <li>Phase I environmental site assessments for all 5 facilities are required DD workstreams, to be initiated Day 1 upon exclusivity</li>
+        <li>Phase II assessments triggered if Phase I finds recognized environmental conditions at any site</li>
+        <li>SCS's current environmental compliance costs ($0.8M annually) reflect professional management &mdash; the business has invested in regulatory compliance, not deferred it</li>
+        <li>Angela Torres (Director of Quality &amp; Compliance, 8 years) has managed EPA, DOT, and OSHA compliance without regulatory actions &mdash; institutional compliance quality is high</li>
+    </ul>
+
+    <p><strong>Residual risk:</strong> A material environmental finding at Cincinnati HQ (remediation cost $2&ndash;5M+) would require price renegotiation or escrow. The deal team has not modeled environmental remediation costs. R&amp;W insurance with environmental coverage is strongly recommended. Any Phase II finding with remediation cost above $2.0M would trigger IC re-approval. [RC Assessment &mdash; must resolve before close.]</p>
+
+    <p><strong>Monitoring trigger:</strong> Phase I/II environmental assessment findings; any EPA, state EPA, or municipal regulatory communication identified in legal DD.</p>
+</div>
+
+<!-- Risk 5 -->
+<div style="margin-bottom: 32px;">
+    <div class="risk-header">
+        <h3 style="margin: 0;">Risk 5: Raw Material Cost Volatility</h3>
+        <div class="risk-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="badge badge-possible">Possible</span>
+        </div>
+    </div>
+
+    <p><strong>Description:</strong> SCS passes through raw material cost increases with a 60&ndash;90 day lag. In a sustained inflationary cycle, gross margins compress temporarily by up to 100bps before pricing catches up. The 2022&ndash;2023 inflationary period is the most recent example.</p>
+
+    <p><strong>Mitigants:</strong></p>
+    <ul>
+        <li>60% of SCS's sourcing is from 3 major manufacturers (BASF, Dow, Ashland) with whom SCS has 20+ year relationships and authorized distributor status &mdash; providing priority allocation and reasonable pricing stability</li>
+        <li>Walsh has implemented systematic annual price increases in the sales organization, improving pass-through speed from informal to disciplined</li>
+        <li>Product mix diversification (water treatment, food, institutional, agricultural) reduces exposure to any single input commodity</li>
+        <li>Historical data confirms pricing catches up within 60&ndash;90 days &mdash; margin compression is temporary, not structural</li>
+    </ul>
+
+    <p><strong>Residual risk:</strong> A severe and sustained inflationary spike (similar to 2022) could compress EBITDA by $1.5&ndash;2.0M in Year 1. The model does not include a specific raw material inflation scenario but the base case Year 1 EBITDA of $19.5M (management projection) incorporates stable input costs. [RC Assumption &mdash; Year 1 downside sensitivity if inflation accelerates: -$1.5M EBITDA, which still yields positive FCF and interest coverage.]</p>
+
+    <p><strong>Monitoring trigger:</strong> Monthly gross margin by product category; BASF/Dow/Ashland index pricing versus SCS list prices.</p>
+</div>
+
+<!-- Risk 6 -->
+<div style="margin-bottom: 32px;">
+    <div class="risk-header">
+        <h3 style="margin: 0;">Risk 6: Management Equity Plan &mdash; Walsh Retention Risk</h3>
+        <div class="risk-meta">
+            <span class="badge badge-high">High</span>
+            <span class="badge badge-remote">Remote</span>
+        </div>
+    </div>
+
+    <p><strong>Description:</strong> Karen Walsh (VP Sales) is the single most important retention priority. She built the sales organization, knows the customer base, has identified the add-on targets, and is the primary commercial continuity plan during the founder transition. If Walsh departs post-close, the revenue protection and upside case are both materially impaired.</p>
+
+    <p><strong>Mitigants:</strong></p>
+    <ul>
+        <li>Management equity participation (20% pool, vesting 4 years with 1-year cliff) provides retention incentive worth approximately $3&ndash;5M to Walsh at base case exit</li>
+        <li>CCO role elevation confirmed by deal team &mdash; Walsh understands this is the plan</li>
+        <li>Walsh's preliminary relationships with 2 add-on founders aligns her personal success with the platform build strategy</li>
+    </ul>
+
+    <p><strong>Residual risk:</strong> If Walsh departs for a competitor within Year 1, revenue attrition from top-50 customer coverage disruption is estimated at 5&ndash;10% of revenue over 12 months. This scenario is not modeled and would require immediate board action. [RC Assessment &mdash; Walsh retention is non-negotiable; LOI should include Walsh's retention agreement as a closing condition.]</p>
+
+    <p><strong>Monitoring trigger:</strong> Walsh's engagement and sentiment at monthly board meetings; any competitive poaching activity.</p>
+</div>
+
+<hr>
+
+<!-- ============================================================ -->
+<!-- SECTION 10: DUE DILIGENCE STATUS                              -->
+<!-- ============================================================ -->
+<h2 id="sec10">Section 10: Due Diligence Status</h2>
+
+<h3>10.1 Completed Workstreams</h3>
+
+<table>
+    <thead>
+        <tr><th>Workstream</th><th>Status</th><th>Key Findings</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Management meeting (full day on-site)</td><td>Complete</td><td>January 8, 2026. Attended by Harrison and Walsh. Sessions with Hoffman, Schmidt, Walsh. Facility tour. Full meeting notes prepared.</td></tr>
+        <tr><td>CIM analysis</td><td>Complete</td><td>Financial and operational analysis complete. EBITDA adjustments validated at high level. Customer analysis complete.</td></tr>
+        <tr><td>Preliminary financial analysis</td><td>Complete</td><td>Historical 3-year P&amp;L analysis, EBITDA bridge, working capital analysis, preliminary LBO model.</td></tr>
+        <tr><td>Preliminary LBO model</td><td>Complete</td><td>Base, downside, and upside cases modeled. See Section 8 and model-summary.md.</td></tr>
+        <tr><td>Competitive intelligence</td><td>Complete</td><td>Comparable transactions analyzed. Market landscape assessed. Hawkins Inc. (public comparable) reviewed.</td></tr>
+        <tr><td>Preliminary lender outreach</td><td>Complete</td><td>Ares Capital and Golub Capital expressed preliminary interest. Awaiting exclusivity to share CIM and commence formal underwriting.</td></tr>
+        <tr><td>CEO search firm identification</td><td>In Progress</td><td>2 search firms scoped (Spencer Stuart, Egon Zehnder). Engagement to be authorized post-exclusivity.</td></tr>
+        <tr><td>Environmental consultant identification</td><td>Complete</td><td>Environmental consultant (ATC Group Services) scoped. Engagement to be authorized post-exclusivity.</td></tr>
+        <tr><td>Customer reference checks</td><td>Not Started</td><td>Planned for DD period: 8&ndash;10 customer calls targeting top 20 accounts, covering at least 50% of revenue</td></tr>
+        <tr><td>Management references</td><td>Not Started</td><td>References for Schmidt, Walsh planned for DD</td></tr>
+    </tbody>
+</table>
+
+<h3>10.2 DD Workstreams Planned (Post-Exclusivity)</h3>
+
+<table>
+    <thead>
+        <tr><th>Workstream</th><th>Provider</th><th>Scope</th><th>Target Completion</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Quality of Earnings</td><td>TBD (2 firms to be scoped)</td><td>EBITDA validation, NWC analysis, adjustments validation, revenue quality</td><td>April 15, 2026</td></tr>
+        <tr><td>Legal DD</td><td>TBD (Kirkland &amp; Ellis preferred)</td><td>Corporate structure, material contracts, litigation, IP, real estate, labor</td><td>April 15, 2026</td></tr>
+        <tr><td>Tax</td><td>TBD</td><td>Federal/state compliance, structural optimization</td><td>April 15, 2026</td></tr>
+        <tr><td>Environmental (Phase I/II)</td><td>ATC Group Services</td><td>All 5 facilities; Phase II if triggered</td><td>March 21, 2026</td></tr>
+        <tr><td>Insurance</td><td>TBD</td><td>Property, liability, environmental, fleet, workers comp</td><td>April 1, 2026</td></tr>
+        <tr><td>IT/Systems</td><td>TBD</td><td>SAP Business One, Salesforce CRM, data security, integration readiness</td><td>April 10, 2026</td></tr>
+        <tr><td>HR/Benefits</td><td>Internal</td><td>Employee census, retention risk, labor compliance, benefits</td><td>April 15, 2026</td></tr>
+        <tr><td>Commercial</td><td>Internal + customer calls</td><td>Customer relationship validation, competitive dynamics, pricing sustainability</td><td>April 10, 2026</td></tr>
+    </tbody>
+</table>
+
+<h3>10.3 Open Items &mdash; Must Resolve Before Final Bid</h3>
+
+<table>
+    <thead>
+        <tr><th>Open Item</th><th>Owner</th><th>Target Resolution</th><th>Risk Level</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Corporate family tree validation &mdash; top 20 customers</td><td>Walsh + Thomas Chen</td><td>DD period, by April 1</td><td><span class="badge badge-high">High</span></td></tr>
+        <tr><td>QofE EBITDA validation (confirm $18.0M adj. EBITDA within 10%)</td><td>QofE provider</td><td>April 15, 2026</td><td><span class="badge badge-high">High</span></td></tr>
+        <tr><td>Phase I environmental &mdash; all 5 facilities</td><td>ATC Group Services</td><td>March 21, 2026</td><td><span class="badge badge-high">High</span></td></tr>
+        <tr><td>Walsh and Schmidt retention agreements &mdash; signed</td><td>Harrison</td><td>Pre-close</td><td><span class="badge badge-critical">Critical</span></td></tr>
+        <tr><td>CEO hire progress confirmation</td><td>Harrison</td><td>IC final approval, April 18</td><td><span class="badge badge-critical">Critical</span></td></tr>
+        <tr><td>Inventory aging report &mdash; validate $3&ndash;5M optimization</td><td>Schmidt + QofE</td><td>April 15, 2026</td><td><span class="badge badge-medium">Medium</span></td></tr>
+        <tr><td>Supplier concentration analysis &mdash; top 10 suppliers</td><td>Internal</td><td>DD period</td><td><span class="badge badge-medium">Medium</span></td></tr>
+        <tr><td>Detailed inventory seasonality build (18-month trailing)</td><td>Schmidt</td><td>April 15, 2026</td><td><span class="badge badge-medium">Medium</span></td></tr>
+        <tr><td>Roof replacement assessment &mdash; Cincinnati HQ</td><td>Phase I contractor</td><td>March 21, 2026</td><td><span class="badge badge-medium">Medium</span></td></tr>
+    </tbody>
+</table>
+
+<h3>10.4 Cumulative DD Spend (Pre-Exclusivity)</h3>
+
+<p>Management presentation logistics, CIM analysis, and preliminary legal scoping: estimated $50&ndash;75K. Full DD budget upon exclusivity: estimated $400&ndash;500K.</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<!-- SECTION 11: RECOMMENDATION                                    -->
+<!-- ============================================================ -->
+<h2 id="sec11">Section 11: Recommendation</h2>
+
+<div style="background: #f0f7f0; border: 2px solid #2E7D5B; padding: 24px; margin: 20px 0;">
+    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+        <span style="background: #2E7D5B; color: #ffffff; padding: 8px 24px; border-radius: 5px; font-weight: 700; font-size: 18px; letter-spacing: 0.5px;">PROCEED</span>
+    </div>
+    <table style="margin: 0; background: transparent;">
+        <tr style="background:transparent !important;"><td style="border:none; padding: 4px 14px 4px 0; font-weight:600; width:140px;">Deal Lead</td><td style="border:none; padding: 4px 0;">James Harrison, Managing Partner &amp; Co-Founder</td></tr>
+        <tr style="background:transparent !important;"><td style="border:none; padding: 4px 14px 4px 0; font-weight:600;">IC Meeting Date</td><td style="border:none; padding: 4px 0;">February 5, 2026</td></tr>
+        <tr style="background:transparent !important;"><td style="border:none; padding: 4px 14px 4px 0; font-weight:600;">Fund</td><td style="border:none; padding: 4px 0;">Northwood Capital Fund II, L.P.</td></tr>
+    </table>
+</div>
+
+<p><strong>Thesis summary:</strong> SCS is a 40-year-old specialty chemical distributor with essential products, inelastic demand, 85%+ customer retention, custom blending lock-in, and a fragmented $35&ndash;40B market offering meaningful consolidation upside. The investment thesis is the convergence of two opportunities: (1) professionalization of a business that has outgrown its founder &mdash; capturing margin expansion and management infrastructure value that Hoffman's informal operating style has suppressed, and (2) geographic add-on platform build in a market with identified targets, proven multiple arbitrage (5&ndash;7x add-ons into an 8&ndash;10x platform), and Walsh already holding preliminary founder relationships.</p>
+
+<p><strong>On fund hurdles:</strong> The organic-only base case (~18% IRR / 2.3x MOIC) is below Northwood's 20%+ / 2.5x+ hurdle. The deal team recommends approval on the following basis: the base case is deliberately conservative (no credit for add-ons, no credit for multiple expansion beyond 0.4x), and the upside case (~29% / 3.6x) with 2 add-on acquisitions is well-supported by identified targets, proven market pricing, and Walsh's existing founder relationships. The deal team views the organic base case as a floor &mdash; a business of this quality, in a growing market, with a clear professionalization thesis and management equity alignment, should outperform flat multiple, organic-only assumptions.</p>
+
+<p><strong>Conditions on approval:</strong></p>
+<ol>
+    <li><strong>QofE confirmation:</strong> Adjusted EBITDA must be confirmed within 10% of underwritten $18.0M by the QofE provider before final bid submission.</li>
+    <li><strong>Environmental clearance:</strong> No material Phase I findings triggering a Phase II with unacceptable remediation risk (threshold: $2.0M+ unbudgeted liability).</li>
+    <li><strong>Customer concentration validation:</strong> No hidden concentration in top 20 accounts that increases effective top-5 concentration above 40%.</li>
+    <li><strong>Walsh retention agreement:</strong> Executed prior to close as a closing condition.</li>
+    <li><strong>CEO search activation:</strong> CEO search engagement authorized immediately upon exclusivity grant; IC to receive search status update at April 18 IC meeting.</li>
+    <li><strong>Add-on commitment:</strong> Deal team commits to initiating formal add-on process (Targets A and B) within 18 months of close.</li>
+</ol>
+
+<p><strong>Primary concerns:</strong> Founder transition is the single highest-risk element of this investment. The team is confident in the mitigation plan (advisory agreement, joint visit protocol, Walsh as continuity bridge, Okafor as operational resource) but acknowledges that customer relationship transfer at this level of personal concentration is the most execution-intensive assumption in the thesis.</p>
+
+<p><strong>Next action:</strong> Authorize LOI submission at $155.0M (8.6x LTM Adj. EBITDA) with 60-day exclusivity request, subject to Baird/seller countersignature.</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<!-- QA SUMMARY                                                    -->
+<!-- ============================================================ -->
+<h2 id="qa">QA Summary</h2>
+
+<p style="font-style: italic; color: #555;">Per Northwood Capital QA Protocol (qa-protocol.md)</p>
+
+<table>
+    <thead>
+        <tr><th style="width:200px;">Check</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+        <tr><td><strong>Source Verification</strong></td><td>All financial figures sourced to CIM (November 2025), management meeting notes (January 8, 2026), or LBO model (February 2026). EBITDA adjustments sourced to management call with Schmidt. Projection basis labeled per convention (RC Assumption or Mgmt Estimate).</td></tr>
+        <tr><td><strong>Structural Consistency</strong></td><td>All financial metrics traced to spine and source documents. Entry EV $155.0M, equity $93.0M, debt $62.0M, leverage 3.4x &mdash; consistent across Sections 1, 7, and 8. Returns (~18% / 2.3x base) consistent with computed LBO model (model-summary.md, March 2026). No orphan numbers identified.</td></tr>
+        <tr><td><strong>Adversarial Review</strong></td><td>Top 3 risks identified and stress-tested (founder transition, customer concentration, environmental). Bear cases articulated. Downside scenario modeled explicitly (revenue decline to $185M, margin compression, 8.0x exit = 1.2x / ~4%). Base case returns acknowledged as below hurdle with explicit condition on add-on execution.</td></tr>
+        <tr><td><strong>Assumption Flagging</strong></td><td>All forward-looking numbers carry category labels (RC Assumption, Mgmt Estimate, Historical). Exit multiple assumption (9.0x) sourced to comparable transaction analysis. Margin expansion assumptions traced to specific operational initiatives with quantified estimates.</td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<!-- ============================================================ -->
+<!-- REVISION HISTORY                                              -->
+<!-- ============================================================ -->
+<h2 id="revision">Revision History</h2>
+
+<table>
+    <thead>
+        <tr><th>Version</th><th>Date</th><th>Author</th><th>Changes</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>v1.0</td><td>February 5, 2026</td><td>James Harrison, Andrew Walsh</td><td>Initial IC memo for LOI authorization</td></tr>
+        <tr><td>v2.0</td><td>March 1, 2026</td><td>Andrew Walsh, Thomas Chen</td><td>Updated returns analysis with computed LBO model output (D&amp;A tax shield incorporated; base case ~18% / 2.3x, upside ~29% / 3.6x)</td></tr>
+    </tbody>
+</table>
+
+<!-- ============================================================ -->
+<!-- FOOTER                                                        -->
+<!-- ============================================================ -->
+<div style="border-top: 1px solid #dee2e6; margin-top: 40px; padding-top: 15px; font-size: 11px; color: #888; text-align: center;">
+    CONFIDENTIAL &mdash; Northwood Capital | Investment Committee Memorandum &mdash; Project Everest | March 2026
+</div>
+
+<div style="margin-top: 12px; font-size: 11px; color: #888; text-align: center; font-style: italic;">
+    Northwood Capital Partners | Chicago, IL<br>
+    This memorandum is intended solely for the Investment Committee of Northwood Capital Partners.<br>
+    Do not distribute or reproduce without authorization.
+</div>
+
+</body>
+</html>

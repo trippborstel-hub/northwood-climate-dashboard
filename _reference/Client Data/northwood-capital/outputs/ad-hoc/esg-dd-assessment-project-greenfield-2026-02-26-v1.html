@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESG Due Diligence Assessment — Project Greenfield</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 60px;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #ffffff;
+        }
+        h1 { font-size: 28px; font-weight: 700; color: #1B2A3D; margin: 8px 0 4px 0; }
+        h2 { font-size: 22px; font-weight: 600; color: #1B2A3D; margin: 35px 0 15px 0; border-bottom: 2px solid #1B2A3D; padding-bottom: 6px; }
+        h3 { font-size: 18px; font-weight: 600; color: #2C4A6E; margin: 25px 0 10px 0; }
+        h4 { font-size: 15px; font-weight: 600; color: #2C4A6E; margin: 20px 0 8px 0; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 13px; }
+        th { background-color: #1B2A3D; color: #ffffff; font-weight: 600; text-align: left; padding: 10px 14px; border: 1px solid #1B2A3D; }
+        td { padding: 8px 14px; border: 1px solid #dee2e6; vertical-align: top; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+        .callout-row { display: flex; gap: 20px; margin: 25px 0; }
+        .callout-box { flex: 1; background: #f8f9fa; border-left: 4px solid #0D6EAA; padding: 16px 20px; }
+        .callout-label { font-size: 12px; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
+        .callout-value { font-size: 32px; font-weight: 700; color: #1B2A3D; margin: 4px 0; }
+        .callout-sub { font-size: 13px; color: #555; }
+        .callout-box.risk { border-left-color: #c62828; }
+        .callout-box.caution { border-left-color: #856404; }
+        .callout-box.upside { border-left-color: #2E7D5B; }
+        .score-1 { background: #d4edda; color: #155724; font-weight: 600; text-align: center; }
+        .score-2 { background: #d1ecf1; color: #0c5460; font-weight: 600; text-align: center; }
+        .score-3 { background: #fff3cd; color: #856404; font-weight: 600; text-align: center; }
+        .score-4 { background: #f8d7da; color: #721c24; font-weight: 600; text-align: center; }
+        .score-5 { background: #c62828; color: #ffffff; font-weight: 600; text-align: center; }
+        .total-row { font-weight: 700; background-color: #f0f4f8 !important; }
+        .total-row td { border-top: 2px solid #1B2A3D; }
+        p { margin: 8px 0; }
+        .section-intro { color: #555; font-size: 14px; margin-bottom: 15px; }
+        .footnote { font-size: 12px; color: #555; margin-top: 8px; }
+        .recommendation-box { background: #f0f4f8; border: 2px solid #1B2A3D; padding: 20px 24px; margin: 20px 0; }
+        .recommendation-box h3 { color: #1B2A3D; margin-top: 0; }
+        .condition-list { margin: 10px 0; padding-left: 20px; }
+        .condition-list li { margin-bottom: 8px; }
+        @media print {
+            body { padding: 20px; max-width: 100%; }
+            table { page-break-inside: avoid; }
+            h2 { page-break-after: avoid; }
+            .callout-row { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div style="border-bottom: 3px solid #1B2A3D; padding-bottom: 20px; margin-bottom: 30px;">
+    <div style="font-size: 12px; color: #555; text-transform: uppercase; letter-spacing: 1px;">
+        Northwood Capital — Confidential
+    </div>
+    <h1>ESG Due Diligence Assessment — Project Greenfield</h1>
+    <div style="font-size: 14px; color: #555;">
+        Heartland Waste Solutions | February 26, 2026 | Internal Only
+    </div>
+</div>
+
+<!-- EXECUTIVE SUMMARY CALLOUTS -->
+<div class="callout-row">
+    <div class="callout-box risk">
+        <div class="callout-label">ESG Composite Score</div>
+        <div class="callout-value">3.7</div>
+        <div class="callout-sub">Elevated Risk — Two dimensions at 5</div>
+    </div>
+    <div class="callout-box risk">
+        <div class="callout-label">Total ESG-Related Cost</div>
+        <div class="callout-value">$19.5M–$29.5M</div>
+        <div class="callout-sub">Environmental + safety + governance (Years 1–3)</div>
+    </div>
+    <div class="callout-box caution">
+        <div class="callout-label">Protocol Threshold</div>
+        <div class="callout-value">Presumptive Pass</div>
+        <div class="callout-sub">Score 3.6–4.0 with dimension at 5</div>
+    </div>
+    <div class="callout-box" style="border-left-color: #1B2A3D;">
+        <div class="callout-label">Recommendation</div>
+        <div class="callout-value" style="font-size: 26px;">Advance with Conditions</div>
+        <div class="callout-sub">Presumptive pass rebutted — see Section 6</div>
+    </div>
+</div>
+
+<!-- DEAL SUMMARY -->
+<table>
+    <tr><th style="width:35%;">Field</th><th>Value</th></tr>
+    <tr><td>Codename</td><td>Greenfield</td></tr>
+    <tr><td>Target</td><td>Heartland Waste Solutions ("HWS")</td></tr>
+    <tr><td>Sector</td><td>Environmental Services / Waste Management</td></tr>
+    <tr><td>HQ</td><td>Rockford, IL</td></tr>
+    <tr><td>Deal Lead</td><td>Mark Sullivan (Partner)</td></tr>
+    <tr><td>Assessment Team</td><td>Mark Sullivan, Rachel Kim (Associate), David Okafor (Operating Partner, Industrial — informal consultation)</td></tr>
+    <tr><td>Trigger</td><td>IC Chair "Advance with Conditions" decision, January 28, 2026. Material ESG risk identified at initial screening (preliminary scoring average 2.6, below 3.0 threshold). ESG DD required before IC memo preparation.</td></tr>
+    <tr><td>Stage</td><td>Preliminary DD — pre-LOI. This assessment determines whether the deal advances to IC for LOI authorization.</td></tr>
+    <tr><td>LTM Revenue</td><td class="num">$128.5M</td></tr>
+    <tr><td>LTM Adj. EBITDA (reported)</td><td class="num">$16.8M (13.1% margin)</td></tr>
+    <tr><td>QofE-Adjusted EBITDA (est.)</td><td class="num">~$15.0M</td></tr>
+    <tr><td>Northwood Target EV</td><td class="num">$97.5M–$105.0M (6.5x–7.0x on QofE-adj.)</td></tr>
+    <tr><td>Estimated Equity Check</td><td class="num">$38.0M–$42.0M</td></tr>
+    <tr><td>Investment Thesis</td><td>Buy-fix-sell: acquire at ESG discount, remediate environmental/safety/governance, exit to national strategic (WM, Republic, GFL) at 10.5x–11.5x</td></tr>
+</table>
+
+<!-- EXECUTIVE SUMMARY -->
+<h2>Executive Summary</h2>
+
+<p><strong>Recommendation: Advance with Conditions.</strong> Heartland Waste Solutions carries the highest ESG risk profile of any deal in Northwood's pipeline or portfolio history — a weighted composite of 3.7 with two dimensions scoring 5 (Environmental Liability, Labor Practices & Safety). Under the firm's ESG DD Assessment Protocol, this triggers a Presumptive Pass: the deal cannot advance unless the deal team demonstrates that (a) risk is fully quantifiable, (b) deal structure provides full protection, and (c) the value creation thesis justifies the risk premium.</p>
+
+<p>The deal team rebuts the Presumptive Pass on all three grounds. Environmental liabilities are quantifiable within a $12.0M–$18.0M range supported by independent methodology. Deal structure protections — purchase price reduction, environmental escrow, seller indemnity, Pollution Legal Liability insurance, and close conditions for EHS and CFO hires — bound the downside. The buy-fix-sell thesis generates a base case 4.2x MOIC / ~33% IRR at an ESG-adjusted entry of 6.7x, with the bear case (remediation at high end, Belvidere expansion denied) still producing a 2.7x / ~22% return that meets Northwood's floor.</p>
+
+<p>This memo presents the full ESG assessment, details the six conditions required for IC advancement, and identifies four open items that must be resolved during post-LOI diligence.</p>
+
+<!-- ESG SCORECARD -->
+<h2>ESG Scorecard</h2>
+
+<p class="section-intro">Scored per the firm's ESG Risk Assessment Methodology (8 dimensions, 1–5 scale, weighted composite). Two dimensions score 5, triggering IC-level escalation per the risk framework.</p>
+
+<table>
+    <tr>
+        <th>Dimension</th>
+        <th class="num">Weight</th>
+        <th class="num">Score</th>
+        <th>Rating</th>
+        <th>Key Finding</th>
+        <th class="num">Financial Impact</th>
+    </tr>
+    <tr>
+        <td>E1 — Physical Climate Risk</td>
+        <td class="num">15%</td>
+        <td class="num score-3">3</td>
+        <td>Moderate</td>
+        <td>Midwest geography — tornado/severe storm exposure across 14 outdoor facilities including 3 active landfills. No formalized business continuity plan. Insurance adequate but no weather-specific contingency.</td>
+        <td class="num">N/A — standard sector risk</td>
+    </tr>
+    <tr>
+        <td>E2 — Transition Risk</td>
+        <td class="num">10%</td>
+        <td class="num score-3">3</td>
+        <td>Moderate</td>
+        <td>125-vehicle diesel fleet (avg age 7.2 years). No CNG/EV conversion plan. Landfill methane with basic passive flare only — no gas-to-energy system. Offset by regulatory tailwind: waste services benefit from environmental regulation, not threatened by it.</td>
+        <td class="num">$0.5M methane upgrade (Y2) [RC Estimate]</td>
+    </tr>
+    <tr>
+        <td>E3 — Environmental Liability</td>
+        <td class="num">15%</td>
+        <td class="num score-5">5</td>
+        <td>High</td>
+        <td>IL EPA consent order (Belvidere, Oct 2024). PFAS at 28 ppt vs. 4 ppt EPA limit (7x exceedance). Remediation plan due July 2026 — PFAS scope undefined. WI DNR warning letter (Janesville, Mar 2025) — leachate system upgrade required. Unresolved soil contamination at one closed site. No remediation reserve on balance sheet. Cash basis accounting makes environmental exposure invisible in financials.</td>
+        <td class="num">$12.0M–$18.0M [Independent est.]</td>
+    </tr>
+    <tr>
+        <td>S1 — Labor Practices & Safety</td>
+        <td class="num">15%</td>
+        <td class="num score-5">5</td>
+        <td>High</td>
+        <td>TRIR 8.2 vs. industry avg ~4.5 (1.8x). One CDL driver fatality (2024). Three OSHA citations in 18 months (Serious: $42K penalty; lockout/tagout; fall protection). Workers' comp mod factor 1.45, premium $3.2M trending +18% YoY. EHS staffing: 0.5 FTE (1 part-time coordinator, no safety professional) for ~580 employees. No incident investigation protocol, no near-miss reporting, no behavioral safety program.</td>
+        <td class="num">$2.0M–$3.0M safety buildout (Y1–2) + $3.2M/yr excess workers' comp [CIM, Mgmt Meeting]</td>
+    </tr>
+    <tr>
+        <td>S2 — Workforce Resilience</td>
+        <td class="num">15%</td>
+        <td class="num score-3">3</td>
+        <td>Moderate</td>
+        <td>CDL driver turnover 35% vs. ~25% industry. Pay gap: $22–$26/hr vs. WM/Republic $24–$30/hr. 4–6 week fill time per CDL vacancy creates short-staffing, overtime, fatigue. Not credential-gated — CDL pipeline is constrained but not structurally broken. Mike Dellacroce (VP Ops) is a strong operational asset — former Republic Services, honest about gaps, capable under proper infrastructure.</td>
+        <td class="num">$1.5M–$2.5M incremental annual labor cost to close pay gap [RC Estimate]</td>
+    </tr>
+    <tr>
+        <td>S3 — Community & Reputation</td>
+        <td class="num">5%</td>
+        <td class="num score-4">4</td>
+        <td>Elevated</td>
+        <td>Belvidere expansion: 72 of 87 public comments opposed (83%). Hearing April 2026. Residential development 0.5 miles from landfill boundary — hand-painted "NO EXPANSION" signs visible from access road. Odor complaints (noticeable from 0.5 miles per on-site visit, Feb 12). 2024 fatality received local press coverage. Community opposition is organized and growing.</td>
+        <td class="num">$5.0M probability-weighted airspace risk [RC Estimate]</td>
+    </tr>
+    <tr>
+        <td>G1 — Board & Management</td>
+        <td class="num">15%</td>
+        <td class="num score-4">4</td>
+        <td>Elevated</td>
+        <td>No board of directors. No CFO (controller only — not CPA, never done accrual conversion). No EHS function. No general counsel. Cash basis accounting on QuickBooks Desktop. Founder (age 67) manages all 12 municipal contracts, IL EPA relationship, insurance broker, and top 5 commercial accounts personally. Full exit within 12 months. No identified successor. Buyer must build entire governance infrastructure.</td>
+        <td class="num">$1.5M–$2.5M governance build (Y1) [RC Estimate]</td>
+    </tr>
+    <tr>
+        <td>G2 — Data Privacy & Cybersecurity</td>
+        <td class="num">10%</td>
+        <td class="num score-2">2</td>
+        <td>Low</td>
+        <td>On-premise IT (2 physical servers, no UPS, no disaster recovery). QuickBooks Desktop — no ERP. No field connectivity (no tablets, no mobile apps). Minimal sensitive data exposure for waste management operations — no PHI, limited PII. Risk is operational disruption, not data breach.</td>
+        <td class="num">$0.4M–$0.6M IT infrastructure (Y1) [RC Estimate]</td>
+    </tr>
+    <tr class="total-row">
+        <td><strong>Weighted Composite</strong></td>
+        <td class="num"></td>
+        <td class="num score-4"><strong>3.7</strong></td>
+        <td><strong>Elevated</strong></td>
+        <td>Two dimensions at 5 (E3, S1). Two dimensions at 4 (S3, G1). Triggers Presumptive Pass under ESG DD Assessment Protocol.</td>
+        <td class="num"><strong>$19.5M–$29.5M total</strong></td>
+    </tr>
+</table>
+
+<p class="footnote"><strong>Composite calculation:</strong> (3 x 0.15) + (3 x 0.10) + (5 x 0.15) + (5 x 0.15) + (3 x 0.15) + (4 x 0.05) + (4 x 0.15) + (2 x 0.10) = 0.45 + 0.30 + 0.75 + 0.75 + 0.45 + 0.20 + 0.60 + 0.20 = 3.70</p>
+
+<!-- DETAILED FINDINGS -->
+<h2>Detailed Findings by Dimension</h2>
+
+<h3>E3 — Environmental Liability (Score: 5 — High)</h3>
+
+<p>Environmental liability is the defining risk of this transaction. It is not a single issue — it is a pattern of deferred environmental management accumulated over 23 years of founder-operator ownership, now crystallized in regulatory enforcement actions across multiple jurisdictions.</p>
+
+<h4>Belvidere Landfill — IL EPA Consent Order</h4>
+
+<p>The Illinois EPA issued a consent order in October 2024 against the Belvidere landfill for groundwater contamination. PFAS was detected at 28 ppt — 7x the EPA maximum contaminant level of 4 ppt. Approximately 20 groundwater monitoring wells surround the site [observed during Feb 12 facility visit], several with recent IL EPA sampling tags.</p>
+
+<p>The contamination predates HWS ownership. Kowalski acquired the Belvidere site in 2005 from a prior operator that had a chemical storage operation [Mgmt Meeting, Feb 12]. However, the liability follows the property. HWS is the responsible party under the consent order regardless of the contamination's origin.</p>
+
+<p>The consent order requires a remediation plan by July 2026 — 4 months from today. Management has retained Midwest Environmental Associates as the environmental consultant but has not yet defined the PFAS remediation scope [Mgmt Meeting, Feb 12]. Kowalski's verbal remediation estimate of $4.0M–$6.0M [Mgmt Meeting, Feb 12] is anchored on costs experienced to date (monitoring, consulting, soil work) rather than on the full remediation scope that PFAS contamination at 7x the regulatory limit requires. The CIM's stated range of $8.0M–$12.0M [CIM, Harris Williams, Jan 2026] is more realistic but likely still understated.</p>
+
+<h4>Janesville Landfill — WI DNR Warning</h4>
+
+<p>The Wisconsin DNR issued a warning letter in March 2025 requiring a leachate collection system upgrade at the Janesville landfill. Management estimates $2.0M–$3.0M for the upgrade [Mgmt Meeting, Feb 12] and has been deferring the work. This is a known, bounded obligation with a defined technical scope — lower risk than Belvidere but indicative of the pattern.</p>
+
+<h4>Closed Sites</h4>
+
+<p>Three closed disposal sites carry 30-year post-closure monitoring obligations at ~$450K/year [CIM, Jan 2026]. One site has unresolved soil contamination — Kowalski did not identify which site or specify the nature or extent [Mgmt Meeting, Feb 12]. This is an open item requiring Phase I/II investigation.</p>
+
+<h4>Remediation Reserve</h4>
+
+<p>There is no remediation reserve on the balance sheet. Janet Polanski (Controller) confirmed that environmental costs are expensed as incurred from operating cash flow with no accrual for future obligations [Mgmt Meeting, Feb 12]. When presented with a $12.0M–$15.0M potential liability, her response was: "That... that would be a lot. We have about $4 million in cash at any time." Cash basis accounting makes the entire environmental liability invisible in the company's financial records.</p>
+
+<h4>Remediation Cost Estimates</h4>
+
+<table>
+    <tr>
+        <th>Source</th>
+        <th class="num">Low ($M)</th>
+        <th class="num">Base ($M)</th>
+        <th class="num">High ($M)</th>
+        <th>Basis</th>
+    </tr>
+    <tr>
+        <td>Management (Kowalski, verbal)</td>
+        <td class="num">$4.0M</td>
+        <td class="num">$5.0M</td>
+        <td class="num">$6.0M</td>
+        <td>Costs experienced to date; does not scope PFAS remediation [Mgmt Meeting, Feb 12]</td>
+    </tr>
+    <tr>
+        <td>CIM (Harris Williams)</td>
+        <td class="num">$8.0M</td>
+        <td class="num">$10.0M</td>
+        <td class="num">$12.0M</td>
+        <td>Unspecified methodology [CIM, Jan 2026]</td>
+    </tr>
+    <tr>
+        <td>Independent estimate (Northwood)</td>
+        <td class="num">$12.0M</td>
+        <td class="num">$15.0M</td>
+        <td class="num">$18.0M</td>
+        <td>Based on PFAS remediation cost benchmarks, consent order scope, leachate system upgrade, closed site remediation, monitoring and contingency [RC Estimate — pending formal Phase I/II]</td>
+    </tr>
+</table>
+
+<p class="footnote"><strong>Methodology note:</strong> The independent estimate is preliminary. It is based on PFAS remediation cost benchmarks for Subtitle D landfills with groundwater contamination at comparable exceedance levels, the WI DNR-specified leachate upgrade scope, and a $1.0M–$2.0M allowance for closed site soil remediation. The estimate will be refined when the formal Phase I/II ESA results are available. Per the ESG DD Assessment Protocol, the IC decision is informed by the independent estimate (base case) with the regulatory worst-case as the downside stress.</p>
+
+<h3>S1 — Labor Practices & Safety (Score: 5 — High)</h3>
+
+<p>The safety profile is institutionally deficient. This is not a business with an elevated safety risk that is being managed — it is a business with an elevated safety risk and no management system in place to address it.</p>
+
+<table>
+    <tr>
+        <th>Metric</th>
+        <th class="num">HWS</th>
+        <th class="num">Industry Avg</th>
+        <th>Assessment</th>
+    </tr>
+    <tr>
+        <td>Total Recordable Incident Rate (TRIR)</td>
+        <td class="num" style="color:#c62828; font-weight:600;">8.2</td>
+        <td class="num">~4.5</td>
+        <td>1.8x industry average. Pattern of elevated incidents across collection, transfer, and landfill operations.</td>
+    </tr>
+    <tr>
+        <td>Fatalities (trailing 36 months)</td>
+        <td class="num" style="color:#c62828; font-weight:600;">1</td>
+        <td class="num">0</td>
+        <td>CDL driver struck while backing a rear-loader on residential route, 2024. OSHA Serious citation, $42K penalty. [CIM; Mgmt Meeting, Feb 12]</td>
+    </tr>
+    <tr>
+        <td>OSHA Citations (trailing 18 months)</td>
+        <td class="num" style="color:#c62828; font-weight:600;">3</td>
+        <td class="num">N/A</td>
+        <td>Serious (fatality, $42K), lockout/tagout (DeKalb transfer station), fall protection (Belvidere landfill gas collection). [CIM; Mgmt Meeting, Feb 12]</td>
+    </tr>
+    <tr>
+        <td>Workers' Comp Mod Factor</td>
+        <td class="num" style="color:#c62828; font-weight:600;">1.45</td>
+        <td class="num">1.00</td>
+        <td>Jumped materially after 2024 fatality. Premium $3.2M/yr, trending +18% YoY. [Controller, Mgmt Meeting, Feb 12]</td>
+    </tr>
+    <tr>
+        <td>EHS Staffing</td>
+        <td class="num" style="color:#c62828; font-weight:600;">0.5 FTE</td>
+        <td class="num">2–4 FTE</td>
+        <td>One part-time coordinator (Karen Schmidt, former route admin). No safety professional. [CIM; Mgmt Meeting, Feb 12]</td>
+    </tr>
+</table>
+
+<p>Mike Dellacroce (VP Operations) was direct about the gaps: no formal safety training program, no incident investigation protocol, no near-miss reporting system, no behavioral observation program. Quarterly "toolbox talks" are the only recurring safety activity [Mgmt Meeting, Feb 12]. Dellacroce stated he has been requesting a dedicated EHS director for years, and after the 2024 fatality expected Kowalski to act. Instead, Kowalski decided to sell.</p>
+
+<p>The safety deficit is not an individual failure — it is the same institutional vacuum that produced the environmental exposure. An EHS function, a CFO with accrual accounting capability, and a board with oversight authority would have created the systems that identify, track, and mitigate these risks before they become regulatory enforcement actions and OSHA citations. The absence of all three simultaneously is the governance root cause.</p>
+
+<h3>S3 — Community & Reputation (Score: 4 — Elevated)</h3>
+
+<p>Community opposition to the Belvidere landfill expansion is organized and growing. Of 87 public comments received on the expansion application, 72 were opposed (83%) [Initial Screen, Jan 28, 2026]. Residential development sits approximately 0.5 miles from the landfill boundary. At least 4 hand-painted "NO EXPANSION" signs were visible from the landfill access road during the February 12 site visit. Landfill odor was noticeable from approximately 0.5 miles [Site Visit Observations, Feb 12].</p>
+
+<p>The public hearing is scheduled for April 2026. If the expansion is denied, Belvidere has 4.2 years of remaining airspace [CIM, Jan 2026]. Denial would transform the Belvidere landfill from a 15+ year permitted asset into a depleting resource, materially changing the business plan, exit narrative, and valuation.</p>
+
+<p>The 2024 fatality received local press coverage, adding to the community's negative perception of HWS operations. The combination of environmental contamination, odor complaints, a workplace fatality, and public regulatory enforcement creates a reputational profile that a buyer inherits at close.</p>
+
+<h3>G1 — Board & Management Oversight (Score: 4 — Elevated)</h3>
+
+<p>The governance structure does not exist. This is not a business with weak governance — it has no governance infrastructure at all.</p>
+
+<table>
+    <tr>
+        <th>Function</th>
+        <th>Status</th>
+        <th>Gap Assessment</th>
+    </tr>
+    <tr>
+        <td>Board of Directors</td>
+        <td style="color:#c62828; font-weight:600;">None</td>
+        <td>Sole proprietor model. No advisory board. No independent oversight.</td>
+    </tr>
+    <tr>
+        <td>Chief Financial Officer</td>
+        <td style="color:#c62828; font-weight:600;">None</td>
+        <td>Janet Polanski is controller, not CFO. Not CPA. Has never done an accrual conversion. No visibility into environmental liabilities. Competent within scope but scope is bookkeeping, not institutional finance. [Mgmt Meeting, Feb 12]</td>
+    </tr>
+    <tr>
+        <td>EHS Director</td>
+        <td style="color:#c62828; font-weight:600;">None</td>
+        <td>Karen Schmidt (0.5 FTE) is a former route admin, not a safety professional. No incident investigation, near-miss reporting, or behavioral safety programs. [Mgmt Meeting, Feb 12]</td>
+    </tr>
+    <tr>
+        <td>General Counsel</td>
+        <td style="color:#c62828; font-weight:600;">None</td>
+        <td>No in-house or outside counsel on retainer for corporate governance. Legal spend is reactive (litigation, regulatory response). [Initial Screen, Jan 28]</td>
+    </tr>
+    <tr>
+        <td>Financial Reporting</td>
+        <td style="color:#c62828; font-weight:600;">Cash basis</td>
+        <td>QuickBooks Desktop. No monthly balance sheet. No ERP. No environmental reserves or accruals. QofE will build the accrual picture from scratch. [Controller, Mgmt Meeting, Feb 12]</td>
+    </tr>
+    <tr>
+        <td>Succession</td>
+        <td style="color:#c62828; font-weight:600;">No successor identified</td>
+        <td>Kowalski (age 67) wants full exit in 12 months. Dellacroce (VP Ops) is operationally strong but has stated he does not want the CEO role. [Mgmt Meeting, Feb 12]</td>
+    </tr>
+</table>
+
+<h4>Governance Gap — Remediation Cost</h4>
+
+<table>
+    <tr>
+        <th>Gap</th>
+        <th>Remediation</th>
+        <th class="num">Estimated Annual Cost</th>
+        <th>Timeline</th>
+    </tr>
+    <tr>
+        <td>No EHS function</td>
+        <td>Hire EHS Director + implement compliance program</td>
+        <td class="num">$250K–$350K (salary + program)</td>
+        <td>Identify pre-close; start Day 1</td>
+    </tr>
+    <tr>
+        <td>No CFO</td>
+        <td>Hire CFO + upgrade reporting + cash-to-accrual conversion</td>
+        <td class="num">$300K–$400K (salary) + $300K–$500K (one-time system/conversion)</td>
+        <td>Identify pre-close; start Day 1</td>
+    </tr>
+    <tr>
+        <td>No GC</td>
+        <td>Engage outside counsel on retainer + compliance review</td>
+        <td class="num">$150K–$250K annually</td>
+        <td>30–60 days post-close</td>
+    </tr>
+    <tr>
+        <td>No board</td>
+        <td>Recruit 2 independent directors per Northwood standard</td>
+        <td class="num">$75K–$150K (fees + D&O insurance)</td>
+        <td>60–90 days post-close</td>
+    </tr>
+    <tr>
+        <td>Cash basis to GAAP</td>
+        <td>Accounting firm engagement + ERP implementation</td>
+        <td class="num">$300K–$500K (one-time)</td>
+        <td>120–180 days post-close</td>
+    </tr>
+    <tr class="total-row">
+        <td><strong>Total Year 1 Governance Build</strong></td>
+        <td></td>
+        <td class="num"><strong>$1.5M–$2.5M</strong></td>
+        <td></td>
+    </tr>
+</table>
+
+<h3>Dimensions Scoring 1–2 (No Material Risk)</h3>
+
+<p><strong>E1 — Physical Climate Risk (Score: 3 — Moderate):</strong> Midwest geography with tornado and severe storm exposure. No formalized business continuity plan across 14 facilities. Standard sector risk for outdoor waste management operations — manageable with proper planning post-close.</p>
+
+<p><strong>E2 — Transition Risk (Score: 3 — Moderate):</strong> 125-vehicle all-diesel fleet with no CNG/EV plan. Basic passive methane flare at Belvidere. Offset by the structural position: waste management services benefit from environmental regulation (increased demand) rather than being threatened by it. Fleet modernization and methane capture upgrade are addressable within the standard capex plan.</p>
+
+<p><strong>S2 — Workforce Resilience (Score: 3 — Moderate):</strong> CDL driver turnover at 35% vs. ~25% industry, driven by a $2–$4/hr pay gap vs. national operators. Not credential-gated — CDL pipeline is constrained but addressable through competitive compensation. Dellacroce is the strongest management asset on the team.</p>
+
+<p><strong>G2 — Data Privacy & Cybersecurity (Score: 2 — Low):</strong> On-premise IT with no disaster recovery plan. Minimal sensitive data exposure for waste management operations. Risk is operational disruption from server failure, not data breach. Addressable with standard IT infrastructure investment ($0.4M–$0.6M).</p>
+
+<!-- REMEDIATION COST SUMMARY -->
+<h2>Remediation Cost Summary</h2>
+
+<table>
+    <tr>
+        <th style="width:30%;">Cost Category</th>
+        <th class="num">Management Est. ($M)</th>
+        <th class="num">Independent Est. — Base ($M)</th>
+        <th class="num">Independent Est. — High ($M)</th>
+        <th>Source</th>
+    </tr>
+    <tr>
+        <td>Environmental remediation</td>
+        <td class="num">$8.0M–$12.0M</td>
+        <td class="num">$15.0M</td>
+        <td class="num">$18.0M</td>
+        <td>CIM (mgmt); RC estimate (independent)</td>
+    </tr>
+    <tr>
+        <td>Safety program buildout</td>
+        <td class="num">—</td>
+        <td class="num">$2.5M</td>
+        <td class="num">$3.0M</td>
+        <td>RC Estimate</td>
+    </tr>
+    <tr>
+        <td>Governance build (Year 1)</td>
+        <td class="num">—</td>
+        <td class="num">$2.0M</td>
+        <td class="num">$2.5M</td>
+        <td>RC Estimate</td>
+    </tr>
+    <tr>
+        <td>Fleet & operational ESG</td>
+        <td class="num">—</td>
+        <td class="num">$5.0M</td>
+        <td class="num">$6.0M</td>
+        <td>RC Estimate — fleet refresh, telematics, methane capture</td>
+    </tr>
+    <tr class="total-row">
+        <td><strong>Total</strong></td>
+        <td class="num"><strong>$8.0M–$12.0M</strong></td>
+        <td class="num"><strong>$24.5M</strong></td>
+        <td class="num"><strong>$29.5M</strong></td>
+        <td></td>
+    </tr>
+</table>
+
+<p class="footnote"><strong>Note:</strong> Management's $8.0M–$12.0M covers environmental remediation only and does not account for safety, governance, or fleet investment. The $12.5M–$17.5M gap between management's estimate and the independent total reflects the true cost of institutional ownership that Kowalski has deferred for 23 years.</p>
+
+<!-- IMPACT ON RETURNS -->
+<h2>Impact on Returns</h2>
+
+<table>
+    <tr>
+        <th style="width:35%;">Scenario</th>
+        <th class="num">Entry EV ($M)</th>
+        <th class="num">Remediation ($M)</th>
+        <th class="num">Exit EBITDA ($M)</th>
+        <th class="num">Exit Multiple</th>
+        <th class="num">Fund MOIC</th>
+        <th class="num">Fund IRR</th>
+    </tr>
+    <tr>
+        <td>Pre-ESG DD (screening basis)</td>
+        <td class="num">$100.0M</td>
+        <td class="num">—</td>
+        <td class="num">—</td>
+        <td class="num">—</td>
+        <td class="num">—</td>
+        <td class="num">—</td>
+    </tr>
+    <tr>
+        <td style="background:#f8d7da;">Bear case (remediation high, expansion denied)</td>
+        <td class="num">$100.0M</td>
+        <td class="num">$18.0M</td>
+        <td class="num">$20.0M</td>
+        <td class="num">9.0x</td>
+        <td class="num" style="font-weight:700;">2.7x</td>
+        <td class="num" style="font-weight:700;">~22%</td>
+    </tr>
+    <tr style="background:#f0f4f8 !important;">
+        <td style="background:#f0f4f8;"><strong>Base case</strong></td>
+        <td class="num">$100.0M</td>
+        <td class="num">$15.0M</td>
+        <td class="num">$24.0M</td>
+        <td class="num">10.5x</td>
+        <td class="num" style="font-weight:700;">4.2x</td>
+        <td class="num" style="font-weight:700;">~33%</td>
+    </tr>
+    <tr>
+        <td style="background:#d4edda;">Bull case (remediation low, expansion granted)</td>
+        <td class="num">$100.0M</td>
+        <td class="num">$12.0M</td>
+        <td class="num">$27.0M</td>
+        <td class="num">11.5x</td>
+        <td class="num" style="font-weight:700;">5.6x</td>
+        <td class="num" style="font-weight:700;">~41%</td>
+    </tr>
+</table>
+
+<p class="footnote"><strong>Assumptions:</strong> Entry EV $100.0M (midpoint). Entry debt $50.0M (3.3x). Fund equity $40.0M (80% of $50.0M total equity, 20% management roll). 5-year hold. Bear case: remediation $18.0M, Belvidere expansion denied, no tuck-ins, 9.0x exit. Base case: remediation $15.0M, expansion granted Y3, 1 tuck-in at $0.6M EBITDA, 10.5x exit. Bull case: remediation $12.0M, expansion granted Y2, 2 tuck-ins at $1.5M EBITDA, 11.5x exit. See ESG Valuation Impact Analysis (Feb 25, 2026) for full model detail.</p>
+
+<!-- RECOMMENDATION -->
+<h2>Recommendation and Rebuttal</h2>
+
+<div class="recommendation-box">
+    <h3>Recommendation: Advance with Conditions</h3>
+    <p>The ESG composite score of 3.7 with two dimensions at 5 triggers a Presumptive Pass under the ESG DD Assessment Protocol (Section 5, Decision Thresholds). The presumptive pass is rebuttable if the deal team demonstrates that (a) risk is fully quantifiable, (b) deal structure provides full protection, and (c) the value creation thesis justifies the risk premium.</p>
+</div>
+
+<h3>Rebuttal — Three Conditions Met</h3>
+
+<p><strong>(a) Risk is quantifiable.</strong> Environmental liabilities are bounded within a $12.0M–$18.0M range. The range is driven by PFAS remediation at Belvidere (uncertain but bracketed by comparable site data), Janesville leachate upgrade ($2.0M–$3.0M with defined technical scope), and closed site soil remediation ($1.0M–$2.0M). Safety and governance costs are independently estimable from market compensation data and program build costs. The sensitivity analysis (see ESG Valuation Impact Analysis) shows that even at $22.0M remediation (25% above high-end estimate) and an 8.5x exit, the fund achieves a 2.1x MOIC.</p>
+
+<p><strong>(b) Deal structure provides protection.</strong> The ESG DD Assessment Protocol (Section 6) defines the required protections. For Greenfield, these are:</p>
+
+<ul>
+    <li><strong>Purchase price reduction:</strong> Entry at 6.5x–7.0x on QofE-adjusted EBITDA (vs. 8.5x clean comp) — a $22.5M–$27.5M discount from clean valuation that funds the remediation.</li>
+    <li><strong>Environmental escrow:</strong> $18.0M (independent estimate, high case). Released upon remediation completion or regulatory closure.</li>
+    <li><strong>Seller environmental indemnity:</strong> Pre-close contamination. Survival: longer of 5 years or regulatory closure + 12 months.</li>
+    <li><strong>Pollution Legal Liability (PLL) insurance:</strong> Sized to regulatory worst-case. 10-year term minimum.</li>
+    <li><strong>R&W carve-out:</strong> Known environmental conditions excluded from R&W coverage; addressed by PLL.</li>
+    <li><strong>Close conditions:</strong> EHS Director identified (offer extended), CFO identified (offer extended).</li>
+</ul>
+
+<p><strong>(c) Value creation thesis justifies the risk premium.</strong> This is a buy-fix-sell thesis, not a platform build. The investment return is directly produced by ESG remediation — the ESG discount at entry and the ESG fix at exit are the investment. In the base case, $40.0M of fund equity generates a 4.2x MOIC / ~33% IRR. 88% of the return comes from EBITDA growth and multiple expansion, both directly driven by the ESG remediation. The bear case (2.7x / ~22%) meets Northwood's 2.5x / 20% return floor. A traditional risk-adjusted buyer will not underwrite this deal — Northwood's ability to execute the ESG fix is the competitive advantage.</p>
+
+<!-- CONDITIONS FOR IC ADVANCEMENT -->
+<h2>Conditions for IC Advancement</h2>
+
+<p class="section-intro">The deal may not proceed to IC memo preparation until all six conditions below are satisfied or waived by the IC Chair.</p>
+
+<table>
+    <tr>
+        <th style="width:5%;">#</th>
+        <th style="width:35%;">Condition</th>
+        <th>Owner</th>
+        <th>Deadline</th>
+        <th>Deliverable</th>
+    </tr>
+    <tr>
+        <td class="num">1</td>
+        <td><strong>Phase I ESA on all 6 sites</strong> (3 active landfills + 3 closed sites)</td>
+        <td>Sullivan / Kim</td>
+        <td>Phase I: March 28, 2026</td>
+        <td>Phase I ESA reports (third-party environmental consultant)</td>
+    </tr>
+    <tr>
+        <td class="num">2</td>
+        <td><strong>Independent environmental liability quantification</strong> — must bracket the range with low / base / high estimates and explicit assumptions for each</td>
+        <td>Sullivan</td>
+        <td>March 28, 2026</td>
+        <td>Environmental liability report with remediation cost range</td>
+    </tr>
+    <tr>
+        <td class="num">3</td>
+        <td><strong>OSHA citation history</strong> — full 5-year record from OSHA IMIS database</td>
+        <td>Kim</td>
+        <td>March 7, 2026</td>
+        <td>OSHA records package with citation log, penalties, abatement status</td>
+    </tr>
+    <tr>
+        <td class="num">4</td>
+        <td><strong>Workers' compensation actuarial analysis</strong> — 5-year loss runs with mod factor trajectory projection</td>
+        <td>Kim</td>
+        <td>March 7, 2026</td>
+        <td>Loss runs + actuarial estimate of normalized premium</td>
+    </tr>
+    <tr>
+        <td class="num">5</td>
+        <td><strong>Belvidere airspace engineering report</strong> — remaining capacity verification and expansion probability assessment</td>
+        <td>Sullivan / Kim</td>
+        <td>March 21, 2026</td>
+        <td>Engineering report + probability-weighted scenario for IC model</td>
+    </tr>
+    <tr>
+        <td class="num">6</td>
+        <td><strong>Tony Rizzo interview</strong> — landfill operations, environmental systems, consent order status, Belvidere expansion dynamics</td>
+        <td>Sullivan / Kim</td>
+        <td>March 7, 2026</td>
+        <td>Meeting notes. Rizzo is the institutional knowledge holder for all disposal assets and was not interviewed during the February 12 management meeting.</td>
+    </tr>
+</table>
+
+<p class="footnote"><strong>Sequencing note:</strong> Phase I ESAs take 3–4 weeks. If Phase I findings trigger Phase II ESAs (likely at Belvidere and the closed site with soil contamination), Phase II adds 4–8 weeks. Per the ESG DD Assessment Protocol, the IC may choose to (a) wait for Phase II before authorizing LOI, (b) advance to LOI conditioned on Phase II results, or (c) pass. The deal team will present Phase I findings to IC with a Phase II scope recommendation.</p>
+
+<!-- RECOMMENDED DEAL STRUCTURE -->
+<h2>Recommended Deal Structure Protections</h2>
+
+<table>
+    <tr>
+        <th>Mechanism</th>
+        <th>Sizing</th>
+        <th>Rationale</th>
+    </tr>
+    <tr>
+        <td><strong>Purchase price reduction</strong></td>
+        <td>Entry at 6.5x–7.0x (vs. 8.5x clean comp)</td>
+        <td>$22.5M–$27.5M discount funds remediation + risk premium</td>
+    </tr>
+    <tr>
+        <td><strong>Environmental escrow</strong></td>
+        <td>$18.0M (independent high case)</td>
+        <td>Release upon remediation milestones or regulatory closure</td>
+    </tr>
+    <tr>
+        <td><strong>Seller environmental indemnity</strong></td>
+        <td>Pre-close contamination; survival: longer of 5 years or regulatory closure + 12 months</td>
+        <td>Kowalski's proceeds provide indemnification backstop</td>
+    </tr>
+    <tr>
+        <td><strong>Pollution Legal Liability (PLL) insurance</strong></td>
+        <td>Coverage to regulatory worst-case; 10-year term</td>
+        <td>Addresses tail risk beyond seller indemnity period</td>
+    </tr>
+    <tr>
+        <td><strong>R&W insurance carve-out</strong></td>
+        <td>Known environmental conditions excluded</td>
+        <td>Known contamination cannot be insured under R&W; PLL addresses the gap</td>
+    </tr>
+    <tr>
+        <td><strong>Close condition: EHS Director</strong></td>
+        <td>Offer extended or accepted before close</td>
+        <td>Cannot operate this business without EHS function on Day 1</td>
+    </tr>
+    <tr>
+        <td><strong>Close condition: CFO</strong></td>
+        <td>Offer extended or accepted before close</td>
+        <td>Cash-to-accrual conversion, environmental reserve setup, and institutional financial reporting require CFO from Day 1</td>
+    </tr>
+    <tr>
+        <td><strong>100-day plan: safety program</strong></td>
+        <td>Detailed safety improvement plan with 90-day milestones</td>
+        <td>TRIR of 8.2 with a fatality 14 months ago. Safety program is the most time-sensitive remediation.</td>
+    </tr>
+    <tr>
+        <td><strong>Workers' comp reserve</strong></td>
+        <td>Model includes elevated workers' comp ($3.2M/yr) for 24 months</td>
+        <td>Mod factor will not normalize until Year 3 at earliest</td>
+    </tr>
+</table>
+
+<!-- OPEN ITEMS -->
+<h2>Open Items and Residual Unknowns</h2>
+
+<table>
+    <tr>
+        <th style="width:5%;">#</th>
+        <th style="width:25%;">Unknown</th>
+        <th>Why Unresolved</th>
+        <th>Resolution Plan</th>
+        <th>Worst-Case Implication</th>
+    </tr>
+    <tr>
+        <td class="num">1</td>
+        <td><strong>PFAS remediation scope at Belvidere</strong></td>
+        <td>PFAS remediation plan not yet defined by management or their environmental consultant. Scope depends on plume delineation (Phase II).</td>
+        <td>Phase II ESA at Belvidere will delineate the PFAS plume and define remediation scope. Target: complete during post-LOI DD (Day 1–45).</td>
+        <td>If PFAS has migrated offsite (residential area 0.5 miles north), remediation costs could exceed $18.0M high estimate. Offsite migration would also trigger additional regulatory enforcement and community litigation risk.</td>
+    </tr>
+    <tr>
+        <td class="num">2</td>
+        <td><strong>Belvidere expansion outcome</strong></td>
+        <td>Public hearing in April 2026. 83% of public comments opposed. Outcome is uncertain and beyond Northwood's control.</td>
+        <td>Monitor hearing outcome. The model carries a 60% approval probability in the base case and 0% in the bear case. Both scenarios produce returns above Northwood's floor.</td>
+        <td>If denied: Belvidere has 4.2 years of remaining airspace. Disposal revenue (~25% of total) declines in Y4–5. Exit narrative to strategics weakens. Exit multiple compresses toward 9.0x (bear case).</td>
+    </tr>
+    <tr>
+        <td class="num">3</td>
+        <td><strong>Closed site soil contamination — unidentified site</strong></td>
+        <td>Kowalski referenced soil contamination at one of three closed sites but did not identify the site, substance, or extent. [Mgmt Meeting, Feb 12]</td>
+        <td>Phase I ESA on all 3 closed sites. Identify the affected site and assess scope.</td>
+        <td>If contamination is significant (e.g., industrial solvent, not just fill material), remediation could add $2.0M–$5.0M to the environmental liability. Covered by the contingency allowance in the independent estimate.</td>
+    </tr>
+    <tr>
+        <td class="num">4</td>
+        <td><strong>RCRA Part B permit renewal (Dec 2026)</strong></td>
+        <td>The specialty environmental processing facility in Loves Park, IL requires RCRA Part B permit renewal by December 2026. Facility generates ~10% of revenue ($12.9M LTM). Renewal process not yet assessed.</td>
+        <td>Legal and regulatory DD workstream during post-LOI diligence. Assess permit renewal status, compliance history, and transfer requirements.</td>
+        <td>If permit renewal is delayed or denied, $12.9M of annual revenue is at risk. This would be a red flag finding requiring same-day IC escalation per DD Workplan Section 7.2.</td>
+    </tr>
+</table>
+
+<!-- QA SUMMARY -->
+<h2>QA Summary</h2>
+
+<table>
+    <tr>
+        <th style="width:25%;">Check</th>
+        <th style="width:12%;">Status</th>
+        <th>Notes</th>
+    </tr>
+    <tr>
+        <td><strong>Source Verification</strong></td>
+        <td style="background:#d4edda; color:#155724; font-weight:600; text-align:center;">Pass</td>
+        <td>All financial figures sourced to CIM (Harris Williams, January 2026) or management meeting (February 12, 2026). ESG scores derived from firm's 8-dimension methodology. Environmental liability range based on RC preliminary independent assessment methodology; formal Phase I/II pending (disclosed as open item). Workers' comp data sourced from Controller (Polanski, Feb 12). TRIR, OSHA citations, and mod factor sourced from CIM and confirmed in management meeting. Every data point carries explicit source attribution in the body of this memo.</td>
+    </tr>
+    <tr>
+        <td><strong>Structural Consistency</strong></td>
+        <td style="background:#d4edda; color:#155724; font-weight:600; text-align:center;">Pass</td>
+        <td>Composite ESG score (3.7) verified: (3x0.15)+(3x0.10)+(5x0.15)+(5x0.15)+(3x0.15)+(4x0.05)+(4x0.15)+(2x0.10) = 3.70. Financial figures consistent with pipeline tracker, deal status, initial screen, and ESG valuation impact analysis (Feb 25). Returns scenarios reference the same entry EV ($100.0M), equity check ($40.0M), and debt quantum ($50.0M) across all documents. Remediation cost ranges ($12.0M–$18.0M independent) used consistently.</td>
+    </tr>
+    <tr>
+        <td><strong>Adversarial Review</strong></td>
+        <td style="background:#fff3cd; color:#856404; font-weight:600; text-align:center;">Flag</td>
+        <td><strong>Three bear-case stress tests identified:</strong> (1) PFAS migration offsite — if groundwater contamination has reached the residential area 0.5 miles north, remediation costs exceed $18.0M and community litigation becomes probable. The current estimate assumes on-site containment. Phase II will resolve this. (2) Belvidere expansion denial + remediation overspend — dual-failure scenario compresses exit multiple below 9.0x and extends hold period beyond 5 years, degrading IRR even if MOIC holds. (3) Second fatality under Northwood ownership before safety program is fully operational — reputational and LP risk that is not quantifiable but must be disclosed. The 100-day safety plan is the primary mitigant.</td>
+    </tr>
+    <tr>
+        <td><strong>Assumption Flagging</strong></td>
+        <td style="background:#d4edda; color:#155724; font-weight:600; text-align:center;">Pass</td>
+        <td><strong>Hard data:</strong> LTM Revenue $128.5M, LTM Adj. EBITDA $16.8M, TRIR 8.2, workers' comp $3.2M/yr, mod factor 1.45, PFAS 28 ppt vs. 4 ppt limit, OSHA citations (3), employees (~580). <strong>Management guidance:</strong> Remediation $8.0M–$12.0M (understated per independent assessment), airspace 4.2 years, founder exit 12 months. <strong>RC Estimate:</strong> QofE-adjusted EBITDA ~$15.0M, independent remediation $12.0M–$18.0M, governance build $1.5M–$2.5M, safety build $2.0M–$3.0M. <strong>Aspirational:</strong> Exit EBITDA $24.0M (requires successful execution), exit multiple 10.5x (requires clean compliance and institutional management), TRIR to 4.0 by Y3 (requires EHS Director and full program implementation).</td>
+    </tr>
+</table>
+
+<!-- FOOTER -->
+<div style="border-top: 1px solid #dee2e6; margin-top: 40px; padding-top: 15px; font-size: 11px; color: #888; text-align: center;">
+    CONFIDENTIAL — Northwood Capital | ESG Due Diligence Assessment — Project Greenfield | February 26, 2026
+</div>
+
+</body>
+</html>

@@ -465,9 +465,9 @@
 // DATA MODEL
 // ============================================================
 
-// Base path to the Northwood data environment, served via localhost.
-// The server root is claude-projects/, so paths are relative from there.
-const DATA_ROOT = '/_reference/Client%20Data/northwood-capital/';
+// Base path to the Northwood data environment.
+// Relative path from step1/ up to repo root, then into _reference/.
+const DATA_ROOT = '../_reference/Client%20Data/northwood-capital/';
 
 function fileURL(path, file) {
   if (!path) return null;

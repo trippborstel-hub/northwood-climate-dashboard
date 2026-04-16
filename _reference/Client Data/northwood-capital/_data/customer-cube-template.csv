@@ -1,0 +1,21 @@
+# Northwood Capital — Customer Cube Analysis Data Template
+# Minimum required columns: customer_name, period, revenue
+# Optional columns: segment, geography, first_period
+# Period format: YYYY-MM (monthly) or YYYY (annual)
+# Revenue: numeric, currency symbols and commas accepted
+customer_name,period,revenue,segment,geography,first_period
+"Acme Industrial Corp",2024-01,125000.00,"Enterprise Software","Northeast","2019-03"
+"Acme Industrial Corp",2024-02,118000.00,"Enterprise Software","Northeast","2019-03"
+"Acme Industrial Corp",2024-03,132000.00,"Enterprise Software","Northeast","2019-03"
+"Beta Manufacturing LLC",2024-01,95000.00,"Managed Services","Southeast","2021-06"
+"Beta Manufacturing LLC",2024-02,97000.00,"Managed Services","Southeast","2021-06"
+"Beta Manufacturing LLC",2024-03,91000.00,"Managed Services","Southeast","2021-06"
+"Crossroads Logistics",2024-01,78000.00,"Consulting","Midwest","2020-01"
+"Crossroads Logistics",2024-02,82000.00,"Consulting","Midwest","2020-01"
+"Crossroads Logistics",2024-03,80000.00,"Consulting","Midwest","2020-01"
+"Delta Financial Services",2024-01,65000.00,"Enterprise Software","West","2022-09"
+"Delta Financial Services",2024-02,71000.00,"Enterprise Software","West","2022-09"
+"Delta Financial Services",2024-03,68000.00,"Enterprise Software","West","2022-09"
+"Echo Healthcare Group",2024-01,52000.00,"Managed Services","Northeast","2023-04"
+"Echo Healthcare Group",2024-02,55000.00,"Managed Services","Northeast","2023-04"
+"Echo Healthcare Group",2024-03,58000.00,"Managed Services","Northeast","2023-04"

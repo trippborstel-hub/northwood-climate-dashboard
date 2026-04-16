@@ -1,0 +1,215 @@
+{
+  "deal": {
+    "codename": "Falcon",
+    "target_name": "National Environmental Testing Labs",
+    "sector": "Environmental Services / Testing",
+    "stage": "screening",
+    "revenue": 95.0,
+    "ebitda_adjusted": 14.2,
+    "ev_range_low": 115.0,
+    "ev_range_high": 140.0
+  },
+  "transaction_comps": [
+    {
+      "target": "EcoTest Laboratories",
+      "acquirer": "Kelso & Company",
+      "date": "2025-11",
+      "ev": 195.0,
+      "ebitda": 22.4,
+      "revenue": 135.0,
+      "ev_ebitda": 8.7,
+      "ev_revenue": 1.4,
+      "buyer_type": "Financial Sponsor",
+      "description": "Environmental testing labs, PFAS specialist, 8 labs",
+      "citation": "[PB, EcoTest Labs / Kelso, Nov 2025]"
+    },
+    {
+      "target": "GreenField Environmental",
+      "acquirer": "Sentinel Capital Partners",
+      "date": "2025-07",
+      "ev": 280.0,
+      "ebitda": 31.1,
+      "revenue": 210.0,
+      "ev_ebitda": 9.0,
+      "ev_revenue": 1.3,
+      "buyer_type": "Financial Sponsor",
+      "description": "Remediation and compliance testing, national platform",
+      "citation": "[PB, GreenField / Sentinel Capital, Jul 2025]"
+    },
+    {
+      "target": "SafeWater Testing Corp",
+      "acquirer": "Eurofins Scientific (strategic)",
+      "date": "2025-04",
+      "ev": 155.0,
+      "ebitda": 16.3,
+      "revenue": 98.0,
+      "ev_ebitda": 9.5,
+      "ev_revenue": 1.6,
+      "buyer_type": "Strategic",
+      "description": "Water quality and PFAS testing, EPA-certified labs",
+      "citation": "[PB, SafeWater / Eurofins, Apr 2025]"
+    },
+    {
+      "target": "EnviroAnalytics Group",
+      "acquirer": "American Securities",
+      "date": "2024-12",
+      "ev": 240.0,
+      "ebitda": 28.2,
+      "revenue": 175.0,
+      "ev_ebitda": 8.5,
+      "ev_revenue": 1.4,
+      "buyer_type": "Financial Sponsor",
+      "description": "Environmental consulting and testing, 12 offices",
+      "citation": "[PB, EnviroAnalytics / American Securities, Dec 2024]"
+    },
+    {
+      "target": "National Environmental Labs",
+      "acquirer": "Clayton Dubilier & Rice",
+      "date": "2024-08",
+      "ev": 350.0,
+      "ebitda": 41.2,
+      "revenue": 260.0,
+      "ev_ebitda": 8.5,
+      "ev_revenue": 1.3,
+      "buyer_type": "Financial Sponsor",
+      "description": "Full-service environmental testing, PFAS and emerging contaminants",
+      "citation": "[PB, National Environmental Labs / CD&R, Aug 2024]"
+    },
+    {
+      "target": "PureTest Environmental",
+      "acquirer": "Montrose Environmental (strategic)",
+      "date": "2024-05",
+      "ev": 82.0,
+      "ebitda": 10.3,
+      "revenue": 62.0,
+      "ev_ebitda": 8.0,
+      "ev_revenue": 1.3,
+      "buyer_type": "Strategic",
+      "description": "Regional environmental testing, TX/OK focus",
+      "citation": "[PB, PureTest / Montrose, May 2024]"
+    },
+    {
+      "target": "Apex Environmental Services",
+      "acquirer": "Wind Point Partners",
+      "date": "2024-02",
+      "ev": 210.0,
+      "ebitda": 25.0,
+      "revenue": 155.0,
+      "ev_ebitda": 8.4,
+      "ev_revenue": 1.4,
+      "buyer_type": "Financial Sponsor",
+      "description": "Environmental remediation and compliance, Southeast US",
+      "citation": "[PB, Apex Environmental / Wind Point, Feb 2024]"
+    }
+  ],
+  "trading_comps": [
+    {
+      "company": "Montrose Environmental Group",
+      "ticker": "MEG",
+      "ev": 2100.0,
+      "ltm_ebitda": 195.0,
+      "ltm_revenue": 680.0,
+      "ev_ebitda": 10.8,
+      "ev_revenue": 3.1,
+      "ebitda_margin": 28.7,
+      "revenue_growth": 15.2,
+      "citation": "[CIQ, MEG public filings, LTM Jan 2026]"
+    },
+    {
+      "company": "US Ecology (Republic Services sub)",
+      "ticker": "RSG",
+      "ev": 48000.0,
+      "ltm_ebitda": 5200.0,
+      "ltm_revenue": 16200.0,
+      "ev_ebitda": 9.2,
+      "ev_revenue": 3.0,
+      "ebitda_margin": 32.1,
+      "revenue_growth": 6.8,
+      "citation": "[CIQ, RSG public filings, LTM Jan 2026]"
+    },
+    {
+      "company": "Clean Harbors",
+      "ticker": "CLH",
+      "ev": 9800.0,
+      "ltm_ebitda": 1050.0,
+      "ltm_revenue": 5800.0,
+      "ev_ebitda": 9.3,
+      "ev_revenue": 1.7,
+      "ebitda_margin": 18.1,
+      "revenue_growth": 7.5,
+      "citation": "[CIQ, CLH public filings, LTM Jan 2026]"
+    },
+    {
+      "company": "Casella Waste Systems",
+      "ticker": "CWST",
+      "ev": 6200.0,
+      "ltm_ebitda": 430.0,
+      "ltm_revenue": 1350.0,
+      "ev_ebitda": 14.4,
+      "ev_revenue": 4.6,
+      "ebitda_margin": 31.9,
+      "revenue_growth": 10.2,
+      "citation": "[CIQ, CWST public filings, LTM Jan 2026]"
+    }
+  ],
+  "statistics": {
+    "transaction": {
+      "ev_ebitda": {
+        "low": 8.0,
+        "median": 8.5,
+        "mean": 8.657142857142857,
+        "high": 9.5
+      },
+      "ev_revenue": {
+        "low": 1.3,
+        "median": 1.4,
+        "mean": 1.3857142857142857,
+        "high": 1.6
+      }
+    },
+    "trading": {
+      "ev_ebitda": {
+        "low": 9.2,
+        "median": 10.05,
+        "mean": 10.925,
+        "high": 14.4
+      },
+      "ev_revenue": {
+        "low": 1.7,
+        "median": 3.05,
+        "mean": 3.1,
+        "high": 4.6
+      }
+    }
+  },
+  "valuation_assessment": {
+    "implied_multiple_low": 8.1,
+    "implied_multiple_high": 9.9,
+    "implied_multiple_mid": 9.0,
+    "txn_comp_median": 8.5,
+    "trading_comp_median": 10.05,
+    "positioning": "0.5x above transaction comp median",
+    "guardrail_sector": "Environmental Services",
+    "guardrail_range": [
+      7.0,
+      10.0
+    ],
+    "checks": [
+      {
+        "test": "Multiple within sector range",
+        "result": "PASS",
+        "detail": "8.1x - 9.9x vs 7.0x - 10.0x (Environmental Services)"
+      },
+      {
+        "test": "Multiple below hard ceiling",
+        "result": "PASS",
+        "detail": "9.9x vs 12.0x"
+      }
+    ]
+  },
+  "meta": {
+    "generated_date": "2026-02-22",
+    "tool": "comp_analysis.py",
+    "confidential": "Northwood Capital"
+  }
+}

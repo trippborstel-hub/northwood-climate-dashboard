@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keystone Behavioral Health — Q4 2025 Board Deck</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; background: #fff; color: #333; }
+  
+  .slide {
+    width: 1920px; min-height: 1080px; padding: 60px 80px;
+    page-break-after: always; position: relative;
+    border-bottom: 3px solid #e0e0e0;
+  }
+  .slide-header {
+    background: #1B365D; color: white; padding: 24px 40px;
+    margin: -60px -80px 40px -80px; font-size: 28px; font-weight: 600;
+  }
+  .slide-header .subtitle { font-size: 16px; font-weight: 400; opacity: 0.85; margin-top: 4px; }
+  
+  .cover {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; text-align: center;
+    background: linear-gradient(135deg, #1B365D 0%, #2a4a7f 100%);
+    color: white;
+  }
+  .cover h1 { font-size: 48px; margin-bottom: 16px; }
+  .cover h2 { font-size: 32px; font-weight: 400; margin-bottom: 8px; }
+  .cover h3 { font-size: 24px; font-weight: 300; margin-bottom: 40px; }
+  .cover .meta { font-size: 18px; opacity: 0.85; line-height: 1.8; }
+  
+  h2 { color: #1B365D; font-size: 22px; margin: 24px 0 12px 0; border-bottom: 2px solid #1B365D; padding-bottom: 6px; }
+  h3 { color: #1B365D; font-size: 18px; margin: 16px 0 8px 0; }
+  
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 15px; }
+  th { background: #1B365D; color: white; padding: 10px 14px; text-align: left; font-weight: 600; }
+  th.right, td.right { text-align: right; }
+  td { padding: 8px 14px; border-bottom: 1px solid #dee2e6; }
+  tr:nth-child(even) td { background: #f8f9fa; }
+  tr:hover td { background: #e9ecef; }
+  
+  .metric-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin: 20px 0;
+  }
+  .metric-card {
+    background: #f8f9fa; border-radius: 8px; padding: 20px;
+    border-left: 4px solid #1B365D;
+  }
+  .metric-card .label { font-size: 13px; color: #6c757d; text-transform: uppercase; letter-spacing: 0.5px; }
+  .metric-card .value { font-size: 28px; font-weight: 700; color: #1B365D; margin: 4px 0; }
+  .metric-card .detail { font-size: 13px; color: #495057; }
+  
+  .rag { display: inline-block; padding: 4px 12px; border-radius: 4px; font-weight: 600; font-size: 14px; }
+  .rag-green { background: #d4edda; color: #155724; }
+  .rag-amber { background: #fff3cd; color: #856404; }
+  .rag-red { background: #f8d7da; color: #721c24; }
+  
+  .footer {
+    position: absolute; bottom: 20px; left: 80px; right: 80px;
+    font-size: 12px; color: #6c757d; border-top: 1px solid #dee2e6;
+    padding-top: 8px; display: flex; justify-content: space-between;
+  }
+  
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  .highlight { background: #fff3cd; border-left: 4px solid #ffc107; padding: 16px 20px; margin: 12px 0; border-radius: 4px; }
+  
+  ul { margin: 8px 0 8px 24px; }
+  li { margin: 4px 0; line-height: 1.5; }
+  
+  .risk-table td:nth-child(3), .risk-table td:nth-child(4) { text-align: center; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 12px; font-weight: 600; }
+  .badge-high { background: #f8d7da; color: #721c24; }
+  .badge-medium { background: #fff3cd; color: #856404; }
+  .badge-low { background: #d4edda; color: #155724; }
+  .badge-new { background: #cce5ff; color: #004085; }
+  
+  .na { color: #999; font-style: italic; }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1: COVER -->
+<div class="slide cover">
+  <h1>Keystone Behavioral Health</h1>
+  <h2>Board of Directors Meeting</h2>
+  <h3>Q4 2025 Operating Review</h3>
+  <div class="meta">
+    <p>March 26, 2026</p>
+    <p>&nbsp;</p>
+    <p>CONFIDENTIAL</p>
+    <p>Prepared for the Board of Directors</p>
+    <p>Northwood Capital Partners — Sponsor Representative</p>
+  </div>
+  <div style="margin-top: 40px; font-size: 16px; opacity: 0.8;">
+    <p><strong>Board Members:</strong> Nadia Fernandez, Vice President — Northwood Capital</p>
+    <p><strong>Management:</strong> Dr. Rachel Adams (CEO), William Park (CFO), Jennifer Martinez (COO)</p>
+  </div>
+  <div class="footer" style="color: rgba(255,255,255,0.6); border-top-color: rgba(255,255,255,0.3);">
+    <span>CONFIDENTIAL — Northwood Capital</span>
+    <span>Page 1</span>
+  </div>
+</div>
+
+<!-- SLIDE 2: EXECUTIVE SUMMARY -->
+<div class="slide">
+  <div class="slide-header">
+    Executive Summary
+    <div class="subtitle">Keystone Behavioral Health — Q4 2025</div>
+  </div>
+  
+  <div class="highlight">
+    <strong>Status:</strong> <span class="rag rag-amber">AMBER</span>
+    &nbsp;&mdash;&nbsp; Behavioral Health / Applied Behavior Analysis (ABA) Therapy | Fund Ii | Acquired February 01, 2024
+  </div>
+  
+  <div class="metric-grid">
+    <div class="metric-card">
+      <div class="label">LTM Revenue</div>
+      <div class="value">$138.0M</div>
+      <div class="detail">Entry: $125.0M (+10%)</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">LTM Adj. EBITDA</div>
+      <div class="value">$24.2M</div>
+      <div class="detail">Entry: $22.2M (+9%)</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Gross MOIC</div>
+      <div class="value">1.4x</div>
+      <div class="detail">IRR: ~12%</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Net Leverage</div>
+      <div class="value">3.1x</div>
+      <div class="detail">Entry: 3.6x (6.0x paydown)</div>
+    </div>
+  </div>
+  
+  <div class="two-col">
+    <div>
+      <h3>Key Highlights</h3>
+      <ul>
+        <li>Revenue growth of 10% since entry ($125.0M to $138.0M)</li>
+        <li>EBITDA growth of 9% ($22.2M to $24.2M)</li>
+        <li>Margin: 17.5% (entry 17.8%, -30 bps)</li>
+        <li>Deleveraging: 3.6x to 3.1x ($6.0M debt paydown)</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Investment Thesis</h3>
+      <p>ABA therapy demand far exceeds supply (autism diagnosis rates increasing 10%+ annually). Build multi-state platform through de novo + add-on. Centralize clinical training, billing, and compliance.</p>
+      <h3 style="margin-top: 16px;">Next Board Agenda</h3>
+      <p>100-day plan progress, therapist pipeline, 2026 clinic expansion plan, payor negotiations</p>
+    </div>
+  </div>
+  
+  <div class="footer">
+    <span>CONFIDENTIAL — Northwood Capital</span>
+    <span>Page 2</span>
+  </div>
+</div>
+
+<!-- SLIDE 3: FINANCIAL RESULTS -->
+<div class="slide">
+  <div class="slide-header">
+    Financial Results
+    <div class="subtitle">Entry vs. Current Performance — LTM as of January 31, 2026</div>
+  </div>
+  
+  <h2>Performance Summary</h2>
+  <table>
+    <tr>
+      <th>Metric</th>
+      <th class="right">At Entry</th>
+      <th class="right">Current (LTM)</th>
+      <th class="right">Change</th>
+      <th class="right">Change %</th>
+    </tr>
+    <tr>
+      <td>Revenue</td>
+      <td class="right">$125.0M</td>
+      <td class="right">$138.0M</td>
+      <td class="right">$13.0M</td>
+      <td class="right">+10%</td>
+    </tr>
+    <tr>
+      <td>Adjusted EBITDA</td>
+      <td class="right">$22.2M</td>
+      <td class="right">$24.2M</td>
+      <td class="right">$2.0M</td>
+      <td class="right">+9%</td>
+    </tr>
+    <tr>
+      <td>EBITDA Margin</td>
+      <td class="right">17.8%</td>
+      <td class="right">17.5%</td>
+      <td class="right">-30 bps</td>
+      <td class="right">—</td>
+    </tr>
+    <tr>
+      <td>Total Debt</td>
+      <td class="right">$80.0M</td>
+      <td class="right">$74.0M</td>
+      <td class="right">($6.0M)</td>
+      <td class="right">—</td>
+    </tr>
+    <tr>
+      <td>Net Leverage</td>
+      <td class="right">3.6x</td>
+      <td class="right">3.1x</td>
+      <td class="right">-0.5x</td>
+      <td class="right">—</td>
+    </tr>
+    <tr>
+      <td>Headcount</td>
+      <td class="right">290</td>
+      <td class="right">340</td>
+      <td class="right">+50</td>
+      <td class="right">+17%</td>
+    </tr>
+  </table>
+  
+  <h2>Returns Analysis</h2>
+  <table>
+    <tr>
+      <th>Metric</th>
+      <th class="right">Value</th>
+    </tr>
+    <tr><td>Entry EV</td><td class="right">$200.0M</td></tr>
+    <tr><td>Entry Multiple</td><td class="right">9.0x</td></tr>
+    <tr><td>Total Equity Invested</td><td class="right">$120.0M</td></tr>
+    <tr><td>Implied EV (10.0x exit)</td><td class="right">$242.0M</td></tr>
+    <tr><td>Less: Current Debt</td><td class="right">($74.0M)</td></tr>
+    <tr><td>Equity Value</td><td class="right">$168.0M</td></tr>
+    <tr><td>Plus: Cumulative Distributions</td><td class="right">$0.0M</td></tr>
+    <tr><td><strong>Total Value</strong></td><td class="right"><strong>$168.0M</strong></td></tr>
+    <tr><td><strong>Gross MOIC</strong></td><td class="right"><strong>1.4x</strong></td></tr>
+    <tr><td><strong>Gross IRR</strong></td><td class="right"><strong>~12%</strong></td></tr>
+  </table>
+  
+  <div class="footer">
+    <span>CONFIDENTIAL — Northwood Capital</span>
+    <span>Page 3</span>
+  </div>
+</div>
+
+<!-- SLIDE 4: KPI DASHBOARD -->
+<div class="slide">
+  <div class="slide-header">
+    KPI Dashboard
+    <div class="subtitle">Key Performance Indicators — LTM as of January 31, 2026</div>
+  </div>
+  
+  <div class="metric-grid">
+    <div class="metric-card" style="border-left-color: #ffc107;">
+      <div class="label">Revenue</div>
+      <div class="value">$138.0M</div>
+      <div class="detail">+10% vs entry</div>
+    </div>
+    <div class="metric-card" style="border-left-color: #ffc107;">
+      <div class="label">EBITDA Margin</div>
+      <div class="value">17.5%</div>
+      <div class="detail">Entry: 17.8%</div>
+    </div>
+    <div class="metric-card" style="border-left-color: #28a745;">
+      <div class="label">Leverage</div>
+      <div class="value">3.1x</div>
+      <div class="detail">Entry: 3.6x</div>
+    </div>
+    <div class="metric-card" style="border-left-color: #ffc107;">
+      <div class="label">Headcount</div>
+      <div class="value">340</div>
+      <div class="detail">Entry: 290</div>
+    </div>
+  </div>
+  
+  <h2>Operating KPIs</h2>
+  <table>
+    <tr>
+      <th>KPI</th>
+      <th class="right">Current</th>
+      <th class="right">At Entry</th>
+      <th class="right">Change</th>
+      <th>RAG</th>
+    </tr>
+    <tr>
+      <td>LTM Revenue</td>
+      <td class="right">$138.0M</td>
+      <td class="right">$125.0M</td>
+      <td class="right">+10%</td>
+      <td><span class="rag rag-green">GREEN</span></td>
+    </tr>
+    <tr>
+      <td>LTM EBITDA</td>
+      <td class="right">$24.2M</td>
+      <td class="right">$22.2M</td>
+      <td class="right">+9%</td>
+      <td><span class="rag rag-green">GREEN</span></td>
+    </tr>
+    <tr>
+      <td>EBITDA Margin</td>
+      <td class="right">17.5%</td>
+      <td class="right">17.8%</td>
+      <td class="right">-30 bps</td>
+      <td><span class="rag rag-amber">AMBER</span></td>
+    </tr>
+    <tr>
+      <td>Net Leverage</td>
+      <td class="right">3.1x</td>
+      <td class="right">3.6x</td>
+      <td class="right">-0.5x</td>
+      <td><span class="rag rag-green">GREEN</span></td>
+    </tr>
+    <tr>
+      <td>Headcount</td>
+      <td class="right">340</td>
+      <td class="right">290</td>
+      <td class="right">+50</td>
+      <td><span class="rag rag-green">GREEN</span></td>
+    </tr>
+    <tr>
+      <td>Customer Count</td>
+      <td class="right">1,250</td>
+      <td class="right">—</td>
+      <td class="right">—</td>
+      <td><span class="rag rag-green">GREEN</span></td>
+    </tr>
+    <tr>
+      <td>Top Customer Concentration</td>
+      <td class="right"><span class="na">N/A</span></td>
+      <td class="right">—</td>
+      <td class="right">—</td>
+      <td><span class="rag rag-green">GREEN</span></td>
+    </tr>
+  </table>
+  
+  <p class='na' style='margin-top: 20px;'>[Detailed KPI dashboard data available in portco financial reporting]</p>
+  
+  <div class="footer">
+    <span>CONFIDENTIAL — Northwood Capital</span>
+    <span>Page 4</span>
+  </div>
+</div>
+
+<!-- SLIDE 5: REVENUE DETAIL -->
+<div class="slide">
+  <div class="slide-header">
+    Revenue Detail
+    <div class="subtitle">Keystone Behavioral Health — Revenue Composition and Growth</div>
+  </div>
+  
+  <div class="two-col">
+    <div>
+      <h2>Revenue Growth Since Entry</h2>
+      <table>
+        <tr><th>Period</th><th class="right">Revenue</th><th class="right">Growth</th></tr>
+        <tr><td>At Entry (2024)</td><td class="right">$125.0M</td><td class="right">—</td></tr>
+        <tr><td>Current (LTM Jan 2026)</td><td class="right">$138.0M</td><td class="right">+10%</td></tr>
+      </table>
+      
+      <h3>Revenue Drivers</h3>
+      <ul>
+        <li>Organic growth from existing operations</li>
+        
+      </ul>
+    </div>
+    <div>
+      <h2>Sector Context</h2>
+      <p><strong>Sector:</strong> Behavioral Health / Applied Behavior Analysis (ABA) Therapy</p>
+      <p><strong>Customers:</strong> 1,250</p>
+      <p><strong>Top Customer:</strong> N/A</p>
+      
+      <h3 style="margin-top: 24px;">Add-On Acquisitions</h3>
+      <p class='na'>[No add-ons completed to date]</p>
+    </div>
+  </div>
+  
+  <div class="footer">
+    <span>CONFIDENTIAL — Northwood Capital</span>
+    <span>Page 5</span>
+  </div>
+</div>
+
+<!-- SLIDE 6: OPERATIONS -->
+<div class="slide">
+  <div class="slide-header">
+    Operations Update
+    <div class="subtitle">People, Capacity, and Operational Health</div>
+  </div>
+  
+  <h2>Headcount Summary</h2>
+  <table>
+    <tr>
+      <th>Metric</th>
+      <th class="right">At Entry</th>
+      <th class="right">Current</th>
+      <th class="right">Change</th>
+    </tr>
+    <tr>
+      <td>Total Headcount</td>
+      <td class="right">290</td>
+      <td class="right">340</td>
+      <td class="right">+50</td>
+    </tr>
+  </table>
+  
+  <h2>Management Team</h2>
+  <table>
+    <tr><th>Role</th><th>Name</th></tr>
+    <tr><td>Chief Executive Officer</td><td>Dr. Rachel Adams</td></tr>
+    <tr><td>Chief Financial Officer</td><td>William Park</td></tr>
+    <tr><td>Chief Operating Officer</td><td>Jennifer Martinez</td></tr>
+  </table>
+  
+  <h2>Northwood Oversight</h2>
+  <table>
+    <tr><th>Role</th><th>Name</th><th>Title</th></tr>
+    <tr><td>Deal Lead</td><td>Nadia Fernandez</td><td>Vice President</td></tr>
+  </table>
+  
+  <div class="footer">
+    <span>CONFIDENTIAL — Northwood Capital</span>
+    <span>Page 6</span>
+  </div>
+</div>
+
+<!-- SLIDE 7: STRATEGIC INITIATIVES -->
+<div class="slide">
+  <div class="slide-header">
+    Strategic Initiatives & Value Creation
+    <div class="subtitle">Progress Against Investment Thesis</div>
+  </div>
+  
+  <h2>Investment Thesis</h2>
+  <div class="highlight">
+    <p>ABA therapy demand far exceeds supply (autism diagnosis rates increasing 10%+ annually). Build multi-state platform through de novo + add-on. Centralize clinical training, billing, and compliance.</p>
+  </div>
+  
+  <h2>Value Creation Summary</h2>
+  <table>
+    <tr>
+      <th>Metric</th>
+      <th class="right">At Entry</th>
+      <th class="right">Current</th>
+      <th class="right">Value Created</th>
+    </tr>
+    <tr>
+      <td>Revenue</td>
+      <td class="right">$125.0M</td>
+      <td class="right">$138.0M</td>
+      <td class="right">$13.0M</td>
+    </tr>
+    <tr>
+      <td>EBITDA</td>
+      <td class="right">$22.2M</td>
+      <td class="right">$24.2M</td>
+      <td class="right">$2.0M</td>
+    </tr>
+    <tr>
+      <td>Debt Paydown</td>
+      <td class="right">$80.0M</td>
+      <td class="right">$74.0M</td>
+      <td class="right">$6.0M</td>
+    </tr>
+    <tr>
+      <td>Distributions</td>
+      <td class="right">—</td>
+      <td class="right">$0.0M</td>
+      <td class="right">$0.0M</td>
+    </tr>
+    <tr>
+      <td><strong>Total Value (vs. Equity Invested)</strong></td>
+      <td class="right"><strong>$120.0M</strong></td>
+      <td class="right"><strong>$168.0M</strong></td>
+      <td class="right"><strong>1.4x MOIC</strong></td>
+    </tr>
+  </table>
+  
+  <p style="margin-top: 16px;"><em>[Detailed strategic initiative tracking available in portco value-creation folder]</em></p>
+  
+  <div class="footer">
+    <span>CONFIDENTIAL — Northwood Capital</span>
+    <span>Page 7</span>
+  </div>
+</div>
+
+<!-- SLIDE 8: RISKS -->
+<div class="slide">
+  <div class="slide-header">
+    Risk Assessment
+    <div class="subtitle">Key Risks and Mitigants</div>
+  </div>
+  
+  <h2>Risk Register</h2>
+  <table class="risk-table">
+    <tr>
+      <th>#</th>
+      <th>Risk</th>
+      <th>Severity</th>
+      <th>Status</th>
+    </tr>
+    <tr><td>1</td><td>BCBA therapist recruitment in competitive market</td><td><span class="badge badge-high">High</span></td><td>Monitoring</td></tr><tr><td>2</td><td>Insurance reimbursement rate negotiations</td><td><span class="badge badge-medium">Medium</span></td><td>Monitoring</td></tr><tr><td>3</td><td>State licensing requirements vary by geography</td><td><span class="badge badge-medium">Medium</span></td><td>Monitoring</td></tr><tr><td>4</td><td>100-day plan execution risk</td><td><span class="badge badge-medium">Medium</span></td><td>Monitoring</td></tr>
+  </table>
+  
+  <h2>Performance Status</h2>
+  <div class="highlight">
+    <p><strong>Overall RAG:</strong> <span class="rag rag-amber">AMBER</span></p>
+    <p><strong>Performance:</strong> Early 100 Day Plan</p>
+    
+  </div>
+  
+  <div class="footer">
+    <span>CONFIDENTIAL — Northwood Capital</span>
+    <span>Page 8</span>
+  </div>
+</div>
+
+<!-- SLIDE 9: CAPITAL STRUCTURE -->
+<div class="slide">
+  <div class="slide-header">
+    Capital Structure & Covenant Compliance
+    <div class="subtitle">Debt, Leverage, and Liquidity</div>
+  </div>
+  
+  <h2>Debt Summary</h2>
+  <table>
+    <tr>
+      <th>Facility</th>
+      <th class="right">Original</th>
+      <th class="right">Current</th>
+      <th>Terms</th>
+    </tr>
+    <tr>
+      <td>Term Loan</td>
+      <td class="right">$80.0M</td>
+      <td class="right">$74.0M</td>
+      <td>S+500bps, 7yr maturity, 1% amort</td>
+    </tr>
+    <tr>
+      <td>Revolver ($15.0M)</td>
+      <td class="right">—</td>
+      <td class="right">$0.0M</td>
+      <td>Hayfin Capital (lead), Golub Capital</td>
+    </tr>
+  </table>
+  
+  <h2>Leverage Profile</h2>
+  <div class="metric-grid" style="grid-template-columns: repeat(3, 1fr);">
+    <div class="metric-card" style="border-left-color: #28a745;">
+      <div class="label">Entry Leverage</div>
+      <div class="value">3.6x</div>
+      <div class="detail">Debt: $80.0M</div>
+    </div>
+    <div class="metric-card" style="border-left-color: #28a745;">
+      <div class="label">Current Leverage</div>
+      <div class="value">3.1x</div>
+      <div class="detail">Debt: $74.0M</div>
+    </div>
+    <div class="metric-card" style="border-left-color: #28a745;">
+      <div class="label">Debt Paydown</div>
+      <div class="value">$6.0M</div>
+      <div class="detail">0.5x deleveraging</div>
+    </div>
+  </div>
+  
+  <h2>Cumulative Distributions</h2>
+  <p>$0.0M </p>
+  
+  <div class="footer">
+    <span>CONFIDENTIAL — Northwood Capital</span>
+    <span>Page 9</span>
+  </div>
+</div>
+
+<!-- SLIDE 10: APPENDIX -->
+<div class="slide">
+  <div class="slide-header">
+    Appendix
+    <div class="subtitle">Entry Terms, Fund Context, and Data Sources</div>
+  </div>
+  
+  <h2>Entry Terms</h2>
+  <table>
+    <tr><th>Metric</th><th class="right">Value</th></tr>
+    <tr><td>Acquisition Date</td><td class="right">February 01, 2024</td></tr>
+    <tr><td>Enterprise Value</td><td class="right">$200.0M</td></tr>
+    <tr><td>Entry Multiple</td><td class="right">9.0x</td></tr>
+    <tr><td>LTM Revenue (at entry)</td><td class="right">$125.0M</td></tr>
+    <tr><td>LTM EBITDA (at entry)</td><td class="right">$22.2M</td></tr>
+    <tr><td>Total Equity Invested</td><td class="right">$120.0M</td></tr>
+    <tr><td>Fund Equity (80%)</td><td class="right">$96.0M</td></tr>
+    <tr><td>Management Rollover (20%)</td><td class="right">$24.0M</td></tr>
+    <tr><td>Entry Debt</td><td class="right">$80.0M</td></tr>
+    <tr><td>Entry Leverage</td><td class="right">3.6x</td></tr>
+    <tr><td>Transaction Type</td><td class="right">Platform acquisition (founder/clinician partial exit, 20% ro</td></tr>
+  </table>
+  
+  <h2>Fund Context</h2>
+  <table>
+    <tr><th>Metric</th><th class="right">Value</th></tr>
+    <tr><td>Fund</td><td class="right">Fund Ii</td></tr>
+    <tr><td>Sector</td><td class="right">Healthcare Services</td></tr>
+    <tr><td>Sector Detail</td><td class="right">Behavioral Health / Applied Behavior Analysis (ABA) Therapy</td></tr>
+  </table>
+  
+  <h2>Data Sources</h2>
+  <ul>
+    <li>Canonical data: <code>_reference/data-spine.json</code> [Spine]</li>
+    <li>Portfolio status: <code>portfolio/keystone-behavioral-health/portco-status.md</code> [Available]</li>
+    <li>KPI dashboard: [Available]</li>
+    <li>Monthly financial package: [Available]</li>
+    <li>Annual budget: [Available]</li>
+    <li>Strategic initiatives: [Available]</li>
+    <li>Closing summary: [Available]</li>
+  </ul>
+  
+  <p style="margin-top: 24px; font-size: 13px; color: #6c757d;">
+    Generated: February 22, 2026 | Tool: board_deck.py | 
+    All figures per deliverable-standards.md precision rules | 
+    QA protocol applied per qa-protocol.md
+  </p>
+  
+  <div class="footer">
+    <span>CONFIDENTIAL — Northwood Capital</span>
+    <span>Page 10</span>
+  </div>
+</div>
+
+</body>
+</html>

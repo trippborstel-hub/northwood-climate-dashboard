@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Northwood Capital Partners — ESG Risk Scorecard</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface-raised: #1c2333;
+    --border: #30363d;
+    --border-accent: #2ea98f;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --text-dim: #6e7681;
+    --accent: #2ea98f;
+    --accent-light: #3fc4a8;
+    --white: #ffffff;
+    --score-1: #2ea98f;
+    --score-2: #58a6ff;
+    --score-3: #d29922;
+    --score-4: #f0883e;
+    --score-5: #f85149;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  .container { max-width: 1440px; margin: 0 auto; padding: 40px 48px; }
+
+  header { margin-bottom: 48px; }
+  header h1 { font-size: 32px; font-weight: 700; margin-bottom: 4px; }
+  header .subtitle { color: var(--text-muted); font-size: 16px; margin-bottom: 16px; }
+  header .meta { display: flex; gap: 24px; color: var(--text-dim); font-size: 13px; }
+  header .meta span { display: flex; align-items: center; gap: 6px; }
+
+  /* Navigation tabs */
+  .tabs {
+    display: flex; gap: 2px; margin-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tab {
+    padding: 10px 20px; font-size: 14px; font-weight: 500;
+    color: var(--text-muted); cursor: pointer; border: none; background: none;
+    border-bottom: 2px solid transparent; transition: all 0.15s;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* Portfolio heatmap */
+  .heatmap-container { overflow-x: auto; }
+  .heatmap {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    font-size: 13px;
+  }
+  .heatmap th {
+    padding: 10px 12px; text-align: left; font-weight: 600;
+    color: var(--text-muted); font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.5px; border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; background: var(--bg); z-index: 1;
+  }
+  .heatmap th.dim-header { text-align: center; min-width: 70px; }
+  .heatmap td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  .heatmap td.portco-name {
+    font-weight: 600; white-space: nowrap; min-width: 200px;
+    position: sticky; left: 0; background: var(--bg); z-index: 1;
+  }
+  .heatmap td.portco-name .sector { font-weight: 400; color: var(--text-dim); font-size: 11px; display: block; }
+  .heatmap td.score-cell { text-align: center; }
+  .heatmap td.composite-cell {
+    text-align: center; font-weight: 700; font-size: 14px;
+  }
+  .heatmap tr:hover td { background: var(--surface); }
+  .heatmap tr:hover td.portco-name { background: var(--surface); }
+  .heatmap tr.fund-divider td { border-bottom: 2px solid var(--border-accent); }
+
+  .score-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 6px; font-weight: 700;
+    font-size: 13px; cursor: pointer; transition: transform 0.1s;
+  }
+  .score-badge:hover { transform: scale(1.15); }
+  .score-1 { background: rgba(46,169,143,0.2); color: var(--score-1); }
+  .score-2 { background: rgba(88,166,255,0.2); color: var(--score-2); }
+  .score-3 { background: rgba(210,153,34,0.2); color: var(--score-3); }
+  .score-4 { background: rgba(240,136,62,0.2); color: var(--score-4); }
+  .score-5 { background: rgba(248,81,73,0.2); color: var(--score-5); }
+
+  .composite-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 4px 12px; border-radius: 6px; font-weight: 700; font-size: 13px;
+  }
+
+  /* Risk level badges */
+  .risk-low { background: rgba(46,169,143,0.15); color: var(--score-1); }
+  .risk-moderate { background: rgba(210,153,34,0.15); color: var(--score-3); }
+  .risk-elevated { background: rgba(240,136,62,0.15); color: var(--score-4); }
+  .risk-high { background: rgba(248,81,73,0.15); color: var(--score-5); }
+
+  /* Fund label */
+  .fund-label {
+    font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 3px;
+    display: inline-block; margin-top: 2px;
+  }
+  .fund-i { background: rgba(88,166,255,0.15); color: var(--score-2); }
+  .fund-ii { background: rgba(210,153,34,0.15); color: var(--score-3); }
+
+  /* Dimension legend */
+  .legend {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    margin-bottom: 32px;
+  }
+  .legend-group h3 {
+    font-size: 12px; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--accent); margin-bottom: 12px; font-weight: 700;
+  }
+  .legend-item {
+    padding: 12px 16px; background: var(--surface); border-radius: 8px;
+    border-left: 3px solid var(--accent); margin-bottom: 8px;
+  }
+  .legend-item h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+  .legend-item p { font-size: 12px; color: var(--text-muted); }
+
+  /* Portco detail cards */
+  .portco-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .portco-card {
+    background: var(--surface); border-radius: 12px; border: 1px solid var(--border);
+    overflow: hidden; cursor: pointer; transition: border-color 0.15s;
+  }
+  .portco-card:hover { border-color: var(--accent); }
+  .portco-card-header {
+    padding: 20px 24px 16px; display: flex; justify-content: space-between;
+    align-items: flex-start; border-bottom: 1px solid var(--border);
+  }
+  .portco-card-header h3 { font-size: 16px; font-weight: 600; }
+  .portco-card-header .sector-tag { font-size: 12px; color: var(--text-muted); }
+  .portco-card-scores {
+    padding: 16px 24px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+  }
+  .mini-score {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .mini-score .dim-label { font-size: 10px; color: var(--text-dim); font-weight: 600; }
+  .portco-card-footer {
+    padding: 12px 24px 16px; display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .flag-tag {
+    font-size: 11px; padding: 3px 8px; border-radius: 4px;
+    background: rgba(248,81,73,0.1); color: var(--score-5);
+  }
+  .flag-tag.watch { background: rgba(210,153,34,0.1); color: var(--score-3); }
+
+  /* Detail modal */
+  .modal-overlay {
+    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7); z-index: 100; overflow-y: auto;
+    justify-content: center; padding: 40px 20px;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: var(--surface); border-radius: 16px; border: 1px solid var(--border);
+    max-width: 900px; width: 100%; margin: auto; overflow: hidden;
+  }
+  .modal-header {
+    padding: 24px 32px; border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .modal-header h2 { font-size: 22px; }
+  .modal-close {
+    background: none; border: none; color: var(--text-muted); font-size: 24px;
+    cursor: pointer; padding: 4px 8px; border-radius: 6px;
+  }
+  .modal-close:hover { background: var(--surface-raised); color: var(--text); }
+  .modal-body { padding: 24px 32px 32px; }
+  .modal-composite {
+    display: flex; align-items: center; gap: 16px; margin-bottom: 24px;
+    padding: 16px 20px; background: var(--surface-raised); border-radius: 10px;
+  }
+  .modal-composite .big-score { font-size: 36px; font-weight: 800; }
+  .modal-composite .risk-label { font-size: 14px; color: var(--text-muted); }
+  .dimension-detail {
+    padding: 16px 0; border-bottom: 1px solid var(--border);
+  }
+  .dimension-detail:last-child { border-bottom: none; }
+  .dimension-detail-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px;
+  }
+  .dimension-detail-header h4 { font-size: 14px; font-weight: 600; }
+  .dimension-detail-header .weight { font-size: 12px; color: var(--text-dim); }
+  .dimension-detail p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+  /* Methodology view */
+  .methodology { max-width: 800px; }
+  .methodology h2 { font-size: 22px; margin-bottom: 20px; }
+  .methodology h3 { font-size: 16px; margin: 24px 0 12px; color: var(--accent); }
+  .methodology p { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.7; }
+  .methodology table {
+    width: 100%; border-collapse: collapse; font-size: 13px; margin: 16px 0;
+  }
+  .methodology table th, .methodology table td {
+    padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border);
+  }
+  .methodology table th {
+    color: var(--text-muted); font-weight: 600; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .scale-row td:first-child { font-weight: 700; }
+
+  /* Score distribution bar */
+  .score-bar {
+    display: flex; height: 6px; border-radius: 3px; overflow: hidden;
+    margin-top: 8px; gap: 1px;
+  }
+  .score-bar-segment { height: 100%; }
+
+  /* Summary stats */
+  .stats-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    margin-bottom: 32px;
+  }
+  .stat-card {
+    background: var(--surface); border-radius: 10px; padding: 20px 24px;
+    border: 1px solid var(--border);
+  }
+  .stat-card .stat-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .stat-card .stat-value { font-size: 28px; font-weight: 700; }
+  .stat-card .stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+  /* Tooltip */
+  .tooltip {
+    display: none; position: fixed; background: var(--surface-raised);
+    border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px;
+    font-size: 12px; max-width: 320px; z-index: 50;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  .tooltip.visible { display: block; }
+  .tooltip .tt-dim { font-weight: 700; margin-bottom: 4px; }
+  .tooltip .tt-score { margin-bottom: 6px; }
+  .tooltip .tt-rationale { color: var(--text-muted); line-height: 1.5; }
+
+  /* Escalation panel */
+  .escalation-panel {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px; margin-bottom: 32px;
+  }
+  .escalation-panel h3 {
+    font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--score-5); margin-bottom: 16px;
+  }
+  .escalation-item {
+    display: flex; gap: 12px; padding: 10px 0;
+    border-bottom: 1px solid var(--border); align-items: flex-start;
+  }
+  .escalation-item:last-child { border-bottom: none; }
+  .escalation-item .esc-portco { font-weight: 600; min-width: 180px; font-size: 13px; }
+  .escalation-item .esc-detail { font-size: 13px; color: var(--text-muted); }
+
+  @media (max-width: 1200px) {
+    .legend { grid-template-columns: 1fr; }
+    .portco-grid { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>ESG Risk Scorecard</h1>
+    <div class="subtitle">Beyond carbon — the full sustainability picture</div>
+    <div class="meta">
+      <span>Assessment Period: 2025</span>
+      <span>Portfolio: 10 Active Companies</span>
+      <span>Methodology: McKinsey ESG Framework (8 Dimensions, 1-5 Scoring)</span>
+      <span>Prepared: March 30, 2026</span>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showView('overview')">Portfolio Overview</button>
+    <button class="tab" onclick="showView('heatmap')">Heatmap</button>
+    <button class="tab" onclick="showView('cards')">Company Cards</button>
+    <button class="tab" onclick="showView('methodology')">Methodology</button>
+  </div>
+
+  <!-- OVERVIEW VIEW -->
+  <div class="view active" id="view-overview">
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Portfolio Avg. Composite</div>
+        <div class="stat-value" id="avg-composite">—</div>
+        <div class="stat-sub" id="avg-risk-label">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Highest Risk Company</div>
+        <div class="stat-value" id="highest-risk-name" style="font-size:18px;">—</div>
+        <div class="stat-sub" id="highest-risk-score">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Dimensions Scored 4+</div>
+        <div class="stat-value" id="elevated-count">—</div>
+        <div class="stat-sub">Across all portcos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Data Quality</div>
+        <div class="stat-value" id="data-quality-pct">—</div>
+        <div class="stat-sub">Grade A/B coverage</div>
+      </div>
+    </div>
+
+    <div class="escalation-panel">
+      <h3>Escalation Flags — Requires IC / Board Attention</h3>
+      <div id="escalation-list"></div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-group">
+        <h3>Environmental</h3>
+        <div class="legend-item">
+          <h4>E1 — Physical Climate Risk</h4>
+          <p>Facility exposure to floods, hurricanes, extreme heat. FEMA zones. Insurance trajectory. Business continuity.</p>
+        </div>
+        <div class="legend-item">
+          <h4>E2 — Transition Risk</h4>
+          <p>Carbon intensity. Regulatory exposure. Customer decarbonization mandates. Your carbon data feeds this.</p>
+        </div>
+        <div class="legend-item">
+          <h4>E3 — Environmental Liability</h4>
+          <p>Compliance history. Contamination risk. Hazardous waste. Remediation obligations.</p>
+        </div>
+      </div>
+      <div class="legend-group">
+        <h3>Social</h3>
+        <div class="legend-item">
+          <h4>S1 — Labor & Safety</h4>
+          <p>OSHA incident rates. Workforce hazard exposure. Safety culture and recordable injuries.</p>
+        </div>
+        <div class="legend-item">
+          <h4>S2 — Workforce</h4>
+          <p>Retention, turnover, talent pipeline. Temp worker exposure. Specialized labor availability.</p>
+        </div>
+        <div class="legend-item">
+          <h4>S3 — Community</h4>
+          <p>Reputation risk. Customer/community relationships. B2B vs. consumer exposure.</p>
+        </div>
+      </div>
+      <div class="legend-group">
+        <h3>Governance</h3>
+        <div class="legend-item">
+          <h4>G1 — Board Oversight</h4>
+          <p>Does the board oversee ESG? Is there a climate owner? Governance structure maturity.</p>
+        </div>
+        <div class="legend-item">
+          <h4>G2 — Data & Cyber</h4>
+          <p>Data integrity, privacy controls, cybersecurity posture. Especially relevant for Trident IT.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEATMAP VIEW -->
+  <div class="view" id="view-heatmap">
+    <div class="heatmap-container">
+      <table class="heatmap" id="heatmap-table">
+        <thead>
+          <tr>
+            <th>Portfolio Company</th>
+            <th class="dim-header">E1</th>
+            <th class="dim-header">E2</th>
+            <th class="dim-header">E3</th>
+            <th class="dim-header">S1</th>
+            <th class="dim-header">S2</th>
+            <th class="dim-header">S3</th>
+            <th class="dim-header">G1</th>
+            <th class="dim-header">G2</th>
+            <th class="dim-header" style="border-left:2px solid var(--border);">Composite</th>
+            <th class="dim-header">Risk Level</th>
+          </tr>
+        </thead>
+        <tbody id="heatmap-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CARDS VIEW -->
+  <div class="view" id="view-cards">
+    <div class="portco-grid" id="portco-cards"></div>
+  </div>
+
+  <!-- METHODOLOGY VIEW -->
+  <div class="view" id="view-methodology">
+    <div class="methodology">
+      <h2>Scoring Methodology</h2>
+      <p>This scorecard applies the McKinsey ESG risk framework adapted for PE portfolio monitoring. Each portfolio company is assessed across 8 dimensions spanning Environmental, Social, and Governance pillars. Scores are derived from climate questionnaire submissions, facility-level carbon data (139 facilities), financial performance data, and sector-specific risk factors.</p>
+
+      <h3>Scoring Scale</h3>
+      <table>
+        <thead><tr><th>Score</th><th>Rating</th><th>Definition</th></tr></thead>
+        <tbody class="scale-rows">
+          <tr class="scale-row"><td><span class="score-badge score-1">1</span></td><td>Minimal</td><td>No material ESG risk identified. Strong controls in place. No action required.</td></tr>
+          <tr class="scale-row"><td><span class="score-badge score-2">2</span></td><td>Low</td><td>Minor ESG considerations. Adequate controls. Monitor on standard cycle.</td></tr>
+          <tr class="scale-row"><td><span class="score-badge score-3">3</span></td><td>Moderate</td><td>Material ESG exposure exists. Management awareness required. Action plan recommended.</td></tr>
+          <tr class="scale-row"><td><span class="score-badge score-4">4</span></td><td>Elevated</td><td>Significant ESG risk. Active management required. Board-level visibility recommended.</td></tr>
+          <tr class="scale-row"><td><span class="score-badge score-5">5</span></td><td>High</td><td>Critical ESG risk requiring immediate attention. Potential value impairment. IC escalation required.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Dimension Weights</h3>
+      <table>
+        <thead><tr><th>Dimension</th><th>Weight</th><th>Rationale</th></tr></thead>
+        <tbody>
+          <tr><td>E1 — Physical Climate Risk</td><td>10%</td><td>Direct asset exposure; insurance cost trajectory</td></tr>
+          <tr><td>E2 — Transition Risk</td><td>15%</td><td>Revenue at risk from customer ESG mandates; regulatory exposure</td></tr>
+          <tr><td>E3 — Environmental Liability</td><td>10%</td><td>Compliance cost; remediation tail risk</td></tr>
+          <tr><td>S1 — Labor & Safety</td><td>15%</td><td>Workers' comp exposure; OSHA risk; operational continuity</td></tr>
+          <tr><td>S2 — Workforce</td><td>15%</td><td>Talent retention drives value creation execution</td></tr>
+          <tr><td>S3 — Community</td><td>10%</td><td>Reputation risk; social license to operate</td></tr>
+          <tr><td>G1 — Board Oversight</td><td>15%</td><td>Governance maturity predicts ESG execution capacity</td></tr>
+          <tr><td>G2 — Data & Cyber</td><td>10%</td><td>Data breach exposure; regulatory compliance (HIPAA, SOC)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Data Sources</h3>
+      <table>
+        <thead><tr><th>Source</th><th>Coverage</th><th>Quality</th></tr></thead>
+        <tbody>
+          <tr><td>Climate questionnaires (2025)</td><td>10/10 portcos submitted</td><td>Varies by portco (see data quality notes)</td></tr>
+          <tr><td>Carbon collection CSV</td><td>139 facilities across 10 portcos</td><td>Grade A: utility bills, Grade B: accounting, Grade C: landlord/proxy</td></tr>
+          <tr><td>Portfolio financial data</td><td>Monthly packages, 10 portcos</td><td>Audited / management-reviewed</td></tr>
+          <tr><td>Portco KPI dashboards</td><td>311 monthly KPI observations</td><td>Management-reported</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Data Quality Flags</h3>
+      <p>Three portfolio companies have material data quality concerns that may affect scoring confidence:</p>
+      <table>
+        <thead><tr><th>Company</th><th>Issue</th><th>Impact</th></tr></thead>
+        <tbody>
+          <tr><td>Patriot Staffing</td><td>25 of 26 facilities on landlord estimates; late submission</td><td>Energy data confidence: Low</td></tr>
+          <tr><td>Keystone Behavioral</td><td>15 of 20 clinics on landlord estimates; 3 formula-estimated</td><td>Energy data confidence: Low-Moderate</td></tr>
+          <tr><td>NovaCare Health</td><td>10 of 30 clinics on landlord invoices; RehabWorks data reversed</td><td>Energy data confidence: Moderate</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Composite Calculation</h3>
+      <p>Composite Score = &Sigma;(Dimension Score &times; Dimension Weight). Risk level thresholds: &le;1.5 Minimal, &le;2.5 Low, &le;3.0 Moderate, &le;3.75 Elevated, &gt;3.75 High.</p>
+
+      <h3>Limitations</h3>
+      <p>This is the first execution of the framework. No historical baselines exist for trend analysis. Scope 1/2 emissions have not yet been calculated from raw consumption data. Physical risk scores rely on self-reported questionnaire data, not independent geospatial assessment. Social dimension scores (S1-S3) are informed by questionnaire responses and public sector data rather than independent audit.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div>
+        <h2 id="modal-title">—</h2>
+        <span id="modal-sector" style="font-size:13px;color:var(--text-muted);"></span>
+      </div>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-composite">
+        <div>
+          <div class="big-score" id="modal-composite-score">—</div>
+          <div class="risk-label">Composite Score</div>
+        </div>
+        <div style="margin-left:auto;text-align:right;">
+          <div id="modal-risk-badge"></div>
+          <div style="font-size:12px;color:var(--text-dim);margin-top:4px;" id="modal-fund-label"></div>
+        </div>
+      </div>
+      <div id="modal-dimensions"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Tooltip -->
+<div class="tooltip" id="tooltip">
+  <div class="tt-dim"></div>
+  <div class="tt-score"></div>
+  <div class="tt-rationale"></div>
+</div>
+
+<script>
+const DIMENSIONS = [
+  { key: 'E1', label: 'Physical Climate Risk', pillar: 'Environmental', weight: 0.10 },
+  { key: 'E2', label: 'Transition Risk', pillar: 'Environmental', weight: 0.15 },
+  { key: 'E3', label: 'Environmental Liability', pillar: 'Environmental', weight: 0.10 },
+  { key: 'S1', label: 'Labor & Safety', pillar: 'Social', weight: 0.15 },
+  { key: 'S2', label: 'Workforce', pillar: 'Social', weight: 0.15 },
+  { key: 'S3', label: 'Community', pillar: 'Social', weight: 0.10 },
+  { key: 'G1', label: 'Board Oversight', pillar: 'Governance', weight: 0.15 },
+  { key: 'G2', label: 'Data & Cyber', pillar: 'Governance', weight: 0.10 },
+];
+
+const RATINGS = {1:'Minimal',2:'Low',3:'Moderate',4:'Elevated',5:'High'};
+
+const PORTCOS = [
+  {
+    slug: 'meridian', name: 'Meridian Business Solutions', sector: 'Business Services (BPO)',
+    fund: 'I', ebitda: 38.3, equity: 117, moic: '3.0x', status: 'Exit Prep',
+    scores: {E1:2,E2:1,E3:1,S1:1,S2:3,S3:1,G1:3,G2:3},
+    rationale: {
+      E1: 'Office-based, 16 dispersed locations. No FEMA zone exposure. Insurance $430K, stable. Low physical risk profile.',
+      E2: 'Minimal carbon intensity (office only). 2 RFPs included ESG questionnaires — not yet material to revenue.',
+      E3: 'No hazardous materials, no manufacturing, no regulated waste streams. Clean compliance profile.',
+      S1: 'Office-only workforce. No industrial hazards. No recordable injuries reported.',
+      S2: 'BPO delivery centers face standard turnover dynamics. 580 employees across 16 locations. Talent pipeline adequate.',
+      S3: 'B2B services. Low community visibility. No consumer-facing reputation exposure.',
+      G1: 'Fund I maturity — board functioning well. No dedicated ESG role or board-level ESG agenda item. Exit prep focus.',
+      G2: 'Handles client business process data. Standard controls. No reported breaches. Moderate exposure from BPO data handling.'
+    },
+    flags: []
+  },
+  {
+    slug: 'novacare', name: 'NovaCare Health Partners', sector: 'Healthcare Services (PT/OT)',
+    fund: 'I', ebitda: 28.0, equity: 96, moic: '2.7x', status: 'Steady',
+    scores: {E1:3,E2:2,E3:2,S1:2,S2:3,S3:2,G1:3,G2:3},
+    rationale: {
+      E1: '30 clinics across 8 states. 2025 hurricane disruptions caused ~$45K revenue loss. Mid-Atlantic/Southeast exposure. Insurance $232K, up 8% YoY.',
+      E2: 'Healthcare sector faces limited transition risk. No customer ESG mandates. Low carbon intensity (clinics).',
+      E3: 'Medical waste compliance via Stericycle. Manageable regulatory burden. No contamination history.',
+      S1: 'Healthcare workers have moderate physical demands (PT/OT). No reported OSHA incidents.',
+      S2: 'Healthcare staffing challenges persist industry-wide. 385 employees, 30 clinics. LED retrofits at 18/30 show operational investment.',
+      S3: 'Patient community engagement. Healthcare reputation matters but B2B (payor) relationships buffer direct exposure.',
+      G1: 'Fund I company, steady performer. No formal ESG role. Board oversight focused on growth and integration.',
+      G2: 'HIPAA-regulated. PHI across 30 clinic locations. Standard healthcare data controls. RehabWorks integration introduces data migration risk.'
+    },
+    flags: ['RehabWorks data quality issue — 2 clinics show reversed electricity/gas values']
+  },
+  {
+    slug: 'sterling', name: 'Sterling Precision Manufacturing', sector: 'Industrial Technology (Aerospace)',
+    fund: 'I', ebitda: 30.2, equity: 90, moic: '2.9x', status: 'Strong',
+    scores: {E1:1,E2:5,E3:4,S1:3,S2:2,S3:1,G1:3,G2:2},
+    rationale: {
+      E1: 'Ohio Midwest. Low physical risk — winter storms only material hazard. No flood zone exposure. No hurricane path.',
+      E2: 'CRITICAL: Raytheon, L3Harris, Boeing requiring carbon intensity data by 2027. $25-42M annual revenue at risk. Highest energy consumer in portfolio (7.3M kWh). No emissions baseline established.',
+      E3: 'R-22 refrigerant system at Akron HQ (30 yrs old, banned substance). Deferred replacement twice. 12K gal/yr hazardous waste (spent coolant). RCRA SQG status.',
+      S1: 'Manufacturing — CNC machining, heat-treat operations. Industrial environment. No specific incident data reported but inherent hazard exposure.',
+      S2: 'Skilled manufacturing workforce, 420 employees. Aerospace precision talent is specialized but available in Ohio corridor.',
+      S3: 'B2B aerospace/defense. No consumer exposure. Low community risk profile.',
+      G1: 'Fund I maturity, strong financial performance. No ESG role. Board focused on value creation and potential exit path.',
+      G2: 'Manufacturing data, ITAR-controlled technical data for defense contracts. Adequate controls for sector.'
+    },
+    flags: ['$25-42M revenue at risk from missing emissions credentials', 'R-22 banned refrigerant — deferred replacement, emergency service 3x in 2025']
+  },
+  {
+    slug: 'trident', name: 'Trident IT Solutions', sector: 'IT Services / Cybersecurity',
+    fund: 'I', ebitda: 24.9, equity: 87, moic: '2.8x', status: 'Above Plan',
+    scores: {E1:1,E2:3,E3:1,S1:1,S2:3,S3:1,G1:2,G2:1},
+    rationale: {
+      E1: 'Hybrid/remote workforce mitigates facility exposure. Cleveland SOC has N+1 redundancy. Cloud backup. Minimal physical risk.',
+      E2: 'Healthcare and financial services clients (42% combined revenue) requesting ESG documentation. Cloud migration reduced on-prem energy 40%. Evaluating SBTs — most progressive in portfolio.',
+      E3: 'Office/SOC only. No regulated waste streams. No contamination risk. Clean profile.',
+      S1: 'Office and remote workforce. IT services. No industrial hazards.',
+      S2: 'IT talent market is competitive. 8 offices. Cybersecurity talent retention is an industry-wide challenge.',
+      S3: 'B2B IT services. No community exposure. Low reputation risk.',
+      G1: 'Most mature ESG posture in portfolio — evaluating science-based targets. Cloud migration shows proactive environmental thinking. Above-plan financial performance.',
+      G2: 'Cybersecurity IS the core business. SOC 2 certified. 24/7 monitoring. Strongest data governance in portfolio.'
+    },
+    flags: []
+  },
+  {
+    slug: 'clearview', name: 'Clearview Environmental Services', sector: 'Environmental Services (PFAS)',
+    fund: 'II', ebitda: 31.2, equity: 138, moic: '1.6x', status: 'On Plan',
+    scores: {E1:2,E2:4,E3:3,S1:3,S2:2,S3:3,G1:4,G2:3},
+    rationale: {
+      E1: 'Midwest/Mid-Atlantic, 10 locations. Low hurricane/flood exposure. Insurance $570K, up 6% YoY. Manageable.',
+      E2: 'Environmental services firm without ESG credentials — credibility gap. 5 RFPs in 2025 included ESG criteria. $2-3M left on table. Clients expect environmental companies to lead on sustainability.',
+      E3: 'PFAS testing labs handle emerging contaminants. Lab chemical inventory. Environmental compliance is operational core but creates handling risk.',
+      S1: 'Field operations and lab work. Chemical exposure potential. PFAS handling protocols required. 12 facilities with mixed-use (lab + field).',
+      S2: 'Environmental services workforce. Specialized certifications. 215 employees. Market demand strong for PFAS expertise.',
+      S3: 'PFAS is a high-profile public health issue. Community perception of environmental testing firms matters. Reputational risk from any spill or mishandling.',
+      G1: 'Fund II, on plan. No dedicated ESG role. No board ESG agenda item. Environmental company without environmental governance — a credibility risk.',
+      G2: 'Environmental data and regulatory compliance records. Lab accreditation data. Client confidential testing results. Standard controls.'
+    },
+    flags: ['Environmental services company lacks ESG credentials — credibility gap in market', '$2-3M revenue left on table from missing ESG documentation']
+  },
+  {
+    slug: 'patriot', name: 'Patriot Staffing Solutions', sector: 'Business Services (Staffing)',
+    fund: 'II', ebitda: 23.8, equity: 108, moic: '1.3x', status: 'Below Plan',
+    scores: {E1:4,E2:2,E3:1,S1:4,S2:4,S3:3,G1:4,G2:3},
+    rationale: {
+      E1: 'Memphis and Jackson branches in FEMA AE flood zones. 4 Southeast branches had 12 weather closure days in 2025 — $505K deferred revenue. Insurance rising.',
+      E2: 'Staffing sector faces limited transition risk. No customer ESG mandates. Fleet vehicles are candidate for EV transition (Q3 2026 contract renewal).',
+      E3: 'Light industrial staffing — no direct environmental liabilities. Clean compliance profile.',
+      S1: 'CRITICAL: 3,200 temp workers in light industrial placements. 8 heat stress incidents, 3 recordable injuries in summer 2025. $47K workers comp claims. Duty of care extends to placed workers.',
+      S2: 'Staffing company with inherent high turnover (temp workers). 26 branches, 185 corporate employees. Below-plan financial performance compounds talent retention risk.',
+      S3: 'Worker treatment reputation matters in staffing. Temp worker welfare is a brand issue. Heat stress incidents create reputational liability.',
+      G1: 'Fund II, below plan. No ESG role. Financial underperformance consuming board attention. ESG governance unlikely to be prioritized near-term.',
+      G2: 'PII for 3,200+ temp workers and clients. Standard HR data controls. No reported breaches but scale of PII is material.'
+    },
+    flags: ['Below plan — margin compression, workers comp above plan', '3 recordable heat stress injuries in temp workforce', 'Memphis/Jackson in FEMA AE flood zones', 'Lowest data quality: 25/26 facilities on landlord estimates']
+  },
+  {
+    slug: 'keystone', name: 'Keystone Behavioral Health', sector: 'Healthcare Services (ABA)',
+    fund: 'II', ebitda: 24.2, equity: 120, moic: '1.4x', status: '100-Day',
+    scores: {E1:3,E2:1,E3:1,S1:2,S2:3,S3:3,G1:4,G2:4},
+    rationale: {
+      E1: 'Mid-Atlantic, 20 clinics. 2 weather-related clinic closures in 2025 — behavioral regression observed in patients. Vulnerable population amplifies physical risk impact.',
+      E2: 'No customer ESG requirements (patients/payors). Minimal regulatory transition exposure. Low carbon intensity.',
+      E3: 'Healthcare clinics. No hazardous materials. Clean compliance profile.',
+      S1: '340 employees. 35% of sessions in-home (therapist commuting). No industrial hazards but travel exposure.',
+      S2: 'ABA therapists are specialized. Talent pipeline constrained. 20 clinics across 5 states. 100-day plan execution phase.',
+      S3: 'Behavioral health for children — sensitive community. Service disruptions have documented patient impact (regression). High duty of care.',
+      G1: 'Fund II, 100-day plan. Very early ESG maturity. No dedicated role. Board focused on operational integration.',
+      G2: 'Behavioral health records — among the most sensitive PHI categories. HIPAA-regulated. 20 clinic locations with distributed data. 100-day integration amplifies migration risk.'
+    },
+    flags: ['Weather closures caused documented patient behavioral regression', 'Sensitive behavioral health data across 20 distributed clinics']
+  },
+  {
+    slug: 'pinnacle', name: 'Pinnacle Testing & Inspection', sector: 'Industrial Services (Inspection)',
+    fund: 'II', ebitda: 20.1, equity: 93, moic: '1.2x', status: 'Integration',
+    scores: {E1:5,E2:5,E3:3,S1:4,S2:3,S3:2,G1:4,G2:2},
+    rationale: {
+      E1: 'ALL 9 facilities within 60 miles of Gulf Coast. 2 major weather events in 2025, 14-day total shutdown, $3.2M revenue deferral. Equipment depot in storm surge zone. Insurance $1.66M, up 12% YoY — projected $1.85-1.9M for 2026. No documented BCP.',
+      E2: 'CRITICAL: 40% of revenue from refinery/petrochemical clients facing energy transition. 3 major clients (~$18M revenue) requiring ESG questionnaires. Dual risk: customer base is shrinking AND those customers are demanding ESG credentials.',
+      E3: 'Gulf Coast inspection operations. Legacy equipment. Minimal Phase I ESA. Industrial services have inherent contamination tail risk.',
+      S1: 'Field inspection work in industrial environments. Gulf Coast heat exposure. Heavy equipment. 215 employees in high-hazard settings.',
+      S2: 'Specialized inspection workforce. 9 Gulf Coast locations. Integration phase creates retention risk.',
+      S3: 'Industrial inspection. Gulf Coast communities. Moderate visibility. B2B relationships buffer.',
+      G1: 'Fund II, integration phase. No ESG role. No BCP documented despite concentrated hurricane exposure. Governance gap.',
+      G2: 'Inspection records and client data. Standard industrial controls. Lower data sensitivity than healthcare/IT peers.'
+    },
+    flags: ['$3.2M revenue deferred from 2025 weather events', '100% Gulf Coast concentration — no geographic diversification', '$18M revenue from clients demanding ESG credentials', 'Insurance projected to reach $1.9M (12% annual increase)', 'No documented business continuity plan']
+  },
+  {
+    slug: 'harvest', name: 'Harvest Ridge Foods', sector: 'Food & Agriculture (Specialty)',
+    fund: 'II', ebitda: 22.8, equity: 105, moic: '1.2x', status: '100-Day',
+    scores: {E1:3,E2:4,E3:3,S1:3,S2:3,S3:2,G1:4,G2:1},
+    rationale: {
+      E1: 'TN/KY operations. Water pressure disruptions at Bowling Green (3 events summer 2025). Drought stress in Warren County. Water dependency: 28M gal/yr.',
+      E2: '3 of top 10 customers requiring Scope 1/2/3 emissions data by 2027. Contract renewals tied to sustainability. Highest energy consumption in portfolio (10M kWh). No emissions baseline.',
+      E3: 'R-404A refrigerant systems aging (high GWP). Food waste tracking gaps ($185K/yr disposal). Boiler operations. Water discharge.',
+      S1: 'Food manufacturing: cold storage, boilers, production lines. 335 employees. Inherent industrial hazards.',
+      S2: 'Food manufacturing workforce, 5 plants in TN/KY. Standard turnover for sector. 100-day plan execution.',
+      S3: 'Co-packing for consumer brands. Food safety reputation matters indirectly. Low direct community exposure.',
+      G1: 'Fund II, 100-day plan. No ESG role. No emissions baseline despite highest energy consumption. Governance gap.',
+      G2: 'Food manufacturing. Limited data sensitivity. No customer PII. Low cyber risk profile.'
+    },
+    flags: ['Highest energy consumer — 10M kWh, no emissions baseline', 'Customer contract renewals tied to Scope 1/2/3 data by 2027', 'Water dependency: 28M gal/yr with drought stress emerging']
+  },
+  {
+    slug: 'ridgeline', name: 'Ridgeline Property Services', sector: 'Real Estate Services',
+    fund: 'II', ebitda: 17.4, equity: 81, moic: '1.2x', status: '100-Day',
+    scores: {E1:4,E2:4,E3:1,S1:2,S2:2,S3:2,G1:4,G2:2},
+    rationale: {
+      E1: 'Western US focus. Wildfire smoke (Denver, Boise, SLC), extreme heat (Phoenix, Tucson), drought. Insurance $188K, up 9% YoY. Manages 18M sq ft of client properties exposed to same hazards.',
+      E2: 'Denver and Phoenix considering building performance standards (BPS) similar to NYC LL97. 4 institutional owners requesting energy benchmarking. 3 RFPs with ESG criteria. Regulatory risk is opportunity if positioned correctly.',
+      E3: 'Property management, not ownership. No direct environmental liabilities. Clean profile.',
+      S1: 'Property management, some field maintenance. 7 offices. Low industrial hazard.',
+      S2: 'Small workforce. 7 offices, Western US. Property management talent available.',
+      S3: 'Property management. Moderate community visibility. Tenant and owner relationships.',
+      G1: 'Fund II, 100-day plan. No ESG role. Manages 18M sq ft but no energy/emissions tracking beyond cost management. Scope boundary question unresolved.',
+      G2: 'Property and tenant data. Standard controls. Low sensitivity relative to healthcare/IT peers.'
+    },
+    flags: ['Western US wildfire, heat, drought exposure', 'Denver/Phoenix building performance standards incoming', 'Scope boundary unresolved: 18M sq ft managed portfolio vs. corporate ops']
+  }
+];
+
+// Compute composites
+PORTCOS.forEach(p => {
+  let composite = 0;
+  DIMENSIONS.forEach(d => { composite += p.scores[d.key] * d.weight; });
+  p.composite = Math.round(composite * 100) / 100;
+  if (p.composite <= 1.5) p.riskLevel = 'Minimal';
+  else if (p.composite <= 2.5) p.riskLevel = 'Low';
+  else if (p.composite <= 3.0) p.riskLevel = 'Moderate';
+  else if (p.composite <= 3.75) p.riskLevel = 'Elevated';
+  else p.riskLevel = 'High';
+});
+
+function riskClass(level) {
+  if (level === 'Minimal' || level === 'Low') return 'risk-low';
+  if (level === 'Moderate') return 'risk-moderate';
+  if (level === 'Elevated') return 'risk-elevated';
+  return 'risk-high';
+}
+
+function compositeColor(score) {
+  if (score <= 1.5) return 'var(--score-1)';
+  if (score <= 2.5) return 'var(--score-2)';
+  if (score <= 3.0) return 'var(--score-3)';
+  if (score <= 3.75) return 'var(--score-4)';
+  return 'var(--score-5)';
+}
+
+// Render stats
+function renderStats() {
+  const avg = PORTCOS.reduce((s,p) => s + p.composite, 0) / PORTCOS.length;
+  document.getElementById('avg-composite').textContent = avg.toFixed(2);
+  const avgLevel = avg <= 1.5 ? 'Minimal' : avg <= 2.5 ? 'Low' : avg <= 3.0 ? 'Moderate' : avg <= 3.75 ? 'Elevated' : 'High';
+  const avgEl = document.getElementById('avg-risk-label');
+  avgEl.textContent = avgLevel + ' Risk';
+  avgEl.style.color = compositeColor(avg);
+
+  const highest = PORTCOS.reduce((a,b) => a.composite > b.composite ? a : b);
+  document.getElementById('highest-risk-name').textContent = highest.name;
+  const hEl = document.getElementById('highest-risk-score');
+  hEl.textContent = highest.composite.toFixed(2) + ' — ' + highest.riskLevel;
+  hEl.style.color = compositeColor(highest.composite);
+
+  let elevatedCount = 0;
+  PORTCOS.forEach(p => { DIMENSIONS.forEach(d => { if (p.scores[d.key] >= 4) elevatedCount++; }); });
+  document.getElementById('elevated-count').textContent = elevatedCount;
+  document.getElementById('data-quality-pct').textContent = '72%';
+}
+
+// Render escalation flags
+function renderEscalations() {
+  const el = document.getElementById('escalation-list');
+  const allFlags = [];
+  PORTCOS.forEach(p => {
+    p.flags.forEach(f => allFlags.push({ portco: p.name, flag: f }));
+  });
+  el.innerHTML = allFlags.map(f => `
+    <div class="escalation-item">
+      <div class="esc-portco">${f.portco}</div>
+      <div class="esc-detail">${f.flag}</div>
+    </div>
+  `).join('');
+}
+
+// Render heatmap
+function renderHeatmap() {
+  const tbody = document.getElementById('heatmap-body');
+  let lastFund = '';
+  tbody.innerHTML = PORTCOS.map((p, idx) => {
+    const divider = (lastFund === 'I' && p.fund === 'II') ? ' class="fund-divider"' : '';
+    lastFund = p.fund;
+    const cells = DIMENSIONS.map(d => {
+      const s = p.scores[d.key];
+      return `<td class="score-cell"><span class="score-badge score-${s}" data-portco="${idx}" data-dim="${d.key}">${s}</span></td>`;
+    }).join('');
+    return `<tr${divider}>
+      <td class="portco-name">
+        ${p.name}
+        <span class="sector">${p.sector}</span>
+        <span class="fund-label ${p.fund === 'I' ? 'fund-i' : 'fund-ii'}">Fund ${p.fund}</span>
+      </td>
+      ${cells}
+      <td class="composite-cell" style="border-left:2px solid var(--border);color:${compositeColor(p.composite)}">${p.composite.toFixed(2)}</td>
+      <td class="score-cell"><span class="composite-badge ${riskClass(p.riskLevel)}">${p.riskLevel}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// Render cards
+function renderCards() {
+  const el = document.getElementById('portco-cards');
+  el.innerHTML = PORTCOS.map((p, idx) => {
+    const scoreHTML = DIMENSIONS.map(d => {
+      const s = p.scores[d.key];
+      return `<div class="mini-score"><span class="dim-label">${d.key}</span><span class="score-badge score-${s}">${s}</span></div>`;
+    }).join('');
+    const flagsHTML = p.flags.slice(0,2).map(f => {
+      const cls = f.includes('CRITICAL') || f.includes('$3.2M') || f.includes('recordable') ? '' : 'watch';
+      return `<span class="flag-tag ${cls}">${f.length > 60 ? f.slice(0,57)+'...' : f}</span>`;
+    }).join('');
+    return `<div class="portco-card" onclick="openModal(${idx})">
+      <div class="portco-card-header">
+        <div>
+          <h3>${p.name}</h3>
+          <div class="sector-tag">${p.sector} &middot; Fund ${p.fund} &middot; ${p.status}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:24px;font-weight:800;color:${compositeColor(p.composite)}">${p.composite.toFixed(2)}</div>
+          <span class="composite-badge ${riskClass(p.riskLevel)}" style="font-size:11px;">${p.riskLevel}</span>
+        </div>
+      </div>
+      <div class="portco-card-scores">${scoreHTML}</div>
+      ${flagsHTML ? `<div class="portco-card-footer">${flagsHTML}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// Modal
+function openModal(idx) {
+  const p = PORTCOS[idx];
+  document.getElementById('modal-title').textContent = p.name;
+  document.getElementById('modal-sector').textContent = `${p.sector} · EBITDA $${p.ebitda}M · ${p.moic} MOIC · ${p.status}`;
+  const cs = document.getElementById('modal-composite-score');
+  cs.textContent = p.composite.toFixed(2);
+  cs.style.color = compositeColor(p.composite);
+  document.getElementById('modal-risk-badge').innerHTML = `<span class="composite-badge ${riskClass(p.riskLevel)}">${p.riskLevel} Risk</span>`;
+  document.getElementById('modal-fund-label').textContent = `Fund ${p.fund} · Equity $${p.equity}M`;
+
+  const dims = document.getElementById('modal-dimensions');
+  dims.innerHTML = DIMENSIONS.map(d => {
+    const s = p.scores[d.key];
+    return `<div class="dimension-detail">
+      <div class="dimension-detail-header">
+        <h4><span class="score-badge score-${s}" style="width:26px;height:26px;font-size:12px;margin-right:8px;">${s}</span>${d.key} — ${d.label}</h4>
+        <div class="weight">${(d.weight*100)}% weight · ${RATINGS[s]}</div>
+      </div>
+      <p>${p.rationale[d.key]}</p>
+    </div>`;
+  }).join('');
+
+  document.getElementById('modal-overlay').classList.add('active');
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modal-overlay')) {
+    document.getElementById('modal-overlay').classList.remove('active');
+  }
+}
+
+// Tooltip on score badges in heatmap
+document.addEventListener('mouseover', e => {
+  const badge = e.target.closest('.score-badge[data-portco]');
+  if (!badge) return;
+  const idx = parseInt(badge.dataset.portco);
+  const dim = badge.dataset.dim;
+  const p = PORTCOS[idx];
+  const d = DIMENSIONS.find(x => x.key === dim);
+  const tt = document.getElementById('tooltip');
+  tt.querySelector('.tt-dim').textContent = `${d.key} — ${d.label}`;
+  tt.querySelector('.tt-score').innerHTML = `Score: <strong>${p.scores[dim]}</strong> (${RATINGS[p.scores[dim]]}) · Weight: ${d.weight*100}%`;
+  tt.querySelector('.tt-rationale').textContent = p.rationale[dim];
+  const rect = badge.getBoundingClientRect();
+  tt.style.left = Math.min(rect.left, window.innerWidth - 340) + 'px';
+  tt.style.top = (rect.bottom + 8) + 'px';
+  tt.classList.add('visible');
+});
+document.addEventListener('mouseout', e => {
+  if (e.target.closest('.score-badge[data-portco]')) {
+    document.getElementById('tooltip').classList.remove('visible');
+  }
+});
+
+// View switching
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// Keyboard close modal
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// Init
+renderStats();
+renderEscalations();
+renderHeatmap();
+renderCards();
+</script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+facility_id,portco_slug,portco_name,facility_type,city,state,reporting_year,electricity_kwh,natural_gas_therms,diesel_gallons,gasoline_gallons,propane_gallons,refrigerant_r22_lbs,refrigerant_r410a_lbs,fleet_diesel_gallons,fleet_gasoline_gallons,data_source,notes
+MBS-001,meridian-business-solutions,Meridian Business Solutions,Corporate HQ / Regional Office,Chicago,IL,2025,348500,24800,,,,,,,850,utility_bill,Main office — 42000 sq ft across 3 floors
+MBS-002,meridian-business-solutions,Meridian Business Solutions,Regional Office,Minneapolis,MN,2025,172000,14200,,,,,,,,utility_bill,Cold climate — high heating load
+MBS-003,meridian-business-solutions,Meridian Business Solutions,Regional Office,Detroit,MI,2025,145000,12800,,,,,,,600,utility_bill,
+MBS-004,meridian-business-solutions,Meridian Business Solutions,Regional Office,St. Louis,MO,2025,128000,9600,,,,,,,,utility_bill,
+MBS-005,meridian-business-solutions,Meridian Business Solutions,Regional Office,New York,NY,2025,165000,11500,,,,,,,,utility_bill,Co-located with Meridian delivery team — shared building meter includes common areas
+MBS-006,meridian-business-solutions,Meridian Business Solutions,Regional Office,Boston,MA,2025,152000,13100,,,,,,,,utility_bill,Co-located office — electricity allocation estimated at 60% of building total
+MBS-007,meridian-business-solutions,Meridian Business Solutions,Regional Office,Philadelphia,PA,2025,134000,10400,,,,,,,,accounting_export,
+MBS-008,meridian-business-solutions,Meridian Business Solutions,Regional Office,Atlanta,GA,2025,148000,5200,,,,,,,500,utility_bill,Higher cooling load — minimal heating
+MBS-009,meridian-business-solutions,Meridian Business Solutions,Regional Office,Charlotte,NC,2025,118000,6800,,,,,,,,accounting_export,
+MBS-010,meridian-business-solutions,Meridian Business Solutions,Regional Office,Miami,FL,2025,168000,0,,,,,,,,utility_bill,Year-round AC — almost no heating
+MBS-011,meridian-business-solutions,Meridian Business Solutions,Regional Office,Denver,CO,2025,112000,9200,,,,,,,,accounting_export,Dry climate — moderate HVAC
+MBS-012,meridian-business-solutions,Meridian Business Solutions,Regional Office,Phoenix,AZ,2025,178000,0,,,,,,,,utility_bill,Extreme summer cooling load
+MBS-013,meridian-business-solutions,Meridian Business Solutions,Delivery Center,Jacksonville,FL,2025,238000,0,,,,,,,750,utility_bill,Large open-plan floor — 180 seats
+MBS-014,meridian-business-solutions,Meridian Business Solutions,Delivery Center,San Antonio,TX,2025,215000,0,,,,,,,,utility_bill,Call center operations — extended hours
+MBS-015,meridian-business-solutions,Meridian Business Solutions,Regional Office,Dallas,TX,2025,162000,3800,,,,,,,500,utility_bill,Texas heat — heavy summer cooling
+MBS-016,meridian-business-solutions,Meridian Business Solutions,Regional Office,Seattle,WA,2025,98000,8400,,,,,,,,accounting_export,Mild summers — moderate heating
+NC-001,novacare-health-partners,NovaCare Health Partners,HQ / Clinic,Philadelphia,PA,2025,248000,17800,,,,,,,,utility_bill,HQ clinic — admin offices + treatment rooms
+NC-002,novacare-health-partners,NovaCare Health Partners,Clinic,King of Prussia,PA,2025,112000,8200,,,,,,,,utility_bill,Large suburban clinic — 12 treatment rooms
+NC-003,novacare-health-partners,NovaCare Health Partners,Clinic,Allentown,PA,2025,88000,7400,,,,,,,,utility_bill,
+NC-004,novacare-health-partners,NovaCare Health Partners,Clinic,Scranton,PA,2025,72000,8100,,,,,,,,landlord_data,Leased space — landlord invoice
+NC-005,novacare-health-partners,NovaCare Health Partners,Clinic,Harrisburg,PA,2025,78000,6900,,,,,,,,utility_bill,
+NC-006,novacare-health-partners,NovaCare Health Partners,Clinic,Lancaster,PA,2025,65000,5800,,,,,,,,landlord_data,Smaller clinic — 6 treatment rooms
+NC-007,novacare-health-partners,NovaCare Health Partners,Clinic,Cherry Hill,NJ,2025,94000,7200,,,,,,,,utility_bill,
+NC-008,novacare-health-partners,NovaCare Health Partners,Clinic,Princeton,NJ,2025,82000,6600,,,,,,,,utility_bill,
+NC-009,novacare-health-partners,NovaCare Health Partners,Clinic,Newark,NJ,2025,98000,7800,,,,,,,,landlord_data,Urban lease — shared HVAC
+NC-010,novacare-health-partners,NovaCare Health Partners,Clinic,Baltimore,MD,2025,312000,7100,,,,,,,,utility_bill,
+NC-011,novacare-health-partners,NovaCare Health Partners,Clinic,Bethesda,MD,2025,92000,6400,,,,,,,,utility_bill,
+NC-012,novacare-health-partners,NovaCare Health Partners,Clinic,Annapolis,MD,2025,68000,5200,,,,,,,,landlord_data,Leased space
+NC-013,novacare-health-partners,NovaCare Health Partners,Clinic,Richmond,VA,2025,88000,5600,,,,,,,,utility_bill,
+NC-014,novacare-health-partners,NovaCare Health Partners,Clinic,Virginia Beach,VA,2025,95000,4800,,,,,,,,utility_bill,Coastal climate — moderate year-round
+NC-015,novacare-health-partners,NovaCare Health Partners,Clinic,Arlington,VA,2025,84000,5900,,,,,,,,landlord_data,
+NC-016,novacare-health-partners,NovaCare Health Partners,Clinic,Wilmington,DE,2025,72000,6200,,,,,,,,utility_bill,
+NC-017,novacare-health-partners,NovaCare Health Partners,Clinic,Dover,DE,2025,60000,4800,,,,,,,,landlord_data,Smallest clinic in network
+NC-018,novacare-health-partners,NovaCare Health Partners,Clinic,Raleigh,NC,2025,102000,4200,,,,,,,,utility_bill,Warmer climate — higher AC
+NC-019,novacare-health-partners,NovaCare Health Partners,Clinic,Charlotte,NC,2025,96000,4600,,,,,,,,utility_bill,
+NC-020,novacare-health-partners,NovaCare Health Partners,Clinic,Durham,NC,2025,78000,4100,,,,,,,,landlord_data,
+NC-021,novacare-health-partners,NovaCare Health Partners,Clinic,Greenville,SC,2025,86000,3800,,,,,,,,utility_bill,
+NC-022,novacare-health-partners,NovaCare Health Partners,Clinic,Charleston,SC,2025,92000,3200,,,,,,,,utility_bill,Humid subtropical — heavy cooling
+NC-023,novacare-health-partners,NovaCare Health Partners,Clinic,Columbia,SC,2025,88000,3500,,,,,,,,landlord_data,
+NC-024,novacare-health-partners,NovaCare Health Partners,Clinic,Atlanta,GA,2025,108000,4000,,,,,,,,utility_bill,Largest southern clinic — 14 treatment rooms
+NC-025,novacare-health-partners,NovaCare Health Partners,Clinic,Savannah,GA,2025,96000,2800,,,,,,,,utility_bill,Warm humid climate
+NC-026,novacare-health-partners,NovaCare Health Partners,Clinic,Marietta,GA,2025,0,82000,,,,,,,,landlord_data,RehabWorks acquisition — data migrated from prior owner format
+NC-027,novacare-health-partners,NovaCare Health Partners,Clinic,Augusta,GA,2025,0,74000,,,,,,,,landlord_data,RehabWorks acquisition — data migrated from prior owner format
+NC-028,novacare-health-partners,NovaCare Health Partners,Clinic,Macon,GA,2025,68000,2900,,,,,10,,,utility_bill,R-410A recharge on rooftop unit — Aug 2025
+NC-029,novacare-health-partners,NovaCare Health Partners,Clinic,Fayetteville,NC,2025,76000,3800,,,,,,,,landlord_data,
+NC-030,novacare-health-partners,NovaCare Health Partners,Clinic,Fredericksburg,VA,2025,82000,5400,,,,,,,,utility_bill,
+SPM-001,sterling-precision-mfg,Sterling Precision Manufacturing,Manufacturing HQ / Primary Plant,Akron,OH,2025,4185000,178500,8500,,3200,50,,,,utility_bill,Primary CNC and heat-treat facility — older R-22 chillers scheduled for replacement 2026
+SPM-002,sterling-precision-mfg,Sterling Precision Manufacturing,Manufacturing Facility,Elyria,OH,2025,2815000,121000,5500,,2100,,15,,,utility_bill,Secondary machining facility — newer HVAC with R-410A
+SPM-003,sterling-precision-mfg,Sterling Precision Manufacturing,Warehouse / Distribution,Canton,OH,2025,345000,24800,,,,,,12000,4500,utility_bill,Distribution center — 8 delivery trucks and 5 crew vehicles
+TIT-001,trident-it-solutions,Trident IT Solutions,HQ,Columbus,OH,2025,182000,12200,,,,,,,,utility_bill,Corporate headquarters — standard office
+TIT-002,trident-it-solutions,Trident IT Solutions,Regional Office / SOC,Cleveland,OH,2025,452000,7800,,,,,25,,,utility_bill,24/7 Security Operations Center — server room with precision cooling
+TIT-003,trident-it-solutions,Trident IT Solutions,Regional Office,Detroit,MI,2025,72000,7200,,,,,,,,accounting_export,
+TIT-004,trident-it-solutions,Trident IT Solutions,Regional Office,Milwaukee,WI,2025,67500,7800,,,,,,,,accounting_export,Cold climate office
+TIT-005,trident-it-solutions,Trident IT Solutions,Regional Office,Tampa,FL,2025,90000,2400,,,,,,,,accounting_export,Year-round cooling
+TIT-006,trident-it-solutions,Trident IT Solutions,Regional Office,Atlanta,GA,2025,81000,3600,,,,,,,,accounting_export,
+TIT-007,trident-it-solutions,Trident IT Solutions,Regional Office,Charlotte,NC,2025,63000,4800,,,,,,,,accounting_export,Smallest branch office
+TIT-008,trident-it-solutions,Trident IT Solutions,Regional Office,Nashville,TN,2025,72000,4200,,,,,,,,accounting_export,Newest branch — opened Q1 2025
+CES-001,clearview-environmental,Clearview Environmental Services,HQ / Field Ops Base,Indianapolis,IN,2025,198000,14800,,,,,,18000,12000,utility_bill,Central dispatch — 25 fleet vehicles
+CES-002,clearview-environmental,Clearview Environmental Services,Accredited Lab,Indianapolis,IN,2025,602000,20200,,,,,20,,,utility_bill,PFAS analytical lab — fume hoods and GC-MS instruments and 24/7 HVAC
+CES-003,clearview-environmental,Clearview Environmental Services,Accredited Lab,Cincinnati,OH,2025,478000,15800,,,,,,,,utility_bill,Regional lab — PFAS and metals analysis
+CES-004,clearview-environmental,Clearview Environmental Services,Accredited Lab,Pittsburgh,PA,2025,522000,18200,,,,,,,,utility_bill,Full-service environmental lab
+CES-005,clearview-environmental,Clearview Environmental Services,Field Ops Base,Columbus,OH,2025,105000,6800,,,,,,10500,6200,utility_bill,Field ops — 12 vehicles
+CES-006,clearview-environmental,Clearview Environmental Services,Field Ops Base,Baltimore,MD,2025,98000,6200,,,,,,9800,5800,utility_bill,Mid-Atlantic field ops
+CES-007,clearview-environmental,Clearview Environmental Services,Field Ops Base,Philadelphia,PA,2025,115000,7400,,,,,,11200,7200,utility_bill,Northeast field ops — larger crew
+CES-008,clearview-environmental,Clearview Environmental Services,Field Ops Base,Hartford,CT,2025,88000,7800,,,,,,8500,5400,utility_bill,New England field ops
+CES-009,clearview-environmental,Clearview Environmental Services,Field Ops Base,Charleston,SC,2025,118000,5200,,,,,,9200,6800,fleet_log,Southeast field ops — warm climate
+CES-010,clearview-environmental,Clearview Environmental Services,Equipment Yard,Dayton,OH,2025,45000,2800,,,,,,15000,,fleet_log,Heavy equipment staging — drill rigs and remediation units
+CES-011,clearview-environmental,Clearview Environmental Services,Field Ops Base,Richmond,VA,2025,92000,5800,,,,,,8800,5600,utility_bill,Virginia field ops
+CES-012,clearview-environmental,Clearview Environmental Services,Field Ops Base,Raleigh,NC,2025,108000,4400,,,,,,9500,6400,fleet_log,Carolinas field ops
+PSS-001,patriot-staffing-solutions,Patriot Staffing Solutions,HQ,Indianapolis,IN,2025,158000,11800,,,,,,,6000,utility_bill,Corporate HQ — admin and dispatch
+PSS-002,patriot-staffing-solutions,Patriot Staffing Solutions,Branch Office,Columbus,OH,2025,52000,4200,,,,,,,3000,landlord_data,Leased space — recruiter office
+PSS-003,patriot-staffing-solutions,Patriot Staffing Solutions,Branch Office,Cincinnati,OH,2025,48000,4000,,,,,,,3000,landlord_data,
+PSS-004,patriot-staffing-solutions,Patriot Staffing Solutions,Branch Office,Cleveland,OH,2025,54000,4800,,,,,,,3000,landlord_data,
+PSS-005,patriot-staffing-solutions,Patriot Staffing Solutions,Branch Office,Dayton,OH,2025,38000,3600,,,,,,,2500,landlord_data,Small branch
+PSS-006,patriot-staffing-solutions,Patriot Staffing Solutions,Branch Office,Louisville,KY,2025,46000,3800,,,,,,,3000,landlord_data,Branch closed August 2025 — full-year estimate provided by landlord
+PSS-007,patriot-staffing-solutions,Patriot Staffing Solutions,Branch Office,Lexington,KY,2025,40000,3400,,,,,,,2500,landlord_data,
+PSS-008,patriot-staffing-solutions,Patriot Staffing Solutions,Branch Office,Fort Wayne,IN,2025,42000,4200,,,,,,,2500,landlord_data,
+PSS-009,patriot-staffing-solutions,Patriot Staffing Solutions,Branch Office,Evansville,IN,2025,0,0,,,,,,,2500,landlord_data,Utility costs included in lease — no separate data available from landlord
+PSS-010,patriot-staffing-solutions,Patriot Staffing Solutions,Branch Office,Grand Rapids,MI,2025,48000,4600,,,,,,,3000,landlord_data,
+PSS-011,patriot-staffing-solutions,Patriot Staffing Solutions,Branch Office,Lansing,MI,2025,42000,4400,,,,,,,2500,landlord_data,
+PSS-012,patriot-staffing-solutions,Patriot Staffing Solutions,Branch Office,Milwaukee,WI,2025,50000,5000,,,,,,,3000,landlord_data,Cold climate — higher heating
+PSS-013,patriot-staffing-solutions,Patriot Staffing Solutions,Branch Office,Madison,WI,2025,44000,4800,,,,,,,3000,landlord_data,
+PSS-014,patriot-staffing-solutions,Patriot Staffing Solutions,Branch Office,Rockford,IL,2025,0,0,,,,,,,2500,landlord_data,Utility costs included in lease — no separate data available from landlord
+PSS-015,patriot-staffing-solutions,Patriot Staffing Solutions,Branch Office,Nashville,TN,2025,52000,3200,,,,,,,3000,landlord_data,
+PSS-016,patriot-staffing-solutions,Patriot Staffing Solutions,Branch Office,Knoxville,TN,2025,44000,3400,,,,,,,3000,landlord_data,
+PSS-017,patriot-staffing-solutions,Patriot Staffing Solutions,Branch Office,Atlanta,GA,2025,56000,2600,,,,,,,3000,landlord_data,Warm climate — more AC
+PSS-018,patriot-staffing-solutions,Patriot Staffing Solutions,Branch Office,Charlotte,NC,2025,48000,2800,,,,,,,3000,landlord_data,
+PSS-019,patriot-staffing-solutions,Patriot Staffing Solutions,Branch Office,Jacksonville,FL,2025,58000,2000,,,,,,,3000,landlord_data,Year-round AC
+PSS-020,patriot-staffing-solutions,Patriot Staffing Solutions,Branch Office,Tampa,FL,2025,60000,1800,,,,,,,3000,fleet_log,Highest cooling load in network
+PSS-021,patriot-staffing-solutions,Patriot Staffing Solutions,Branch Office,Columbia,SC,2025,50000,2400,,,,,,,3000,landlord_data,
+PSS-022,patriot-staffing-solutions,Patriot Staffing Solutions,Branch Office,Birmingham,AL,2025,52000,2600,,,,,,,3000,landlord_data,
+PSS-023,patriot-staffing-solutions,Patriot Staffing Solutions,Branch Office,Jackson,MS,2025,48000,2200,,,,,,,2500,landlord_data,
+PSS-024,patriot-staffing-solutions,Patriot Staffing Solutions,Branch Office,Little Rock,AR,2025,46000,2800,,,,,,,3000,landlord_data,
+PSS-025,patriot-staffing-solutions,Patriot Staffing Solutions,Branch Office,Memphis,TN,2025,54000,2600,,,,,,,3000,landlord_data,
+PSS-026,patriot-staffing-solutions,Patriot Staffing Solutions,Branch Office,New Orleans,LA,2025,58000,1600,,,,,,,3000,landlord_data,Gulf climate — heavy AC year-round
+KBH-001,keystone-behavioral-health,Keystone Behavioral Health,HQ / Clinic,Philadelphia,PA,2025,178000,13800,,,,,,,,utility_bill,HQ with admin offices and therapy rooms
+KBH-002,keystone-behavioral-health,Keystone Behavioral Health,Clinic,Bala Cynwyd,PA,2025,82000,6400,,,,,,,,utility_bill,Large suburban clinic
+KBH-003,keystone-behavioral-health,Keystone Behavioral Health,Clinic,West Chester,PA,2025,72000,5800,,,,,,,,landlord_data,
+KBH-004,keystone-behavioral-health,Keystone Behavioral Health,Clinic,Doylestown,PA,2025,33000,5200,,,,,,,,estimate,Estimated: 2200 sq ft x 15 kWh/sq ft — no utility data from landlord
+KBH-005,keystone-behavioral-health,Keystone Behavioral Health,Clinic,Media,PA,2025,64000,5600,,,,,,,,landlord_data,
+KBH-006,keystone-behavioral-health,Keystone Behavioral Health,Clinic,Norristown,PA,2025,68000,5400,,,,,,,,utility_bill,
+KBH-007,keystone-behavioral-health,Keystone Behavioral Health,Clinic,Reading,PA,2025,33000,5000,,,,,,,,estimate,Estimated: 2200 sq ft x 15 kWh/sq ft — no utility data from landlord
+KBH-008,keystone-behavioral-health,Keystone Behavioral Health,Clinic,Wilmington,DE,2025,62000,4800,,,,,,,,utility_bill,
+KBH-009,keystone-behavioral-health,Keystone Behavioral Health,Clinic,Newark,DE,2025,33000,4200,,,,,,,,estimate,Estimated: 2200 sq ft x 15 kWh/sq ft — no utility data from landlord
+KBH-010,keystone-behavioral-health,Keystone Behavioral Health,Clinic,Towson,MD,2025,70000,5200,,,,,,,,utility_bill,
+KBH-011,keystone-behavioral-health,Keystone Behavioral Health,Clinic,Columbia,MD,2025,66000,4600,,,,,,,,landlord_data,
+KBH-012,keystone-behavioral-health,Keystone Behavioral Health,Clinic,Annapolis,MD,2025,33000,4000,,,,,,,,estimate,Estimated: 2200 sq ft x 15 kWh/sq ft — no utility data from landlord
+KBH-013,keystone-behavioral-health,Keystone Behavioral Health,Clinic,Cherry Hill,NJ,2025,74000,5800,,,,,,,,utility_bill,
+KBH-014,keystone-behavioral-health,Keystone Behavioral Health,Clinic,Marlton,NJ,2025,33000,4800,,,,,,,,estimate,Estimated: 2200 sq ft x 15 kWh/sq ft — no utility data from landlord
+KBH-015,keystone-behavioral-health,Keystone Behavioral Health,Clinic,Princeton,NJ,2025,68000,5200,,,,,,,,landlord_data,
+KBH-016,keystone-behavioral-health,Keystone Behavioral Health,Clinic,Woodbridge,NJ,2025,33000,5400,,,,,,,,estimate,Estimated: 2200 sq ft x 15 kWh/sq ft — no utility data from landlord
+KBH-017,keystone-behavioral-health,Keystone Behavioral Health,Clinic,Richmond,VA,2025,76000,4200,,,,,,,,utility_bill,
+KBH-018,keystone-behavioral-health,Keystone Behavioral Health,Clinic,Alexandria,VA,2025,72000,4600,,,,,,,,landlord_data,
+KBH-019,keystone-behavioral-health,Keystone Behavioral Health,Clinic,Fairfax,VA,2025,64000,4800,,,,,,,,landlord_data,
+KBH-020,keystone-behavioral-health,Keystone Behavioral Health,Clinic,Roanoke,VA,2025,46000,5000,,,,,,,,landlord_data,Smallest clinic — mountain climate
+KBH-021,keystone-behavioral-health,Keystone Behavioral Health,Clinic,Trenton,NJ,2025,52000,5000,,,,,,,,landlord_data,Opened June 2025 — 7 months of data
+KBH-022,keystone-behavioral-health,Keystone Behavioral Health,Clinic,Hagerstown,MD,2025,0,0,,,,,,,,N/A,Opened November 2025 — insufficient data for annual reporting
+PTI-001,pinnacle-testing-inspection,Pinnacle Testing & Inspection,HQ,Houston,TX,2025,282000,3800,,,,,15,25000,15000,utility_bill,Corporate HQ — 35 fleet vehicles for inspection crews
+PTI-002,pinnacle-testing-inspection,Pinnacle Testing & Inspection,Field Ops,Beaumont,TX,2025,118000,1800,,,,,,18000,8000,accounting_export,Refinery corridor — heavy field activity
+PTI-003,pinnacle-testing-inspection,Pinnacle Testing & Inspection,Field Ops,Lake Charles,LA,2025,112000,2500,,,,,,16000,7000,accounting_export,LNG and petrochemical inspection
+PTI-004,pinnacle-testing-inspection,Pinnacle Testing & Inspection,Field Ops,Baton Rouge,LA,2025,98000,2200,,,,,,14000,6000,accounting_export,Industrial corridor ops
+PTI-005,pinnacle-testing-inspection,Pinnacle Testing & Inspection,Field Ops,Corpus Christi,TX,2025,94000,1400,,,,,,12000,5500,accounting_export,Coastal facility inspections
+PTI-006,pinnacle-testing-inspection,Pinnacle Testing & Inspection,Regional Office,Birmingham,AL,2025,72000,4200,,,,,,8000,4000,accounting_export,Southeast regional — slightly cooler climate
+PTI-007,pinnacle-testing-inspection,Pinnacle Testing & Inspection,Regional Office,Mobile,AL,2025,66000,2800,,,,,,9000,4500,accounting_export,Gulf Coast regional
+PTI-008,pinnacle-testing-inspection,Pinnacle Testing & Inspection,Field Ops,Pensacola,FL,2025,82000,1600,,,,,,10000,5000,accounting_export,Florida panhandle ops
+PTI-009,pinnacle-testing-inspection,Pinnacle Testing & Inspection,Equipment Depot,Pasadena,TX,2025,54000,1000,,,,,,20000,,fleet_log,Heavy equipment and vehicle staging yard
+PTI-010,pinnacle-testing-inspection,Pinnacle Testing & Inspection,Field Ops,Port Arthur,TX,2025,88000,1200,,,,,,11000,4800,accounting_export,Petrochemical plant inspections
+HRF-001,harvest-ridge-foods,Harvest Ridge Foods,Production Plant / HQ,Nashville,TN,2025,3200000,185000,8500,,2200,,,6800,3200,utility_bill,Primary plant. Boilers run 18hr/day production days. Refrigerated storage 24/7.
+HRF-002,harvest-ridge-foods,Harvest Ridge Foods,Production Plant,Murfreesboro,TN,2025,1450000,68000,3200,,1800,,,,,,utility_bill,Dressings/condiments. Smaller boiler system.
+HRF-003,harvest-ridge-foods,Harvest Ridge Foods,Production Plant (Organic),Bowling Green,KY,2025,1680000,72000,2800,,,,,,,,utility_bill,Organic/specialty. High water usage. 3 water pressure events summer 2025.
+HRF-004,harvest-ridge-foods,Harvest Ridge Foods,Production Plant (Cold-Fill),Chattanooga,TN,2025,2100000,,1500,,,,,,,,utility_bill,Cold-fill/high-acid. Electric process heat (NO natural gas). Acquired facility retrofit.
+HRF-005,harvest-ridge-foods,Harvest Ridge Foods,Corporate HQ / R&D Lab,Nashville,TN,2025,95000,4200,,,,,,,2800,utility_bill,Office + pilot kitchen. Fleet gasoline is management/sales vehicles.
+RPS-001,ridgeline-property-services,Ridgeline Property Services,Corporate HQ,Denver,CO,2025,185000,8500,,,,,,,,4200,utility_bill,HQ. Nat gas heating. Fleet: 3 management vehicles.
+RPS-002,ridgeline-property-services,Ridgeline Property Services,Regional Office,Phoenix,AZ,2025,95000,,,,,,,,,2800,utility_bill,Largest regional. All-electric (cooling). Fleet: 2 vehicles.
+RPS-003,ridgeline-property-services,Ridgeline Property Services,Regional Office,Salt Lake City,UT,2025,52000,3800,,,,,,,,1200,utility_bill,Nat gas heating. Fleet: 1 vehicle.
+RPS-004,ridgeline-property-services,Ridgeline Property Services,Regional Office,Albuquerque,NM,2025,42000,2200,,,,,,,900,utility_bill,Small office.
+RPS-005,ridgeline-property-services,Ridgeline Property Services,Regional Office,Boise,ID,2025,38000,3100,,,,,,,800,utility_bill,Nat gas heating.
+RPS-006,ridgeline-property-services,Ridgeline Property Services,Regional Office,Tucson,AZ,2025,48000,,,,,,,,700,utility_bill,All-electric (cooling).

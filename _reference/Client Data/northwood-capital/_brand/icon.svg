@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Ridge mark — standalone icon -->
+  <polygon points="8,52 20,20 28,34 38,8 48,52" fill="none" stroke="#1A2744" stroke-width="3.5" stroke-linejoin="miter"/>
+  <line x1="38" y1="8" x2="38" y2="52" stroke="#A67C52" stroke-width="2" opacity="0.6"/>
+</svg>

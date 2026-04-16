@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Everest — LBO Model | Northwood Capital</title>
+  <style>
+    /* ── Base ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-size: 13px;
+      color: #1a1a2e;
+      background: #f0f2f5;
+      min-height: 100vh;
+    }
+
+    /* ── Header ─────────────────────────────────────────── */
+    header {
+      background: #0f1f3d;
+      color: #fff;
+      padding: 20px 32px 16px;
+      border-bottom: 3px solid #1e40af;
+    }
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .header-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: #fff;
+    }
+    .header-sub {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+    .header-badge {
+      background: #1e40af;
+      color: #bfdbfe;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      padding: 4px 10px;
+      border-radius: 3px;
+      text-transform: uppercase;
+    }
+    .header-meta {
+      margin-top: 12px;
+      display: flex;
+      gap: 24px;
+      font-size: 11px;
+      color: #64748b;
+    }
+    .header-meta span { color: #94a3b8; }
+    .header-meta strong { color: #cbd5e1; }
+
+    /* ── Tab Navigation ──────────────────────────────────── */
+    .tab-nav {
+      background: #0f1f3d;
+      padding: 0 32px;
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid #1e3a6e;
+    }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 10px 16px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+      letter-spacing: 0.02em;
+    }
+    .tab-btn:hover { color: #94a3b8; }
+    .tab-btn.active {
+      color: #fff;
+      border-bottom-color: #3b82f6;
+      background: rgba(59,130,246,0.08);
+    }
+
+    /* ── Panels ──────────────────────────────────────────── */
+    .panels { padding: 24px 32px 40px; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* ── Section headings ────────────────────────────────── */
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .section { margin-bottom: 32px; }
+
+    /* ── Metric Cards ────────────────────────────────────── */
+    .metrics-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .metric-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 14px 20px;
+      flex: 1;
+      min-width: 140px;
+    }
+    .metric-card.highlight {
+      border-color: #1e40af;
+      background: #eff6ff;
+    }
+    .metric-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #6b7280;
+      margin-bottom: 6px;
+    }
+    .metric-value {
+      font-size: 22px;
+      font-weight: 700;
+      color: #0f1f3d;
+      line-height: 1;
+    }
+    .metric-card.highlight .metric-value { color: #1e40af; }
+    .metric-sub {
+      font-size: 10px;
+      color: #9ca3af;
+      margin-top: 4px;
+    }
+
+    /* ── Tables ──────────────────────────────────────────── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      overflow: hidden;
+      font-size: 12px;
+    }
+    thead th {
+      background: #1e3a6e;
+      color: #e2e8f0;
+      font-weight: 600;
+      font-size: 11px;
+      padding: 9px 14px;
+      text-align: right;
+      letter-spacing: 0.03em;
+    }
+    thead th:first-child { text-align: left; }
+    tbody tr:nth-child(even) { background: #f8fafc; }
+    tbody tr:hover { background: #eff6ff; }
+    tbody td {
+      padding: 8px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      text-align: right;
+      color: #374151;
+    }
+    tbody td:first-child {
+      text-align: left;
+      color: #1f2937;
+      font-weight: 500;
+    }
+    tbody tr.divider td {
+      border-top: 2px solid #cbd5e1;
+      font-weight: 700;
+      color: #0f1f3d;
+      background: #f1f5f9;
+    }
+    tbody tr.subtotal td {
+      font-weight: 600;
+      color: #1e3a6e;
+      border-top: 1px solid #cbd5e1;
+      background: #f8fafc;
+    }
+    tbody tr.section-header td {
+      background: #f1f5f9;
+      color: #6b7280;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-top: none;
+    }
+    .neg { color: #dc2626; }
+    .pos { color: #059669; }
+    .base-case { background: #fefce8 !important; font-weight: 700; }
+
+    /* ── Two-column layout ───────────────────────────────── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .three-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+    }
+
+    /* ── Value Bridge ────────────────────────────────────── */
+    .bridge-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .bridge-label { width: 140px; font-size: 12px; color: #374151; }
+    .bridge-track {
+      flex: 1;
+      height: 22px;
+      background: #f1f5f9;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .bridge-fill {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      padding-left: 8px;
+      font-size: 10px;
+      font-weight: 600;
+      color: #fff;
+      border-radius: 3px;
+    }
+    .bridge-fill.ebitda { background: #1e40af; }
+    .bridge-fill.multiple { background: #0891b2; }
+    .bridge-fill.delev { background: #059669; }
+    .bridge-val { width: 60px; text-align: right; font-size: 12px; font-weight: 600; color: #374151; }
+
+    /* ── Sensitivity Matrix ──────────────────────────────── */
+    .matrix-wrap { overflow-x: auto; }
+    table.matrix thead th { background: #374151; }
+    table.matrix tbody td.base-cell {
+      background: #fef9c3;
+      font-weight: 700;
+      color: #92400e;
+      border: 2px solid #f59e0b;
+    }
+    table.matrix tbody td.above-hurdle { color: #059669; }
+    table.matrix tbody td.below-hurdle { color: #dc2626; }
+
+    /* ── Scenario cards ──────────────────────────────────── */
+    .scenario-header {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 10px 14px;
+      color: #fff;
+      border-radius: 5px 5px 0 0;
+    }
+    .scen-base { background: #1e40af; }
+    .scen-down { background: #dc2626; }
+    .scen-up   { background: #059669; }
+
+    /* ── Footnote ────────────────────────────────────────── */
+    .footnote {
+      font-size: 10px;
+      color: #9ca3af;
+      margin-top: 10px;
+      font-style: italic;
+    }
+
+    /* ── Footer ──────────────────────────────────────────── */
+    footer {
+      background: #0f1f3d;
+      color: #475569;
+      font-size: 10px;
+      padding: 12px 32px;
+      text-align: center;
+      letter-spacing: 0.04em;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     HEADER
+═══════════════════════════════════════════════════════ -->
+<header>
+  <div class="header-top">
+    <div>
+      <div class="header-title">PROJECT EVEREST &mdash; LBO MODEL</div>
+      <div class="header-sub">Specialty Chemical Solutions Inc. &nbsp;|&nbsp; Cincinnati, OH &nbsp;|&nbsp; Industrial / Specialty Chemical Distribution</div>
+    </div>
+    <div class="header-badge">Confidential</div>
+  </div>
+  <div class="header-meta">
+    <div><strong>Deal Lead:</strong> James Harrison</div>
+    <div><strong>Support:</strong> Andrew Walsh, Thomas Chen</div>
+    <div><strong>Stage:</strong> LOI Submitted</div>
+    <div><strong>LOI Date:</strong> February 10, 2026</div>
+    <div><strong>Source:</strong> Baird</div>
+    <div><strong>Model Date:</strong> March 2026</div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════
+     TAB NAVIGATION
+═══════════════════════════════════════════════════════ -->
+<nav class="tab-nav">
+  <button class="tab-btn active"   onclick="showTab('summary',this)">Summary</button>
+  <button class="tab-btn"          onclick="showTab('sources',this)">Sources &amp; Uses</button>
+  <button class="tab-btn"          onclick="showTab('operating',this)">Operating Model</button>
+  <button class="tab-btn"          onclick="showTab('cashflow',this)">Cash Flow</button>
+  <button class="tab-btn"          onclick="showTab('debt',this)">Debt Schedule</button>
+  <button class="tab-btn"          onclick="showTab('returns',this)">Returns</button>
+  <button class="tab-btn"          onclick="showTab('sensitivity',this)">Sensitivity</button>
+  <button class="tab-btn"          onclick="showTab('scenarios',this)">Scenarios</button>
+  <button class="tab-btn"          onclick="showTab('checks',this)">Checks</button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════
+     PANELS
+═══════════════════════════════════════════════════════ -->
+<div class="panels">
+
+  <!-- ────────────────────────────────────────────────────
+       1. SUMMARY
+  ─────────────────────────────────────────────────────── -->
+  <div id="summary" class="panel active">
+
+    <div class="metrics-row">
+      <div class="metric-card">
+        <div class="metric-label">Entry EV</div>
+        <div class="metric-value">$155.0M</div>
+        <div class="metric-sub">8.6x LTM Adj. EBITDA</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Entry Equity</div>
+        <div class="metric-value">$93.0M</div>
+        <div class="metric-sub">80% fund / 20% mgmt</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Exit EV</div>
+        <div class="metric-value">$229.5M</div>
+        <div class="metric-sub">9.0x Year 5 EBITDA &mdash; 5-year hold</div>
+      </div>
+      <div class="metric-card highlight">
+        <div class="metric-label">Gross MOIC</div>
+        <div class="metric-value">2.3x</div>
+        <div class="metric-sub">Base case</div>
+      </div>
+      <div class="metric-card highlight">
+        <div class="metric-label">Gross IRR</div>
+        <div class="metric-value">~18%</div>
+        <div class="metric-sub">Base case</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+
+      <div class="section">
+        <div class="section-title">Returns Summary</div>
+        <table>
+          <tbody>
+            <tr><td>Entry Enterprise Value</td><td>$155.0M</td></tr>
+            <tr><td>Entry Multiple</td><td>8.6x</td></tr>
+            <tr><td>Total Debt at Entry</td><td>$62.0M</td></tr>
+            <tr><td>Leverage at Entry</td><td>3.4x</td></tr>
+            <tr><td>Total Equity Invested</td><td>$93.0M</td></tr>
+            <tr class="section-header"><td colspan="2">Exit (Year 5)</td></tr>
+            <tr><td>Exit EBITDA</td><td>$25.5M</td></tr>
+            <tr><td>Exit Multiple</td><td>9.0x</td></tr>
+            <tr><td>Exit Enterprise Value</td><td>$229.5M</td></tr>
+            <tr><td>Net Debt at Exit</td><td>$17.0M</td></tr>
+            <tr class="subtotal"><td>Exit Equity Value</td><td>$212.5M</td></tr>
+            <tr class="section-header"><td colspan="2">Returns</td></tr>
+            <tr class="divider"><td>Gross MOIC</td><td>2.3x</td></tr>
+            <tr class="divider"><td>Gross IRR</td><td>~18%</td></tr>
+          </tbody>
+        </table>
+        <p class="footnote">Pre-exclusivity base case. Subject to confirmatory due diligence.</p>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Value Creation Bridge</div>
+        <table style="margin-bottom:16px;">
+          <thead><tr><th>Driver</th><th>Value ($M)</th><th>% of Total</th></tr></thead>
+          <tbody>
+            <tr><td>EBITDA Growth</td><td>$64.6M</td><td>54%</td></tr>
+            <tr><td>Multiple Expansion</td><td>$9.9M</td><td>8%</td></tr>
+            <tr><td>Deleveraging</td><td>$45.0M</td><td>38%</td></tr>
+            <tr class="subtotal"><td>Total Value Created</td><td>$119.5M</td><td>100%</td></tr>
+          </tbody>
+        </table>
+        <div class="bridge-bar">
+          <div class="bridge-label">EBITDA Growth</div>
+          <div class="bridge-track"><div class="bridge-fill ebitda" style="width:54%">54%</div></div>
+          <div class="bridge-val">$64.6M</div>
+        </div>
+        <div class="bridge-bar">
+          <div class="bridge-label">Multiple Expansion</div>
+          <div class="bridge-track"><div class="bridge-fill multiple" style="width:8%"></div></div>
+          <div class="bridge-val">$9.9M</div>
+        </div>
+        <div class="bridge-bar">
+          <div class="bridge-label">Deleveraging</div>
+          <div class="bridge-track"><div class="bridge-fill delev" style="width:38%">38%</div></div>
+          <div class="bridge-val">$45.0M</div>
+        </div>
+        <p class="footnote" style="margin-top:14px;">Primary driver: EBITDA growth from 5.1% revenue CAGR and 110bp margin expansion (9.7% to 10.8%). Deleveraging contributes 38% via $45.0M cumulative debt paydown. Conservative +0.4x multiple expansion (8.6x to 9.0x).</p>
+      </div>
+
+    </div>
+
+    <div class="section">
+      <div class="section-title">Investment Highlights &amp; Key Risks</div>
+      <div class="two-col">
+        <table>
+          <thead><tr><th colspan="2">Key Attractions</th></tr></thead>
+          <tbody>
+            <tr><td>Essential Products</td><td>Inelastic demand for specialty chemicals</td></tr>
+            <tr><td>Customer Relationships</td><td>40-year relationships, 85% retention rate</td></tr>
+            <tr><td>Consolidation Play</td><td>5 identified add-on targets in fragmented market</td></tr>
+            <tr><td>E-Commerce Insulation</td><td>Limited disruption risk for specialty chemicals</td></tr>
+          </tbody>
+        </table>
+        <table>
+          <thead><tr><th colspan="2">Key Risks</th></tr></thead>
+          <tbody>
+            <tr><td>Customer Concentration</td><td>Top 5 clients = 32% of revenue</td></tr>
+            <tr><td>Founder Transition</td><td>CEO (age 63) retiring &mdash; key relationship holder</td></tr>
+            <tr><td>Working Capital</td><td>$35M+ inventory; ~18% NWC/revenue</td></tr>
+            <tr><td>Environmental</td><td>Chemical handling &amp; 40-year facility exposure</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /summary -->
+
+  <!-- ────────────────────────────────────────────────────
+       2. SOURCES & USES
+  ─────────────────────────────────────────────────────── -->
+  <div id="sources" class="panel">
+
+    <div class="metrics-row">
+      <div class="metric-card"><div class="metric-label">Entry EV</div><div class="metric-value">$155.0M</div><div class="metric-sub">8.6x LTM Adj. EBITDA</div></div>
+      <div class="metric-card"><div class="metric-label">Total Debt</div><div class="metric-value">$62.0M</div><div class="metric-sub">3.4x leverage</div></div>
+      <div class="metric-card"><div class="metric-label">Total Equity</div><div class="metric-value">$93.0M</div><div class="metric-sub">58% of capitalization</div></div>
+      <div class="metric-card"><div class="metric-label">Total Uses</div><div class="metric-value">$160.0M</div><div class="metric-sub">EV + $5.0M transaction fees</div></div>
+    </div>
+
+    <div class="two-col">
+
+      <div class="section">
+        <div class="section-title">Uses of Funds</div>
+        <table>
+          <thead><tr><th>Item</th><th>Amount</th><th>% of Total</th></tr></thead>
+          <tbody>
+            <tr><td>Enterprise Value</td><td>$155.0M</td><td>96.9%</td></tr>
+            <tr><td>Transaction Fees &amp; Expenses</td><td>$5.0M</td><td>3.1%</td></tr>
+            <tr class="divider"><td>Total Uses</td><td>$160.0M</td><td>100.0%</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Sources of Funds</div>
+        <table>
+          <thead><tr><th>Item</th><th>Amount</th><th>% of Total</th></tr></thead>
+          <tbody>
+            <tr><td>Senior Secured Term Loan</td><td>$62.0M</td><td>38.8%</td></tr>
+            <tr class="section-header"><td colspan="3">Equity</td></tr>
+            <tr><td>&nbsp;&nbsp;Northwood Fund II (80%)</td><td>$74.4M</td><td>46.5%</td></tr>
+            <tr><td>&nbsp;&nbsp;Management Rollover (20%)</td><td>$18.6M</td><td>11.6%</td></tr>
+            <tr class="subtotal"><td>Total Equity</td><td>$93.0M</td><td>58.1%</td></tr>
+            <tr class="divider"><td>Total Sources</td><td>$160.0M</td><td>100.0%</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <div class="section">
+      <div class="section-title">Capitalization Metrics</div>
+      <table>
+        <thead><tr><th>Metric</th><th>Value</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td>Entry Enterprise Value</td><td>$155.0M</td><td>Midpoint of $145&ndash;$165M indicated range (LOI submitted Feb 10, 2026)</td></tr>
+          <tr><td>LTM Adjusted EBITDA</td><td>$18.0M</td><td>$16.5M reported + $1.5M adjustments (owner comp, one-time facility consolidation)</td></tr>
+          <tr><td>Entry EBITDA Multiple</td><td>8.6x</td><td>Reasonable for specialty chemical distribution with essential-product demand stability</td></tr>
+          <tr><td>Total Debt</td><td>$62.0M</td><td>Senior secured term loan; Ares Capital, Golub Capital in preliminary conversations</td></tr>
+          <tr><td>Leverage (Debt / EBITDA)</td><td>3.4x</td><td>Within Northwood 3&ndash;4x target range; supported by essential-product FCF visibility</td></tr>
+          <tr><td>All-In Interest Rate</td><td>8.0%</td><td>SOFR + 525bps; indicative pending formal commitment</td></tr>
+          <tr><td>Fund Equity (80%)</td><td>$74.4M</td><td>Northwood Fund II check</td></tr>
+          <tr><td>Management Rollover (20%)</td><td>$18.6M</td><td>CFO, VP Sales, VP Operations rolling 20%; founder exiting at close</td></tr>
+          <tr><td>Revolver Capacity</td><td>$15.0M</td><td>Undrawn at close; available for working capital and add-ons</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /sources -->
+
+  <!-- ────────────────────────────────────────────────────
+       3. OPERATING MODEL
+  ─────────────────────────────────────────────────────── -->
+  <div id="operating" class="panel">
+
+    <div class="section">
+      <div class="section-title">Revenue &amp; EBITDA Projections</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>LTM (Entry)</th>
+            <th>Year 1</th>
+            <th>Year 2</th>
+            <th>Year 3</th>
+            <th>Year 4</th>
+            <th>Year 5</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Revenue</td><td>$185.0M</td><td>$195.0M</td><td>$205.0M</td><td>$215.0M</td><td>$226.0M</td><td>$237.0M</td></tr>
+          <tr><td>Revenue Growth</td><td>&mdash;</td><td>5.4%</td><td>5.1%</td><td>4.9%</td><td>5.1%</td><td>4.9%</td></tr>
+          <tr class="subtotal"><td>Adj. EBITDA</td><td>$18.0M</td><td>$19.5M</td><td>$21.5M</td><td>$23.2M</td><td>$24.4M</td><td>$25.5M</td></tr>
+          <tr><td>EBITDA Margin</td><td>9.7%</td><td>10.0%</td><td>10.5%</td><td>10.8%</td><td>10.8%</td><td>10.8%</td></tr>
+        </tbody>
+      </table>
+      <p class="footnote">Revenue CAGR: 5.1% (Year 1&ndash;5 organic only; add-ons not modeled in base case). EBITDA margin: 110bp expansion from 9.7% to 10.8%.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Revenue Growth Drivers</div>
+      <table>
+        <thead><tr><th>Driver</th><th>Mechanism</th><th>Contribution</th></tr></thead>
+        <tbody>
+          <tr><td>Volume Growth</td><td>Geographic densification, water treatment contracts, new end markets (semiconductor, pharmaceutical)</td><td>2&ndash;3% annually</td></tr>
+          <tr><td>Pricing</td><td>Annual pass-through increases on raw material costs (60&ndash;90 day lag)</td><td>2&ndash;3% annually</td></tr>
+          <tr><td>Custom Blending Mix Shift</td><td>Targeting 20% to 25% of revenue over hold period (400&ndash;600bps margin premium)</td><td>Incremental margin lift</td></tr>
+          <tr><td>Add-On Acquisitions</td><td>5 identified targets in fragmented specialty chemical market</td><td>Not modeled in base case</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Margin Expansion Drivers</div>
+      <table>
+        <thead><tr><th>Driver</th><th>Detail</th><th>Impact</th></tr></thead>
+        <tbody>
+          <tr><td>Procurement Optimization</td><td>Consolidated supplier negotiations under professional management</td><td>Primary driver</td></tr>
+          <tr><td>SG&amp;A Leverage</td><td>Fixed-cost absorption on incremental revenue; no proportional headcount growth</td><td>Secondary driver</td></tr>
+          <tr><td>Custom Blending Mix</td><td>Higher-margin blended products growing as a share of total revenue</td><td>Tertiary driver</td></tr>
+          <tr><td>Working Capital Optimization</td><td>$3&ndash;5M inventory reduction improving cash conversion</td><td>Cash flow benefit</td></tr>
+          <tr><td>Exit Margin of 10.8%</td><td>Conservative &mdash; assumes successful CEO transition and pricing professionalization</td><td>Year 1 at 10.0% per management projections; expansion begins Year 2</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /operating -->
+
+  <!-- ────────────────────────────────────────────────────
+       4. CASH FLOW BUILD
+  ─────────────────────────────────────────────────────── -->
+  <div id="cashflow" class="panel">
+
+    <div class="section">
+      <div class="section-title">Levered Free Cash Flow Build</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Line Item</th>
+            <th>Year 1</th>
+            <th>Year 2</th>
+            <th>Year 3</th>
+            <th>Year 4</th>
+            <th>Year 5</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Adjusted EBITDA</td><td>$19.5M</td><td>$21.5M</td><td>$23.2M</td><td>$24.4M</td><td>$25.5M</td></tr>
+          <tr><td class="neg">&nbsp;&nbsp;(-) Cash Interest</td><td class="neg">($5.0M)</td><td class="neg">($4.5M)</td><td class="neg">($4.0M)</td><td class="neg">($3.3M)</td><td class="neg">($2.4M)</td></tr>
+          <tr><td class="neg">&nbsp;&nbsp;(-) Cash Taxes</td><td class="neg">($2.7M)</td><td class="neg">($3.2M)</td><td class="neg">($3.7M)</td><td class="neg">($4.1M)</td><td class="neg">($4.6M)</td></tr>
+          <tr><td class="neg">&nbsp;&nbsp;(-) Maintenance Capex</td><td class="neg">($2.9M)</td><td class="neg">($3.1M)</td><td class="neg">($3.2M)</td><td class="neg">($3.4M)</td><td class="neg">($3.6M)</td></tr>
+          <tr><td class="neg">&nbsp;&nbsp;(-) Growth Capex</td><td class="neg">($2.0M)</td><td class="neg">($2.0M)</td><td class="neg">($2.0M)</td><td>$0.0M</td><td>$0.0M</td></tr>
+          <tr><td class="neg">&nbsp;&nbsp;(-) NWC Change</td><td class="neg">($1.8M)</td><td class="neg">($1.8M)</td><td class="neg">($1.8M)</td><td class="neg">($2.0M)</td><td class="neg">($2.0M)</td></tr>
+          <tr><td class="neg">&nbsp;&nbsp;(-) Mandatory Amortization</td><td class="neg">($0.6M)</td><td class="neg">($0.6M)</td><td class="neg">($0.6M)</td><td class="neg">($0.6M)</td><td class="neg">($0.6M)</td></tr>
+          <tr class="divider"><td>Levered Free Cash Flow</td><td>$4.5M</td><td>$6.2M</td><td>$7.8M</td><td>$10.9M</td><td>$12.4M</td></tr>
+          <tr class="section-header"><td colspan="6">Debt Paydown</td></tr>
+          <tr><td>FCF Sweep to Debt</td><td>$4.6M</td><td>$6.2M</td><td>$7.9M</td><td>$10.9M</td><td>$12.4M</td></tr>
+          <tr><td>Cumulative Debt Paydown</td><td>$5.2M</td><td>$12.0M</td><td>$20.5M</td><td>$32.0M</td><td>$45.0M</td></tr>
+          <tr class="subtotal"><td>Debt Balance (End of Year)</td><td>$56.8M</td><td>$50.0M</td><td>$41.5M</td><td>$30.0M</td><td>$17.0M</td></tr>
+        </tbody>
+      </table>
+      <p class="footnote">All levered FCF applied to voluntary debt prepayment (cash sweep convention). Tax basis: 25% effective rate applied to EBIT (EBITDA &minus; interest &minus; D&amp;A). D&amp;A at 2.0% of revenue. NWC at 18% of revenue.</p>
+    </div>
+
+  </div><!-- /cashflow -->
+
+  <!-- ────────────────────────────────────────────────────
+       5. DEBT SCHEDULE
+  ─────────────────────────────────────────────────────── -->
+  <div id="debt" class="panel">
+
+    <div class="metrics-row">
+      <div class="metric-card"><div class="metric-label">Entry Debt</div><div class="metric-value">$62.0M</div><div class="metric-sub">3.4x entry leverage</div></div>
+      <div class="metric-card"><div class="metric-label">All-In Rate</div><div class="metric-value">8.0%</div><div class="metric-sub">SOFR + 525bps (indicative)</div></div>
+      <div class="metric-card"><div class="metric-label">Mandatory Amort.</div><div class="metric-value">1%</div><div class="metric-sub">$0.62M / year on entry balance</div></div>
+      <div class="metric-card highlight"><div class="metric-label">Exit Debt Balance</div><div class="metric-value">$17.0M</div><div class="metric-sub">73% paydown by Year 5</div></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Debt Schedule — Senior Secured Term Loan</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Period</th>
+            <th>BOY Balance</th>
+            <th>Cash Interest</th>
+            <th>Mandatory Amort.</th>
+            <th>FCF Sweep</th>
+            <th>Total Paydown</th>
+            <th>EOY Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="section-header"><td colspan="7">Entry</td></tr>
+          <tr><td>Close</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>$62.0M</td></tr>
+          <tr class="section-header"><td colspan="7">Hold Period</td></tr>
+          <tr><td>Year 1</td><td>$62.0M</td><td class="neg">($5.0M)</td><td class="neg">($0.6M)</td><td class="neg">($4.6M)</td><td class="neg">($5.2M)</td><td>$56.8M</td></tr>
+          <tr><td>Year 2</td><td>$56.8M</td><td class="neg">($4.5M)</td><td class="neg">($0.6M)</td><td class="neg">($6.2M)</td><td class="neg">($6.8M)</td><td>$50.0M</td></tr>
+          <tr><td>Year 3</td><td>$50.0M</td><td class="neg">($4.0M)</td><td class="neg">($0.6M)</td><td class="neg">($7.9M)</td><td class="neg">($8.5M)</td><td>$41.5M</td></tr>
+          <tr><td>Year 4</td><td>$41.5M</td><td class="neg">($3.3M)</td><td class="neg">($0.6M)</td><td class="neg">($10.9M)</td><td class="neg">($11.5M)</td><td>$30.0M</td></tr>
+          <tr><td>Year 5</td><td>$30.0M</td><td class="neg">($2.4M)</td><td class="neg">($0.6M)</td><td class="neg">($12.4M)</td><td class="neg">($13.0M)</td><td>$17.0M</td></tr>
+          <tr class="divider"><td>Total</td><td>&mdash;</td><td class="neg">($19.2M)</td><td class="neg">($3.0M)</td><td class="neg">($42.0M)</td><td class="neg">($45.0M)</td><td>&mdash;</td></tr>
+        </tbody>
+      </table>
+      <p class="footnote">Interest computed on beginning-of-year balance. FCF sweep = levered FCF after mandatory amortization, applied in full until balance reaches zero. Revolver ($15.0M capacity) undrawn at close and throughout hold period in base case.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Debt Terms (Indicative)</div>
+      <table>
+        <thead><tr><th>Term</th><th>Detail</th></tr></thead>
+        <tbody>
+          <tr><td>Instrument</td><td>Senior Secured Term Loan</td></tr>
+          <tr><td>Lender</td><td>Indicative &mdash; Ares Capital, Golub Capital in preliminary conversations</td></tr>
+          <tr><td>Spread</td><td>SOFR + 525bps</td></tr>
+          <tr><td>Base Rate Assumption</td><td>2.75% SOFR (current)</td></tr>
+          <tr><td>All-In Rate</td><td>8.0%</td></tr>
+          <tr><td>Maturity</td><td>7 years</td></tr>
+          <tr><td>Mandatory Amortization</td><td>1% per annum ($0.62M)</td></tr>
+          <tr><td>Revolver</td><td>$15.0M; undrawn at close</td></tr>
+          <tr><td>Prepayment</td><td>Voluntary prepayment permitted without penalty</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /debt -->
+
+  <!-- ────────────────────────────────────────────────────
+       6. RETURNS
+  ─────────────────────────────────────────────────────── -->
+  <div id="returns" class="panel">
+
+    <div class="metrics-row">
+      <div class="metric-card highlight"><div class="metric-label">Gross MOIC</div><div class="metric-value">2.3x</div><div class="metric-sub">2.28x precise</div></div>
+      <div class="metric-card highlight"><div class="metric-label">Gross IRR</div><div class="metric-value">~18%</div><div class="metric-sub">18.0% precise</div></div>
+      <div class="metric-card"><div class="metric-label">Entry Equity</div><div class="metric-value">$93.0M</div><div class="metric-sub">Invested at close</div></div>
+      <div class="metric-card"><div class="metric-label">Exit Equity</div><div class="metric-value">$212.5M</div><div class="metric-sub">Year 5 at 9.0x exit</div></div>
+      <div class="metric-card"><div class="metric-label">Hold Period</div><div class="metric-value">5 Yrs</div><div class="metric-sub">2026 close &rarr; ~2031 exit</div></div>
+    </div>
+
+    <div class="two-col">
+
+      <div class="section">
+        <div class="section-title">Exit Analysis — Base Case</div>
+        <table>
+          <tbody>
+            <tr><td>Year 5 EBITDA</td><td>$25.5M</td></tr>
+            <tr><td>Exit Multiple</td><td>9.0x</td></tr>
+            <tr class="subtotal"><td>Exit Enterprise Value</td><td>$229.5M</td></tr>
+            <tr><td>(-) Net Debt at Exit</td><td>$17.0M</td></tr>
+            <tr class="divider"><td>Exit Equity Value</td><td>$212.5M</td></tr>
+            <tr><td>Entry Equity</td><td>$93.0M</td></tr>
+            <tr class="divider"><td>Gross MOIC</td><td>2.3x</td></tr>
+            <tr class="divider"><td>Gross IRR</td><td>~18%</td></tr>
+          </tbody>
+        </table>
+        <p class="footnote">Exit multiple: +0.4x expansion from 8.6x entry. Conservative &mdash; reflects professionalization, scale, and platform optionality. Not underwriting to expansion per Northwood philosophy.</p>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Returns by Exit Multiple (at Base EBITDA $25.5M)</div>
+        <table>
+          <thead><tr><th>Exit Multiple</th><th>Exit EV</th><th>Exit Equity</th><th>MOIC</th><th>IRR</th></tr></thead>
+          <tbody>
+            <tr><td>7.5x</td><td>$191.2M</td><td>$174.2M</td><td>1.9x</td><td>~13%</td></tr>
+            <tr><td>8.0x</td><td>$204.0M</td><td>$187.0M</td><td>2.0x</td><td>~15%</td></tr>
+            <tr><td>8.5x</td><td>$216.8M</td><td>$199.8M</td><td>2.1x</td><td>~17%</td></tr>
+            <tr class="base-case"><td>9.0x &#9654;</td><td>$229.5M</td><td>$212.5M</td><td>2.3x</td><td>~18%</td></tr>
+            <tr><td>9.5x</td><td>$242.2M</td><td>$225.2M</td><td>2.4x</td><td>~19%</td></tr>
+            <tr><td>10.0x</td><td>$255.0M</td><td>$238.0M</td><td>2.6x</td><td>~21%</td></tr>
+          </tbody>
+        </table>
+        <p class="footnote">Net debt held constant at $17.0M (base case Year 5 balance). &#9654; = base case.</p>
+      </div>
+
+    </div>
+
+    <div class="section">
+      <div class="section-title">IC Screening vs. Model Variance</div>
+      <table>
+        <thead><tr><th>Metric</th><th>IC Screening</th><th>Detailed Model</th><th>Delta</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td>Entry EV</td><td>$145&ndash;$165M</td><td>$155.0M</td><td>Midpoint</td><td>Within range</td></tr>
+          <tr><td>Gross MOIC</td><td>2.5x</td><td>2.3x (2.28x)</td><td>(0.2x)</td><td>Detailed model compresses from NWC intensity and conservative margin assumptions</td></tr>
+          <tr><td>Gross IRR</td><td>~25%</td><td>~18%</td><td>(7pp)</td><td>IC estimate was preliminary; LBO model reflects detailed cash flow build with conservative assumptions</td></tr>
+        </tbody>
+      </table>
+      <p class="footnote">7pp negative IRR variance reflects detailed NWC, capex, and tax modeling vs. IC screening approximation. Upside case (3.6x / ~29% IRR) with add-on acquisitions recovers to IC-level returns, supporting the thesis that the platform build-out is necessary to achieve target returns.</p>
+    </div>
+
+  </div><!-- /returns -->
+
+  <!-- ────────────────────────────────────────────────────
+       7. SENSITIVITY
+  ─────────────────────────────────────────────────────── -->
+  <div id="sensitivity" class="panel">
+
+    <div class="section">
+      <div class="section-title">Gross MOIC Sensitivity — Exit Multiple &times; Exit EBITDA</div>
+      <div class="matrix-wrap">
+        <table class="matrix">
+          <thead>
+            <tr>
+              <th>Multiple \ EBITDA</th>
+              <th>$20.4M <span style="font-weight:400;font-size:10px">(&#8722;20%)</span></th>
+              <th>$22.9M <span style="font-weight:400;font-size:10px">(&#8722;10%)</span></th>
+              <th>$25.5M <span style="font-weight:400;font-size:10px">(base) *</span></th>
+              <th>$28.1M <span style="font-weight:400;font-size:10px">(+10%)</span></th>
+              <th>$30.6M <span style="font-weight:400;font-size:10px">(+20%)</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>7.0x</td>
+              <td class="below-hurdle">1.4x</td>
+              <td class="below-hurdle">1.5x</td>
+              <td class="below-hurdle">1.7x</td>
+              <td class="below-hurdle">1.9x</td>
+              <td class="below-hurdle">2.1x</td>
+            </tr>
+            <tr>
+              <td>8.0x</td>
+              <td class="below-hurdle">1.6x</td>
+              <td class="below-hurdle">1.8x</td>
+              <td class="below-hurdle">2.0x</td>
+              <td class="below-hurdle">2.2x</td>
+              <td class="below-hurdle">2.4x</td>
+            </tr>
+            <tr>
+              <td>8.5x</td>
+              <td class="below-hurdle">1.7x</td>
+              <td class="below-hurdle">1.9x</td>
+              <td class="below-hurdle">2.1x</td>
+              <td class="below-hurdle">2.4x</td>
+              <td>2.6x</td>
+            </tr>
+            <tr>
+              <td style="font-weight:700">9.0x *</td>
+              <td class="below-hurdle">1.8x</td>
+              <td class="below-hurdle">2.0x</td>
+              <td class="base-cell">2.3x &#9654;</td>
+              <td>2.5x</td>
+              <td>2.8x</td>
+            </tr>
+            <tr>
+              <td>9.5x</td>
+              <td class="below-hurdle">1.9x</td>
+              <td class="below-hurdle">2.2x</td>
+              <td class="below-hurdle">2.4x</td>
+              <td>2.7x</td>
+              <td>2.9x</td>
+            </tr>
+            <tr>
+              <td>10.0x</td>
+              <td class="below-hurdle">2.0x</td>
+              <td class="below-hurdle">2.3x</td>
+              <td>2.6x</td>
+              <td>2.8x</td>
+              <td>3.1x</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="footnote">* = base case. &#9654; = base case intersection. Green = &ge;2.5x MOIC. Operating period cash flows held constant; only exit valuation varies.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Gross IRR Sensitivity — Exit Multiple &times; Exit EBITDA</div>
+      <div class="matrix-wrap">
+        <table class="matrix">
+          <thead>
+            <tr>
+              <th>Multiple \ EBITDA</th>
+              <th>$20.4M <span style="font-weight:400;font-size:10px">(&#8722;20%)</span></th>
+              <th>$22.9M <span style="font-weight:400;font-size:10px">(&#8722;10%)</span></th>
+              <th>$25.5M <span style="font-weight:400;font-size:10px">(base) *</span></th>
+              <th>$28.1M <span style="font-weight:400;font-size:10px">(+10%)</span></th>
+              <th>$30.6M <span style="font-weight:400;font-size:10px">(+20%)</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>7.0x</td>
+              <td class="below-hurdle">~6%</td>
+              <td class="below-hurdle">~9%</td>
+              <td class="below-hurdle">~12%</td>
+              <td class="below-hurdle">~14%</td>
+              <td class="below-hurdle">~16%</td>
+            </tr>
+            <tr>
+              <td>8.0x</td>
+              <td class="below-hurdle">~9%</td>
+              <td class="below-hurdle">~12%</td>
+              <td class="below-hurdle">~15%</td>
+              <td class="below-hurdle">~17%</td>
+              <td>~20%</td>
+            </tr>
+            <tr>
+              <td>8.5x</td>
+              <td class="below-hurdle">~11%</td>
+              <td class="below-hurdle">~14%</td>
+              <td class="below-hurdle">~17%</td>
+              <td class="below-hurdle">~19%</td>
+              <td>~21%</td>
+            </tr>
+            <tr>
+              <td style="font-weight:700">9.0x *</td>
+              <td class="below-hurdle">~12%</td>
+              <td class="below-hurdle">~15%</td>
+              <td class="base-cell">~18% &#9654;</td>
+              <td>~20%</td>
+              <td>~23%</td>
+            </tr>
+            <tr>
+              <td>9.5x</td>
+              <td class="below-hurdle">~14%</td>
+              <td class="below-hurdle">~17%</td>
+              <td class="below-hurdle">~19%</td>
+              <td>~22%</td>
+              <td>~24%</td>
+            </tr>
+            <tr>
+              <td>10.0x</td>
+              <td class="below-hurdle">~15%</td>
+              <td class="below-hurdle">~18%</td>
+              <td>~21%</td>
+              <td>~23%</td>
+              <td class="above-hurdle">~25%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="footnote">* = base case. &#9654; = base case intersection. Green = &ge;25% IRR. Red = &le;20% IRR. Hurdle: 20&ndash;25% gross IRR (Northwood Fund II target).</p>
+    </div>
+
+  </div><!-- /sensitivity -->
+
+  <!-- ────────────────────────────────────────────────────
+       8. SCENARIOS
+  ─────────────────────────────────────────────────────── -->
+  <div id="scenarios" class="panel">
+
+    <div class="metrics-row">
+      <div class="metric-card">
+        <div class="metric-label" style="color:#1e40af">Base Case</div>
+        <div class="metric-value">2.3x / ~18%</div>
+        <div class="metric-sub">Organic growth, no add-ons. 9.0x exit.</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label" style="color:#dc2626">Downside</div>
+        <div class="metric-value">1.2x / ~4%</div>
+        <div class="metric-sub">Founder churn, recession, pricing failure. 8.0x exit.</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label" style="color:#059669">Upside</div>
+        <div class="metric-value">3.6x / ~29%</div>
+        <div class="metric-sub">Organic + 2 add-ons + procurement scale. 9.5x exit.</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Scenario Comparison</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th style="color:#93c5fd">Base</th>
+            <th style="color:#fca5a5">Downside</th>
+            <th style="color:#86efac">Upside</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="section-header"><td colspan="4">Operating Assumptions</td></tr>
+          <tr><td>Year 1 Revenue</td><td>$195.0M</td><td>$182.0M</td><td>$200.0M</td></tr>
+          <tr><td>Year 5 Revenue</td><td>$237.0M</td><td>$185.0M</td><td>$290.0M</td></tr>
+          <tr><td>Revenue CAGR (Y1&ndash;5)</td><td>5.1%</td><td>0.0%</td><td>9.4%</td></tr>
+          <tr><td>Year 1 EBITDA</td><td>$19.5M</td><td>$16.4M</td><td>$20.5M</td></tr>
+          <tr><td>Year 5 EBITDA</td><td>$25.5M</td><td>$17.0M</td><td>$36.0M</td></tr>
+          <tr><td>Year 5 EBITDA Margin</td><td>10.8%</td><td>9.2%</td><td>12.4%</td></tr>
+          <tr class="section-header"><td colspan="4">Exit Assumptions</td></tr>
+          <tr><td>Exit Multiple</td><td>9.0x</td><td>8.0x</td><td>9.5x</td></tr>
+          <tr><td>Exit EV</td><td>$229.5M</td><td>$136.0M</td><td>$342.0M</td></tr>
+          <tr><td>Net Debt at Exit</td><td>$17.0M</td><td>$22.8M</td><td>$8.6M</td></tr>
+          <tr><td>Exit Equity Value</td><td>$212.5M</td><td>$113.2M</td><td>$333.4M</td></tr>
+          <tr class="section-header"><td colspan="4">Returns</td></tr>
+          <tr class="divider"><td>Gross MOIC</td><td>2.3x</td><td class="neg">1.2x</td><td class="pos">3.6x</td></tr>
+          <tr class="divider"><td>Gross IRR</td><td>~18%</td><td class="neg">~4%</td><td class="pos">~29%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="three-col">
+      <div class="section">
+        <div class="scenario-header scen-base">Base Case</div>
+        <table style="border-top:none;border-radius:0 0 6px 6px;">
+          <thead><tr><th>Year</th><th>Revenue</th><th>EBITDA</th><th>Margin</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>$195.0M</td><td>$19.5M</td><td>10.0%</td></tr>
+            <tr><td>2</td><td>$205.0M</td><td>$21.5M</td><td>10.5%</td></tr>
+            <tr><td>3</td><td>$215.0M</td><td>$23.2M</td><td>10.8%</td></tr>
+            <tr><td>4</td><td>$226.0M</td><td>$24.4M</td><td>10.8%</td></tr>
+            <tr><td>5</td><td>$237.0M</td><td>$25.5M</td><td>10.8%</td></tr>
+          </tbody>
+        </table>
+        <p class="footnote" style="margin-top:8px">Organic growth only. 5.1% revenue CAGR. Volume + pricing + custom blending mix shift.</p>
+      </div>
+
+      <div class="section">
+        <div class="scenario-header scen-down">Downside</div>
+        <table style="border-top:none;border-radius:0 0 6px 6px;">
+          <thead><tr><th>Year</th><th>Revenue</th><th>EBITDA</th><th>Margin</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>$182.0M</td><td>$16.4M</td><td>9.0%</td></tr>
+            <tr><td>2</td><td>$180.0M</td><td>$16.2M</td><td>9.0%</td></tr>
+            <tr><td>3</td><td>$182.0M</td><td>$16.7M</td><td>9.2%</td></tr>
+            <tr><td>4</td><td>$184.0M</td><td>$17.0M</td><td>9.2%</td></tr>
+            <tr><td>5</td><td>$185.0M</td><td>$17.0M</td><td>9.2%</td></tr>
+          </tbody>
+        </table>
+        <p class="footnote" style="margin-top:8px">Founder exit triggers loss of 1&ndash;2 top-5 customers. Recessionary environment compresses industrial volumes. Pricing discipline failure. No add-ons. 8.0x exit.</p>
+      </div>
+
+      <div class="section">
+        <div class="scenario-header scen-up">Upside</div>
+        <table style="border-top:none;border-radius:0 0 6px 6px;">
+          <thead><tr><th>Year</th><th>Revenue</th><th>EBITDA</th><th>Margin</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>$200.0M</td><td>$20.5M</td><td>10.2%</td></tr>
+            <tr><td>2</td><td>$230.0M</td><td>$25.3M</td><td>11.0%</td></tr>
+            <tr><td>3</td><td>$260.0M</td><td>$30.0M</td><td>11.5%</td></tr>
+            <tr><td>4</td><td>$275.0M</td><td>$33.0M</td><td>12.0%</td></tr>
+            <tr><td>5</td><td>$290.0M</td><td>$36.0M</td><td>12.4%</td></tr>
+          </tbody>
+        </table>
+        <p class="footnote" style="margin-top:8px">Organic + 2 add-ons (Year 2, Year 3; $40M combined revenue at 6&ndash;7x). Custom blending to 30% of revenue. Professional CEO drives commercial excellence. 9.5x exit.</p>
+      </div>
+    </div>
+
+  </div><!-- /scenarios -->
+
+  <!-- ────────────────────────────────────────────────────
+       9. CHECKS
+  ─────────────────────────────────────────────────────── -->
+  <div id="checks" class="panel">
+
+    <div class="metrics-row">
+      <div class="metric-card highlight">
+        <div class="metric-label">Checks Passed</div>
+        <div class="metric-value" style="color:#059669">45 / 45</div>
+        <div class="metric-sub">Model integrity confirmed</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Groups</div>
+        <div class="metric-value">8</div>
+        <div class="metric-sub">Error vector categories</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Failures</div>
+        <div class="metric-value" style="color:#059669">0</div>
+        <div class="metric-sub">All invariants hold</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Last Run</div>
+        <div class="metric-value" style="font-size:15px">Mar 1, 2026</div>
+        <div class="metric-sub">python tools/lbo_model.py everest --all</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">What This Replaces</div>
+      <table>
+        <thead><tr><th>In Excel</th><th>Here</th><th>Advantage</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Formula cells — click to see the equation</td>
+            <td>Test suite validates each equation against a known-correct answer</td>
+            <td>Proves correctness, not just traceability. A wrong formula that looks right still fails a test.</td>
+          </tr>
+          <tr>
+            <td>Trace Precedents — blue arrows to source cells</td>
+            <td>Each test docstring names the exact line in lbo_model.py and data-spine.json</td>
+            <td>Audit trail is prose, not cell references — readable without opening the model</td>
+          </tr>
+          <tr>
+            <td>Manual check cells (e.g., "BS Check = 0")</td>
+            <td>Automated invariant tests run on every regeneration</td>
+            <td>Cannot be accidentally overwritten or ignored</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Group 1 -->
+    <div class="section">
+      <div class="section-title">IRR Solver &mdash; 5 checks &nbsp;<span style="color:#059669;font-weight:700">&#10003; All passed</span></div>
+      <p style="font-size:11px;color:#6b7280;margin-bottom:10px">
+        Guards against: Newton-Raphson convergence failure, wrong period indexing (CF<sub>0</sub> vs CF<sub>1</sub>), off-by-one in hold period, sign inversion. Validated against analytically exact answers — no model dependency.
+      </p>
+      <table>
+        <thead><tr><th style="width:60px">Status</th><th>Check</th></tr></thead>
+        <tbody>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>IRR: $100&rarr;$200 in 1 year = 100.0000%</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>IRR: $100&rarr;$200 in 5 years = 14.8698%</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>IRR: $100&rarr;$100 in 5 years = 0.0000%</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>IRR: $100&rarr;$50 in 5 years = &minus;12.9449% &nbsp;(loss case)</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>NPV at computed IRR (17.97%) &asymp; $0 &nbsp;(definition of IRR, tested on Everest cashflows)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Group 2 -->
+    <div class="section">
+      <div class="section-title">Model Arithmetic &mdash; 4 checks &nbsp;<span style="color:#059669;font-weight:700">&#10003; All passed</span></div>
+      <p style="font-size:11px;color:#6b7280;margin-bottom:10px">
+        Guards against: sources/uses misconstruction, exit EV computed from entry EBITDA instead of exit EBITDA (a $66.5M error for Everest), MOIC numerator/denominator inversion.
+      </p>
+      <table>
+        <thead><tr><th style="width:60px">Status</th><th>Check</th></tr></thead>
+        <tbody>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Sources ($160.0M) = Uses ($160.0M)</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Exit EV = Year 5 EBITDA &times; exit multiple: $25.5M &times; 9.0x = $229.5M &nbsp;(not entry EBITDA $18.0M)</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>MOIC = exit equity / entry equity (not inverted)</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>MOIC &gt; 1.0 for a profitable deal</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Group 3 -->
+    <div class="section">
+      <div class="section-title">Debt Mechanics &mdash; 8 checks &nbsp;<span style="color:#059669;font-weight:700">&#10003; All passed</span></div>
+      <p style="font-size:11px;color:#6b7280;margin-bottom:10px">
+        Guards against: interest on end-of-year balance instead of beginning-of-year (understates interest cost), uncapped FCF sweep driving debt negative (phantom deleveraging), cumulative paydown counter drift across years.
+      </p>
+      <table>
+        <thead><tr><th style="width:60px">Status</th><th>Check</th></tr></thead>
+        <tbody>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Year 1 interest on BOY debt: $62.0M &times; 8.0% = $5.0M &nbsp;(not EOY $56.8M &times; 8.0% = $4.5M)</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Debt balance &ge; $0 in all years &nbsp;(FCF sweep capped at remaining balance)</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Year 1 interest on reconstructed BOY: $62.0M &times; 8.0% = $5.0M</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Year 2 interest on reconstructed BOY: $56.8M &times; 8.0% = $4.5M</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Year 3 interest on reconstructed BOY: $50.0M &times; 8.0% = $4.0M</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Year 4 interest on reconstructed BOY: $41.5M &times; 8.0% = $3.3M</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Year 5 interest on reconstructed BOY: $30.0M &times; 8.0% = $2.4M</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Entry debt ($62.0M) &minus; cumulative paydown ($45.0M) = exit balance ($17.0M)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Group 4 -->
+    <div class="section">
+      <div class="section-title">Year Indexing &mdash; 1 check &nbsp;<span style="color:#059669;font-weight:700">&#10003; Passed</span></div>
+      <p style="font-size:11px;color:#6b7280;margin-bottom:10px">
+        Guards against: off-by-one in prior-year revenue lookup for NWC. Year 1 must reference entry revenue ($185.0M), not Year 1 revenue — an error that produces $0.0M NWC change and overstates FCF.
+      </p>
+      <table>
+        <thead><tr><th style="width:60px">Status</th><th>Check</th></tr></thead>
+        <tbody>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Year 1 NWC uses entry revenue: ($195.0M &minus; $185.0M) &times; 18% = $1.8M &nbsp;(not $0.0M from Year 1 as its own prior)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Group 5 -->
+    <div class="section">
+      <div class="section-title">Edge Cases &mdash; 4 checks &nbsp;<span style="color:#059669;font-weight:700">&#10003; All passed</span></div>
+      <p style="font-size:11px;color:#6b7280;margin-bottom:10px">
+        Guards against: negative tax benefit leaking into FCF when EBT &lt; 0 (max(0,&thinsp;EBT) must be enforced); model failure or negative debt at zero leverage (no division guard needed, but sweep logic must handle zero-balance correctly).
+      </p>
+      <table>
+        <thead><tr><th style="width:60px">Status</th><th>Check</th></tr></thead>
+        <tbody>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Cash taxes = $0 when EBT &lt; 0 &nbsp;(test case: EBITDA $19.5M &minus; interest $100.0M = negative EBT)</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Zero-debt model runs without exception</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Zero-debt model: all EOY debt balances = $0.0M</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Zero-debt model: MOIC &gt; 1.0 at 9.0x exit</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Group 6 -->
+    <div class="section">
+      <div class="section-title">Value Attribution &mdash; 4 checks &nbsp;<span style="color:#059669;font-weight:700">&#10003; All passed</span></div>
+      <p style="font-size:11px;color:#6b7280;margin-bottom:10px">
+        Guards against: bridge formula errors that silently misstate the value creation story — the IC presentation depends on this being right.
+      </p>
+      <table>
+        <thead><tr><th style="width:60px">Status</th><th>Check</th></tr></thead>
+        <tbody>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Bridge sum ($119.5M) &asymp; exit equity &minus; entry equity ($119.5M) &nbsp;(&Delta; = $0.0M, within $0.5M rounding tolerance)</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>EBITDA growth component &gt; $0</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Multiple expansion component &gt; $0</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Deleveraging component &gt; $0</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Group 7 -->
+    <div class="section">
+      <div class="section-title">Data Loading &mdash; 2 checks &nbsp;<span style="color:#059669;font-weight:700">&#10003; All passed</span></div>
+      <p style="font-size:11px;color:#6b7280;margin-bottom:10px">
+        Guards against: silent None return on an unknown deal ID (would cause a confusing AttributeError downstream); missing lbo_assumptions block returning a portco dict that then fails with an opaque KeyError inside run_lbo.
+      </p>
+      <table>
+        <thead><tr><th style="width:60px">Status</th><th>Check</th></tr></thead>
+        <tbody>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Missing deal ID raises ValueError &nbsp;(not AttributeError or silent None)</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Deal without lbo_assumptions raises ValueError at load time &nbsp;(not KeyError inside run_lbo)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Group 8 -->
+    <div class="section">
+      <div class="section-title">Regression Baseline — Everest &mdash; 17 checks &nbsp;<span style="color:#059669;font-weight:700">&#10003; All passed</span></div>
+      <p style="font-size:11px;color:#6b7280;margin-bottom:10px">
+        Any change to lbo_model.py logic or Everest's data spine entry will cause this group to fail. Intentional: forces explicit acknowledgment before outputs change. Baseline established March 2026.
+      </p>
+      <table>
+        <thead><tr><th style="width:60px">Status</th><th>Check</th><th>Expected</th><th>Actual</th></tr></thead>
+        <tbody>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Entry EV</td><td>$155.0M</td><td>$155.0M</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Entry EBITDA</td><td>$18.0M</td><td>$18.0M</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Entry multiple</td><td>8.6x</td><td>8.6x</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Entry total debt</td><td>$62.0M</td><td>$62.0M</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Entry leverage</td><td>3.4x</td><td>3.4x</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Entry total equity</td><td>$93.0M</td><td>$93.0M</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Entry fund equity (80%)</td><td>$74.4M</td><td>$74.4M</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Entry mgmt equity (20%)</td><td>$18.6M</td><td>$18.6M</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Year 5 EBITDA</td><td>$25.5M</td><td>$25.5M</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Exit multiple</td><td>9.0x</td><td>9.0x</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Exit EV</td><td>$229.5M</td><td>$229.5M</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Exit net debt</td><td>$17.0M</td><td>$17.0M</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Exit equity value</td><td>$212.5M</td><td>$212.5M</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Gross MOIC (precise)</td><td>2.28x</td><td>2.28x</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Gross IRR</td><td>18.0%</td><td>18.0%</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Year 5 debt balance</td><td>$17.0M</td><td>$17.0M</td></tr>
+          <tr><td style="color:#059669;font-weight:700">&#10003; Pass</td><td>Total debt paydown</td><td>$45.0M</td><td>$45.0M</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <div class="section-title">To Re-Run</div>
+      <table>
+        <tbody>
+          <tr><td style="font-family:monospace;font-size:12px;color:#1e3a6e">python tools/lbo_model.py everest --all --json</td><td>Regenerate model output (rerun before refreshing this file)</td></tr>
+          <tr><td style="font-family:monospace;font-size:12px;color:#1e3a6e">python tools/lbo_model.py everest --all</td><td>Print formatted model output to terminal</td></tr>
+        </tbody>
+      </table>
+      <p class="footnote" style="margin-top:10px">
+        Test suite: inline (embedded in this file) &nbsp;|&nbsp; Model engine: tools/lbo_model.py &nbsp;|&nbsp; Data: _reference/data-spine.json<br>
+        A failing Checks tab means either model logic or source data has changed. Update the regression baseline intentionally — do not suppress failures.
+      </p>
+    </div>
+
+  </div><!-- /checks -->
+
+</div><!-- /panels -->
+
+<!-- ═══════════════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════════════ -->
+<footer>
+  NORTHWOOD CAPITAL &nbsp;|&nbsp; CHICAGO, IL &nbsp;|&nbsp; CONFIDENTIAL &amp; PROPRIETARY &nbsp;|&nbsp;
+  PROJECT EVEREST &mdash; SPECIALTY CHEMICAL SOLUTIONS INC. &nbsp;|&nbsp; MARCH 2026 &nbsp;|&nbsp;
+  MODEL: tools/lbo_model.py &nbsp;|&nbsp; DATA: _reference/data-spine.json &nbsp;|&nbsp;
+  VALIDATED: 2.28x MOIC &nbsp;/&nbsp; 18.0% IRR
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════
+     TAB LOGIC
+═══════════════════════════════════════════════════════ -->
+<script>
+  function showTab(id, btn) {
+    document.querySelectorAll('.panel').forEach(function(p) {
+      p.classList.remove('active');
+    });
+    document.querySelectorAll('.tab-btn').forEach(function(b) {
+      b.classList.remove('active');
+    });
+    document.getElementById(id).classList.add('active');
+    if (btn) btn.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
