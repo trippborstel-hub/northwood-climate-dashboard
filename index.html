@@ -94,6 +94,8 @@
   }
   .status-complete { background: var(--green); }
   .status-active { background: var(--yellow); }
+  .status-pending { background: var(--text3); }
+  .nav-item-disabled { opacity: 0.45; pointer-events: none; cursor: default; }
   .status-future { background: var(--border); }
 
   .sidebar-footer {
@@ -128,15 +130,37 @@
       <a class="nav-item active" data-src="proposal.html">Proposal</a>
     </div>
 
-    <!-- ANALYSIS -->
+    <!-- WEEK 2: DATA AUDIT -->
     <div class="nav-section">
-      <div class="nav-section-label">Analysis</div>
+      <div class="nav-section-label">Week 2: Data Audit</div>
       <a class="nav-item" data-src="data-analysis.html">
         Data Assessment
         <span class="status status-complete"></span>
       </a>
+      <a class="nav-item" data-src="step1/data-pond.html">
+        Data Pool
+        <span class="status status-complete"></span>
+      </a>
+    </div>
+
+    <!-- WEEK 3: CARBON INVENTORY -->
+    <div class="nav-section">
+      <div class="nav-section-label">Week 3: Carbon Inventory</div>
       <a class="nav-item" data-src="carbon-inventory.html">
         Carbon Inventory
+        <span class="status status-active"></span>
+      </a>
+    </div>
+
+    <!-- WEEK 4: MATERIALITY + INITIATIVES -->
+    <div class="nav-section">
+      <div class="nav-section-label">Week 4: Materiality + Initiatives</div>
+      <a class="nav-item" data-src="esg-scorecard.html">
+        ESG Scorecard
+        <span class="status status-active"></span>
+      </a>
+      <a class="nav-item" data-src="decarbonization.html">
+        Decarbonization
         <span class="status status-active"></span>
       </a>
       <a class="nav-item" data-src="physical-risk.html">
@@ -149,33 +173,12 @@
       </a>
     </div>
 
-    <!-- STRATEGY -->
+    <!-- WEEK 5: TRACKING DASHBOARD -->
     <div class="nav-section">
-      <div class="nav-section-label">Strategy</div>
-      <a class="nav-item" data-src="esg-scorecard.html">
-        ESG Scorecard
-        <span class="status status-active"></span>
-      </a>
-      <a class="nav-item" data-src="decarbonization.html">
-        Decarbonization
-        <span class="status status-active"></span>
-      </a>
-      <a class="nav-item" data-src="recommendations.html">
-        Recommendations
-        <span class="status status-complete"></span>
-      </a>
-    </div>
-
-    <!-- REFERENCE -->
-    <div class="nav-section">
-      <div class="nav-section-label">Reference</div>
-      <a class="nav-item" data-src="portco-financials.html">
-        Portco Financials
-        <span class="status status-complete"></span>
-      </a>
-      <a class="nav-item" data-src="step1/data-pond.html">
-        Data Pond
-        <span class="status status-complete"></span>
+      <div class="nav-section-label">Week 5: Tracking Dashboard</div>
+      <a class="nav-item nav-item-disabled">
+        Carbon Tracking
+        <span class="status status-pending"></span>
       </a>
     </div>
   </nav>
