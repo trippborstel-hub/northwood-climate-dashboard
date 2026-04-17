@@ -3,7 +3,7 @@ import { PORTCOS, FACILITIES, TRAJECTORY, SCOPE1_SOURCES, INITIATIVES, RISK_SUMM
 
 const SCOPE1_COLOR = '#e8724c';
 const SCOPE2_COLOR = '#58a6ff';
-const TARGET_COLOR = '#5bb8a4';
+const TARGET_COLOR = '#4a7ba8';
 
 let portfolioChart = null;
 let detailChart = null;

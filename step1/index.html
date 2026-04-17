@@ -7,7 +7,7 @@
 <style>
   :root {
     --bg: #0f1117; --surface: #1a1d27; --surface2: #232735; --border: #2e3345;
-    --text: #e2e4ea; --text-muted: #8b8fa3; --accent: #5bb8a4; --header-bg: #15171f;
+    --text: #e2e4ea; --text-muted: #8b8fa3; --accent: #4a7ba8; --header-bg: #15171f;
     --green: #4caf50; --yellow: #e8a84c; --red: #e85d5d; --orange: #e8724c; --none: #555a6e;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,7 +32,7 @@
   .week-block .week-label { font-size: 13px; font-weight: 700; color: #fff; }
   .week-block .week-step { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
   .week-block.completed { background: rgba(76,175,80,0.12); }
-  .week-block.current { background: rgba(91,184,164,0.18); border: 2px solid var(--accent); }
+  .week-block.current { background: rgba(74,123,168,0.18); border: 2px solid var(--accent); }
   .week-block.upcoming { background: var(--surface); }
   .week-block.current::after { content: 'WE ARE HERE'; position: absolute; top: -1px; left: 50%; transform: translateX(-50%); background: var(--accent); color: var(--bg); font-size: 9px; font-weight: 800; letter-spacing: 0.8px; padding: 2px 10px; border-radius: 0 0 4px 4px; }
 
@@ -84,7 +84,7 @@
   .dep-row:last-child { margin-bottom: 0; }
   .dep-node { padding: 8px 16px; border-radius: 6px; font-size: 12px; font-weight: 600; white-space: nowrap; }
   .dep-node.done { background: rgba(76,175,80,0.15); color: var(--green); border: 1px solid rgba(76,175,80,0.3); }
-  .dep-node.active { background: rgba(91,184,164,0.15); color: var(--accent); border: 1px solid rgba(91,184,164,0.3); }
+  .dep-node.active { background: rgba(74,123,168,0.15); color: var(--accent); border: 1px solid rgba(74,123,168,0.3); }
   .dep-node.waiting { background: rgba(232,168,76,0.12); color: var(--yellow); border: 1px solid rgba(232,168,76,0.25); }
   .dep-node.blocked { background: rgba(232,93,93,0.12); color: var(--red); border: 1px solid rgba(232,93,93,0.25); }
   .dep-node.future { background: var(--surface2); color: var(--none); border: 1px solid var(--border); }
@@ -307,7 +307,7 @@
         <li>E-11: Prorate Patriot Louisville (full year to 8 months closed branch)</li>
       </ul>
     </div>
-    <div class="ns-owner"><strong>Owner:</strong> Kith</div>
+    <div class="ns-owner"><strong>Owner:</strong> Internal team</div>
   </div>
 
   <div class="ns-card active">
@@ -321,7 +321,7 @@
         <li>Flag Tier 1 items as immediate (CC access, co-build partner, 2 quick confirmations)</li>
       </ul>
     </div>
-    <div class="ns-owner"><strong>Owner:</strong> Kith</div>
+    <div class="ns-owner"><strong>Owner:</strong> Internal team</div>
   </div>
 
   <div class="ns-card active">
@@ -336,7 +336,7 @@
         <li>Draft the calculation methodology documentation</li>
       </ul>
     </div>
-    <div class="ns-owner"><strong>Owner:</strong> Kith</div>
+    <div class="ns-owner"><strong>Owner:</strong> Internal team</div>
   </div>
 
   <div class="ns-card active">
@@ -351,7 +351,7 @@
         <li>Designed for portco CFO/COO self-service — clear instructions, example entries</li>
       </ul>
     </div>
-    <div class="ns-owner"><strong>Owner:</strong> Kith</div>
+    <div class="ns-owner"><strong>Owner:</strong> Internal team</div>
   </div>
 
   <div class="ns-card waiting">
@@ -400,7 +400,7 @@
         <li>Update Deliverables 2-4 with revised assessments</li>
       </ul>
     </div>
-    <div class="ns-owner"><strong>Owner:</strong> Kith</div>
+    <div class="ns-owner"><strong>Owner:</strong> Internal team</div>
   </div>
 
   <div class="ns-card future">
@@ -417,7 +417,7 @@
         <li>Scope 1+2 baseline calculation can begin for all 3 priority portcos</li>
       </ul>
     </div>
-    <div class="ns-owner"><strong>Owner:</strong> Kith + co-build partner</div>
+    <div class="ns-owner"><strong>Owner:</strong> Internal team + co-build partner</div>
   </div>
 </div>
 
@@ -438,7 +438,7 @@
 
 <div class="key-decision">
   <div class="kd-title">Decision 3: CC Environment — Build or Wait?</div>
-  <p>If CC access isn't available by the end of Week 2, we recommend building the prototype in Kith's local environment and migrating later. This adds a migration step but prevents the system build from falling behind schedule. We'll raise this with Sarah if R-01 isn't resolved by April 3.</p>
+  <p>If CC access isn't available by the end of Week 2, we recommend building the prototype in our local environment and migrating later. This adds a migration step but prevents the system build from falling behind schedule. We'll raise this with Sarah if R-01 isn't resolved by April 3.</p>
 </div>
 
 <div class="key-decision">
@@ -495,7 +495,7 @@
 <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px;margin:16px 0;">
   <p style="font-size:14px;color:var(--text);margin-bottom:14px;">Assuming Tier 1 data arrives this week, here's what Week 2 looks like:</p>
   <table>
-  <thead><tr><th>Day</th><th>Kith Activity</th><th>Client Activity</th></tr></thead>
+  <thead><tr><th>Day</th><th>Internal Activity</th><th>Client Activity</th></tr></thead>
   <tbody>
   <tr><td class="item" style="white-space:nowrap;">Mon Mar 30</td><td style="color:var(--text-muted);">Apply Phase 1 fixes to CSV. Begin CC schema build (locally or in CC). Deliver standardized collection template draft.</td><td style="color:var(--text-muted);">Tier 1 responses due. CC access + co-build partner confirmed.</td></tr>
   <tr><td class="item" style="white-space:nowrap;">Tue-Wed</td><td style="color:var(--text-muted);">Integrate Tier 2 portco responses as they arrive. Build emission factor library. Begin Scope 1+2 baseline calculation for Meridian and Sterling (cleanest data).</td><td style="color:var(--text-muted);">Portco contacts respond to R-05 through R-08.</td></tr>
@@ -506,7 +506,7 @@
 </div>
 
 <div class="footer">
-  Kith Consulting &bull; Northwood Capital Partners Engagement &bull; Status &amp; Next Steps &bull; March 26, 2026
+  Northwood Climate Program &bull; Northwood Capital Partners Engagement &bull; Status &amp; Next Steps &bull; March 26, 2026
 </div>
 
 </body>

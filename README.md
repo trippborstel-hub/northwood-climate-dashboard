@@ -1,6 +1,6 @@
 # Northwood Climate Dashboard
 
-The living workspace for Kith Consulting's 6-week climate data and strategy engagement with Northwood Capital Partners.
+The living workspace for Northwood Climate Program's 6-week climate data and strategy engagement with Northwood Capital Partners.
 
 **Live site:** https://trippborstel-hub.github.io/northwood-climate-dashboard/
 

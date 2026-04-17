@@ -9,9 +9,9 @@
   :root {
     --bg: #0f1117; --surface: #1a1d27; --surface2: #232735; --surface3: #2a2e3f;
     --border: #2e3345; --text: #e2e4ea; --text-muted: #8b8fa3; --text-dim: #5a5e72;
-    --accent: #5bb8a4; --accent-dim: rgba(91,184,164,0.12); --white: #fff;
+    --accent: #4a7ba8; --accent-dim: rgba(74,123,168,0.12); --white: #fff;
     --green: #4caf50; --yellow: #e8a84c; --red: #e85d5d;
-    --scope1: #e8724c; --scope2: #5b8fe8; --target-line: #5bb8a4;
+    --scope1: #e8724c; --scope2: #5b8fe8; --target-line: #4a7ba8;
     --capex: #b07cf0; --opex: #e8a84c;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -28,7 +28,7 @@
   .selector-group-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim); width: 100%; margin-bottom: 2px; }
   .selector-btn { padding: 7px 14px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
   .selector-btn:hover { background: var(--surface2); color: var(--text); }
-  .selector-btn.active { background: var(--accent-dim); color: var(--accent); border-color: rgba(91,184,164,0.3); font-weight: 600; }
+  .selector-btn.active { background: var(--accent-dim); color: var(--accent); border-color: rgba(74,123,168,0.3); font-weight: 600; }
   .selector-btn .fund-tag { font-size: 10px; color: var(--text-dim); margin-left: 4px; }
   .selector-btn.fund-btn { border-style: dashed; }
 
@@ -39,7 +39,7 @@
   .ctrl input:focus, .ctrl select:focus { outline: none; border-color: var(--accent); }
   .toggle-group { display: flex; gap: 4px; }
   .toggle-btn { flex: 1; padding: 6px 10px; border-radius: 5px; border: 1px solid var(--border); background: var(--surface2); color: var(--text-muted); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
-  .toggle-btn.active { background: var(--accent-dim); color: var(--accent); border-color: rgba(91,184,164,0.4); }
+  .toggle-btn.active { background: var(--accent-dim); color: var(--accent); border-color: rgba(74,123,168,0.4); }
 
   .preset-row { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
   .preset-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-dim); margin-right: 4px; }
@@ -72,7 +72,7 @@
   .lever-table td:nth-child(1), .lever-table td:nth-child(2), .lever-table td:nth-child(3) { text-align: left; }
   .budget-table td:nth-child(1) { text-align: left; font-weight: 600; }
   .lever-table tr:last-child td, .budget-table tr:last-child td { border-bottom: none; }
-  .lever-table tr.selected { background: rgba(91,184,164,0.05); }
+  .lever-table tr.selected { background: rgba(74,123,168,0.05); }
   .lever-table tr:hover { background: var(--surface2); cursor: pointer; }
   .badge { display: inline-block; padding: 2px 7px; border-radius: 3px; font-size: 10px; font-weight: 600; }
   .badge.s1 { background: rgba(232,114,76,0.15); color: var(--scope1); }
@@ -202,7 +202,7 @@
   </div>
 
   <div class="footnote">
-    <strong>Methodology.</strong> LCOA = levelized cost over lever lifetime at the discount rate, net of energy savings, before carbon price. <strong>Target Optimization</strong> finds the minimum-cost lever set meeting the SBTi target at the planning horizon (greedy add in LCOA order, then trim overshoot). <strong>Exit Value Optimization</strong> selects levers with simple payback ≤ hold period. Efficiency levers reduce the load renewable procurement then fills (no double-count). Roll-up views auto-apply Target Optimization to each portco. Maintenance capex defaults: 1.5% of revenue (manufacturing/industrial), 1.0% (services/healthcare), 0.8% (staffing). Harvest Ridge and Ridgeline baselines are Kith estimates pending data collection.
+    <strong>Methodology.</strong> LCOA = levelized cost over lever lifetime at the discount rate, net of energy savings, before carbon price. <strong>Target Optimization</strong> finds the minimum-cost lever set meeting the SBTi target at the planning horizon (greedy add in LCOA order, then trim overshoot). <strong>Exit Value Optimization</strong> selects levers with simple payback ≤ hold period. Efficiency levers reduce the load renewable procurement then fills (no double-count). Roll-up views auto-apply Target Optimization to each portco. Maintenance capex defaults: 1.5% of revenue (manufacturing/industrial), 1.0% (services/healthcare), 0.8% (staffing). Harvest Ridge and Ridgeline baselines are internal estimates pending data collection.
   </div>
 
 </div>
@@ -695,7 +695,7 @@ function renderGlide() {
   const totalByLever={};
   selectedLevers.forEach(l=>{totalByLever[l.id]=years.reduce((s,y)=>s+(abatementByLever(y)[l.id]||0),0);});
   const topIds=Object.entries(totalByLever).sort((a,b)=>b[1]-a[1]).slice(0,5).map(e=>e[0]);
-  const COLORS=['rgba(91,184,164,0.55)','rgba(91,143,232,0.55)','rgba(176,124,240,0.55)','rgba(232,168,76,0.55)','rgba(232,114,76,0.55)'];
+  const COLORS=['rgba(74,123,168,0.55)','rgba(91,143,232,0.55)','rgba(176,124,240,0.55)','rgba(232,168,76,0.55)','rgba(232,114,76,0.55)'];
   const otherIds=selectedLevers.map(l=>l.id).filter(id=>!topIds.includes(id));
   const bands=[sel.slice()];
   topIds.forEach(id=>{const prev=bands[bands.length-1];bands.push(prev.map((v,i)=>v+(abatementByLever(years[i])[id]||0)));});
@@ -704,7 +704,7 @@ function renderGlide() {
   topIds.forEach((id,i)=>{const lev=LEVERS().find(l=>l.id===id);datasets.push({label:lev.name,_rank:-(totalByLever[id]||0),data:bands[i+1],borderColor:COLORS[i].replace('0.55','0.85'),backgroundColor:COLORS[i],fill:'-1',tension:0.25,pointRadius:0,borderWidth:1});});
   if(otherIds.length>0)datasets.push({label:`Other (${otherIds.length})`,_rank:1e6+1,data:bands[bands.length-1],borderColor:'rgba(139,143,163,0.6)',backgroundColor:'rgba(139,143,163,0.35)',fill:'-1',tension:0.25,pointRadius:0,borderWidth:1});
   datasets.push({label:'BAU',_rank:1e6+2,data:bau,borderColor:'#e8724c',borderWidth:2,fill:false,tension:0.2,pointRadius:0,borderDash:[2,3]});
-  datasets.push({label:'SBTi Target',_rank:1e6+3,data:tgt,borderColor:'#5bb8a4',borderDash:[6,4],borderWidth:2.5,fill:false,pointRadius:0});
+  datasets.push({label:'SBTi Target',_rank:1e6+3,data:tgt,borderColor:'#4a7ba8',borderDash:[6,4],borderWidth:2.5,fill:false,pointRadius:0});
   if(glideChart)glideChart.destroy();
   glideChart=new Chart(document.getElementById('glideChart'),{type:'line',data:{labels:years,datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',align:'start',labels:{color:'#8b8fa3',font:{size:10},boxWidth:10,boxHeight:10,padding:10,sort:(a,b,d)=>(d.datasets[a.datasetIndex]._rank??0)-(d.datasets[b.datasetIndex]._rank??0)}},tooltip:{mode:'index'}},scales:{x:{ticks:{color:'#5a5e72'},grid:{color:'#2e3345'}},y:{min:targetEmissions(state.horizonEnd),ticks:{color:'#5a5e72',callback:v=>v.toLocaleString()},grid:{color:'#2e3345'},title:{display:true,text:'tCO2e',color:'#5a5e72'}}}}});
 }
@@ -712,7 +712,7 @@ function renderGlide() {
 function renderMacc() {
   const sorted=[...LEVERS()].sort((a,b)=>lcoa(a)-lcoa(b));
   const labels=sorted.map(l=>{const lc=Math.round(lcoa(l));return`${l.name.length>28?l.name.slice(0,26)+'…':l.name}  (${lc<0?'−$'+Math.abs(lc):'$'+lc}/t)`;});
-  const tc=lc=>lc<0?'rgba(91,184,164,0.85)':(lc<50?'rgba(91,143,232,0.85)':(lc<150?'rgba(232,168,76,0.85)':'rgba(232,93,93,0.85)'));
+  const tc=lc=>lc<0?'rgba(74,123,168,0.85)':(lc<50?'rgba(91,143,232,0.85)':(lc<150?'rgba(232,168,76,0.85)':'rgba(232,93,93,0.85)'));
   if(maccChart)maccChart.destroy();
   maccChart=new Chart(document.getElementById('maccChart'),{type:'bar',data:{labels,datasets:[{data:sorted.map(l=>l.abate),backgroundColor:sorted.map(l=>tc(lcoa(l))),borderColor:sorted.map(l=>state.selected.has(l.id)?'#ffffff':'transparent'),borderWidth:sorted.map(l=>state.selected.has(l.id)?2:0),borderRadius:3}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{const lev=sorted[ctx.dataIndex];return[`Abatement: ${lev.abate.toLocaleString()} tCO2e/yr`,`LCOA: $${Math.round(lcoa(lev))}/tCO2e`,`Capex: $${lev.capex}k`];}}}},scales:{x:{beginAtZero:true,ticks:{color:'#5a5e72',callback:v=>v.toLocaleString()},grid:{color:'#2e3345'},title:{display:true,text:'Abatement potential (tCO2e/yr)',color:'#5a5e72',font:{size:10}}},y:{ticks:{color:'#8b8fa3',font:{size:10}},grid:{display:false}}}}});
 }
@@ -805,11 +805,11 @@ function renderRollup() {
   rollupGlideChart=new Chart(document.getElementById('rollupGlideChart'),{type:'line',data:{labels:years.map(y=>y.toString()),datasets:[
     {label:'BAU',data:aggBau,borderColor:'#e8724c',borderWidth:2,fill:false,tension:0.2,pointRadius:0,borderDash:[2,3]},
     {label:'Target Optimization',data:aggSel,borderColor:'#5b8fe8',backgroundColor:'rgba(91,143,232,0.15)',fill:true,tension:0.2,pointRadius:0,borderWidth:2.5},
-    {label:'SBTi Target',data:aggTgt,borderColor:'#5bb8a4',borderDash:[6,4],borderWidth:2.5,fill:false,pointRadius:0},
+    {label:'SBTi Target',data:aggTgt,borderColor:'#4a7ba8',borderDash:[6,4],borderWidth:2.5,fill:false,pointRadius:0},
   ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8b8fa3',font:{size:11}}}},scales:{x:{ticks:{color:'#5a5e72'},grid:{color:'#2e3345'}},y:{min:Math.min(...aggTgt)*0.9,ticks:{color:'#5a5e72',callback:v=>v.toLocaleString()},grid:{color:'#2e3345'},title:{display:true,text:'tCO2e',color:'#5a5e72'}}}}});
 
   // Capex bar chart by company
-  const BCOLORS=['#5bb8a4','#5b8fe8','#b07cf0','#e8a84c','#e8724c','#e85d5d','#4caf50','#8b8fa3','#c4a35a','#7cc8e8'];
+  const BCOLORS=['#4a7ba8','#5b8fe8','#b07cf0','#e8a84c','#e8724c','#e85d5d','#4caf50','#8b8fa3','#c4a35a','#7cc8e8'];
   if(rollupCapexChart)rollupCapexChart.destroy();
   rollupCapexChart=new Chart(document.getElementById('rollupCapexChart'),{type:'bar',data:{labels:slugs.map(sl=>PORTCOS[sl].short),datasets:[{label:'Capex ($k)',data:slugs.map(sl=>results[sl].totalCapex),backgroundColor:slugs.map((_,i)=>BCOLORS[i%BCOLORS.length]),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8b8fa3',font:{size:10},maxRotation:45},grid:{display:false}},y:{ticks:{color:'#5a5e72',callback:v=>'$'+v.toLocaleString()},grid:{color:'#2e3345'}}}}});
 }

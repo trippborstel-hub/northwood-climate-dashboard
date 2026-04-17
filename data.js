@@ -1,6 +1,6 @@
 // data.js — Northwood Capital Partners: Full Portfolio Climate Tracker
 // 10 active portcos, quarterly emissions, risk scores, ESG composite, reduction initiatives
-// Canonical data sourced from Kith Climate engagement deliverables
+// Canonical data sourced from Northwood Climate engagement deliverables
 
 export const PORTCOS = {
   meridian: {
@@ -181,7 +181,7 @@ export const PORTCOS = {
     baseYear: 2024,
     targetYear: 2030,
     targetReduction: 42,
-    color: "#5bb8a4"
+    color: "#4a7ba8"
   },
   ridgeline: {
     name: "Ridgeline Property Services",

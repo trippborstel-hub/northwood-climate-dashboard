@@ -22,14 +22,14 @@ function promptForKey() {
             Paste your Anthropic API key below — it's saved in your browser only, never sent to GitHub.
           </p>
           <p style="color:#5a5e72;font-size:11px;margin-bottom:16px">
-            Get a key at <a href="https://console.anthropic.com" target="_blank" style="color:#5bb8a4">console.anthropic.com</a> &rarr; API Keys &rarr; Create Key
+            Get a key at <a href="https://console.anthropic.com" target="_blank" style="color:#4a7ba8">console.anthropic.com</a> &rarr; API Keys &rarr; Create Key
           </p>
           <input type="password" id="keyInput" placeholder="sk-ant-..." style="
             width:100%;padding:10px 14px;background:#0f1117;border:1px solid #2e3345;border-radius:8px;
             color:#e2e4ea;font-family:monospace;font-size:13px;margin-bottom:16px;" />
           <div style="display:flex;gap:8px;justify-content:flex-end">
             <button id="keyCancelBtn" style="background:none;border:1px solid #2e3345;color:#8b8fa3;padding:8px 20px;border-radius:6px;font-size:13px;font-family:inherit;cursor:pointer;">Cancel</button>
-            <button id="keySaveBtn" style="background:#5bb8a4;color:#0f1117;border:none;padding:8px 20px;border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">Save & Analyze</button>
+            <button id="keySaveBtn" style="background:#4a7ba8;color:#0f1117;border:none;padding:8px 20px;border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">Save & Analyze</button>
           </div>
         </div>
       </div>`;
@@ -127,7 +127,7 @@ TRANSITION RISK:
   output.classList.add('visible');
   content.innerHTML = '<p style="color:#8b8fa3;font-style:italic">Analyzing emissions, risk profile, and ESG position...</p>';
 
-  const prompt = `You are a climate-focused PE analyst at Kith Consulting, writing a holistic climate and risk analysis for the investment committee at Northwood Capital Partners.
+  const prompt = `You are a climate-focused PE analyst at Northwood Climate Program, writing a holistic climate and risk analysis for the investment committee at Northwood Capital Partners.
 
 Company: ${p.name}
 Sector: ${p.sector} | Fund: ${p.fund} | Status: ${p.status}
