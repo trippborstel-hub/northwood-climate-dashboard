@@ -4,3 +4,7 @@ _reference/frameworks/
 _reference/methodology/
 _reference/templates/
 _reference/voice/
+
+# Large client-data bundle — kept locally, not tracked
+_reference/Client Data/northwood-capital.zip
+_reference/README.md
