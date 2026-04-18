@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carbon MCP Server — Northwood Climate</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #232735;
+    --border: #2e3345;
+    --text: #e2e4ea;
+    --text-muted: #8b8fa3;
+    --text-dim: #5a5e72;
+    --accent: #4a7ba8;
+    --accent-dim: rgba(74,123,168,0.12);
+    --accent-glow: rgba(74,123,168,0.35);
+    --green: #4caf50;
+    --yellow: #e8a84c;
+    --red: #e85d5d;
+    --code-bg: #0a0c12;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.55;
+    padding: 32px 40px 64px; max-width: 1200px; margin: 0 auto;
+  }
+  code, pre, .mono { font-family: 'JetBrains Mono', 'Courier New', monospace; }
+
+  h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+  h2 { font-size: 16px; font-weight: 700; color: var(--text); margin: 40px 0 14px;
+       text-transform: uppercase; letter-spacing: 1.2px; display: flex; align-items: center; gap: 10px; }
+  h2::after { content:''; flex:1; height:1px; background: var(--border); }
+  h3 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  p { color: var(--text-muted); margin-bottom: 12px; font-size: 14px; }
+  p.lead { font-size: 15px; color: var(--text); max-width: 760px; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .header { padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
+  .subhead { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.5px; }
+
+  /* Architecture diagram */
+  .arch {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 32px 24px; margin: 16px 0 8px;
+    display: flex; align-items: center; justify-content: center; gap: 0;
+    flex-wrap: wrap;
+  }
+  .arch-box {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 18px; text-align: center; min-width: 140px;
+  }
+  .arch-box.accent { border-color: var(--accent); background: var(--accent-dim); }
+  .arch-box .ab-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+  .arch-box .ab-name { font-size: 13px; font-weight: 700; color: var(--text); margin-top: 3px; }
+  .arch-arrow {
+    color: var(--text-dim); font-size: 20px; padding: 0 14px;
+  }
+
+  /* Tool cards */
+  .tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+  .tool-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .tool-sig {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent);
+    margin-bottom: 6px; word-break: break-word;
+  }
+  .tool-desc { font-size: 12.5px; color: var(--text-muted); margin-bottom: 10px; }
+  .tool-example {
+    background: var(--code-bg); border-radius: 6px; padding: 8px 10px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim);
+    line-height: 1.6; overflow-x: auto; white-space: pre;
+  }
+  .tool-example .k { color: var(--accent); }
+  .tool-example .s { color: var(--green); }
+  .tool-example .n { color: var(--yellow); }
+
+  /* Demo */
+  .demo {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    display: grid; grid-template-columns: 240px 1fr; overflow: hidden;
+    min-height: 460px;
+  }
+  .demo-prompts {
+    background: var(--surface2); border-right: 1px solid var(--border);
+    padding: 16px 12px; display: flex; flex-direction: column; gap: 6px;
+  }
+  .demo-prompts-label {
+    font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px;
+    padding: 4px 8px 10px;
+  }
+  .demo-prompt-btn {
+    background: transparent; border: 1px solid var(--border); color: var(--text-muted);
+    text-align: left; padding: 10px 12px; border-radius: 6px; font-size: 12px;
+    font-family: inherit; cursor: pointer; transition: all 0.15s; line-height: 1.4;
+  }
+  .demo-prompt-btn:hover { border-color: var(--accent); color: var(--text); background: var(--accent-dim); }
+  .demo-prompt-btn.active { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+  .demo-reset {
+    margin-top: auto; background: transparent; border: 1px solid var(--border);
+    color: var(--text-dim); padding: 6px 10px; border-radius: 4px; font-size: 11px;
+    font-family: inherit; cursor: pointer;
+  }
+  .demo-reset:hover { color: var(--text); border-color: var(--text-muted); }
+
+  .demo-convo {
+    padding: 20px 24px; overflow-y: auto; max-height: 560px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .msg { max-width: 780px; }
+  .msg-role {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim);
+    margin-bottom: 4px; font-weight: 700;
+  }
+  .msg-user .msg-role { color: var(--yellow); }
+  .msg-assistant .msg-role { color: var(--accent); }
+  .msg-tool .msg-role { color: var(--green); }
+  .msg-body { font-size: 13.5px; color: var(--text); }
+  .msg-tool .msg-body {
+    background: var(--code-bg); border-left: 2px solid var(--green); border-radius: 4px;
+    padding: 10px 12px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px;
+    color: var(--text-muted); white-space: pre-wrap; line-height: 1.55;
+  }
+  .tool-call-line { color: var(--accent); }
+  .tool-ret-line { color: var(--text-dim); margin-top: 4px; }
+  .thinking {
+    color: var(--text-dim); font-style: italic; font-size: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .thinking .dot {
+    width: 4px; height: 4px; border-radius: 50%; background: var(--accent);
+    animation: blink 1.2s infinite;
+  }
+  .thinking .dot:nth-child(2) { animation-delay: 0.2s; }
+  .thinking .dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+  .demo-empty {
+    color: var(--text-dim); font-size: 13px; text-align: center; margin: auto;
+    font-style: italic;
+  }
+
+  /* Install */
+  .install-block {
+    background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 16px 18px; font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    color: var(--text-muted); overflow-x: auto; white-space: pre; line-height: 1.7;
+  }
+  .install-block .k { color: var(--accent); }
+  .install-block .s { color: var(--green); }
+
+  .note {
+    background: var(--accent-dim); border-left: 3px solid var(--accent); border-radius: 4px;
+    padding: 10px 14px; font-size: 12.5px; color: var(--text-muted); margin: 14px 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="subhead">Week 5 · Tracking Dashboard · MCP Integration</div>
+  <h1>Carbon MCP Server</h1>
+  <p class="lead">A Model Context Protocol server that exposes the Northwood portfolio's carbon data
+  as callable tools. Any MCP-compatible agent &mdash; Claude Desktop, Claude Code, Cursor &mdash;
+  can query emissions, run gap analyses, and simulate decarbonization scenarios without touching raw data.</p>
+</div>
+
+<!-- ═════ WHAT IT IS ═════ -->
+<h2>What it is</h2>
+<p>Traditional dashboards serve pixels to humans. An MCP server serves <em>structured capabilities</em>
+to an LLM. The agent asks "which portcos are off-track for 2030?" &mdash; Claude picks the right tools,
+calls them in sequence, and writes the answer, tracing every number back to the data layer.</p>
+
+<div class="arch">
+  <div class="arch-box">
+    <div class="ab-label">Human / Analyst</div>
+    <div class="ab-name">Natural language question</div>
+  </div>
+  <div class="arch-arrow">→</div>
+  <div class="arch-box accent">
+    <div class="ab-label">Claude (agent)</div>
+    <div class="ab-name">Plans tool calls</div>
+  </div>
+  <div class="arch-arrow">→</div>
+  <div class="arch-box">
+    <div class="ab-label">northwood-carbon MCP</div>
+    <div class="ab-name">5 tools · stdio</div>
+  </div>
+  <div class="arch-arrow">→</div>
+  <div class="arch-box">
+    <div class="ab-label">Data layer</div>
+    <div class="ab-name">Carbon inventory + initiatives</div>
+  </div>
+</div>
+
+<!-- ═════ TOOL CATALOG ═════ -->
+<h2>Tool catalog</h2>
+<p>Five tools, chosen to answer ~80% of real analyst questions without the agent ever touching raw CSV or JSON.</p>
+
+<div class="tool-grid">
+  <div class="tool-card">
+    <div class="tool-sig">list_portcos()</div>
+    <div class="tool-desc">All 10 portcos with sector, fund, revenue, EBITDA, facility count, data grade, and SBTi target.</div>
+    <div class="tool-example"><span class="k">→</span> [<span class="s">"meridian"</span>, <span class="s">"sterling"</span>, ...]
+   sector, status, revenue_m,
+   target_reduction_pct, ...</div>
+  </div>
+
+  <div class="tool-card">
+    <div class="tool-sig">get_portco_emissions(portco, year?, scope?)</div>
+    <div class="tool-desc">Scope 1 / Scope 2 emissions for a portco, in tCO2e. Optional year and scope filters.</div>
+    <div class="tool-example"><span class="k">→</span> get_portco_emissions(
+     portco=<span class="s">"meridian"</span>,
+     year=<span class="n">2024</span>)
+<span class="k">←</span> {<span class="s">"2024"</span>: {scope1: <span class="n">750</span>,
+          scope2: <span class="n">1850</span>,
+          total: <span class="n">2600</span>}}</div>
+  </div>
+
+  <div class="tool-card">
+    <div class="tool-sig">gap_to_target(portco, target_year=2030)</div>
+    <div class="tool-desc">Gap between current trajectory and SBTi-aligned reduction pathway. Returns verdict + numbers.</div>
+    <div class="tool-example"><span class="k">→</span> gap_to_target(<span class="s">"harvest"</span>)
+<span class="k">←</span> {gap_pct: <span class="n">31.4</span>,
+   on_track: <span class="n">false</span>,
+   verdict: <span class="s">"Materially off-track..."</span>}</div>
+  </div>
+
+  <div class="tool-card">
+    <div class="tool-sig">list_initiatives(portco?, status?)</div>
+    <div class="tool-desc">Decarbonization levers with estimated reduction (tCO2e), capex ($k), category, and status.</div>
+    <div class="tool-example"><span class="k">→</span> list_initiatives(
+     portco=<span class="s">"sterling"</span>,
+     status=<span class="s">"planned"</span>)
+<span class="k">←</span> [3 initiatives with
+   est_reduction, capex_k, ...]</div>
+  </div>
+
+  <div class="tool-card">
+    <div class="tool-sig">simulate_reduction(portco, initiative_ids)</div>
+    <div class="tool-desc">What-if: apply a subset of initiatives, return projected emissions, capex total, and gap to target.</div>
+    <div class="tool-example"><span class="k">→</span> simulate_reduction(
+     portco=<span class="s">"sterling"</span>,
+     initiative_ids=[<span class="n">4</span>, <span class="n">5</span>])
+<span class="k">←</span> {projected_tco2e: <span class="n">3960</span>,
+   meets_target: <span class="n">false</span>,
+   total_capex_k: <span class="n">850</span>}</div>
+  </div>
+</div>
+
+<!-- ═════ LIVE DEMO ═════ -->
+<h2>Try it</h2>
+<p>Pick a question. Watch Claude pick the right tools, call them, and write the answer.
+This is a simulation &mdash; in a real session the tool calls hit the running MCP server over stdio.</p>
+
+<div class="demo">
+  <div class="demo-prompts">
+    <div class="demo-prompts-label">Preset questions</div>
+    <button class="demo-prompt-btn" data-demo="1">What are Meridian's 2024 Scope 1 emissions?</button>
+    <button class="demo-prompt-btn" data-demo="2">Which 3 portcos are furthest behind their 2030 targets?</button>
+    <button class="demo-prompt-btn" data-demo="3">What's the cheapest planned initiative for Sterling?</button>
+    <button class="demo-prompt-btn" data-demo="4">If Sterling funds VPPA + heat pump, do they hit 2030?</button>
+    <button class="demo-reset" id="demo-reset">Reset</button>
+  </div>
+  <div class="demo-convo" id="demo-convo">
+    <div class="demo-empty">Pick a question on the left.</div>
+  </div>
+</div>
+
+<!-- ═════ INSTALL ═════ -->
+<h2>Install &amp; connect</h2>
+<p>The server is ~200 lines of Python using FastMCP. Clone the repo, then add it to your MCP client config.</p>
+
+<h3 style="margin-top:16px;">Run locally</h3>
+<div class="install-block">git clone https://github.com/trippborstel-hub/northwood-carbon-mcp.git
+cd northwood-carbon-mcp
+uv sync
+uv run server.py</div>
+
+<h3 style="margin-top:20px;">Register with Claude Code / Claude Desktop</h3>
+<div class="install-block">{
+  <span class="k">"mcpServers"</span>: {
+    <span class="k">"northwood-carbon"</span>: {
+      <span class="k">"command"</span>: <span class="s">"uv"</span>,
+      <span class="k">"args"</span>: [<span class="s">"--directory"</span>, <span class="s">"/path/to/northwood-carbon-mcp"</span>, <span class="s">"run"</span>, <span class="s">"server.py"</span>]
+    }
+  }
+}</div>
+
+<div class="note">
+  <strong>Design note.</strong> The tool surface is deliberately small — 5 tools, each doing one clear
+  thing. Good agent-app design rewards clarity of description over breadth of feature: if an agent can
+  read a tool's name and one-sentence purpose and know exactly when to reach for it, it'll compose them
+  correctly. Every extra tool adds noise to the agent's decision, not power.
+</div>
+
+<!-- ═════ DEMO SCRIPT ═════ -->
+<script>
+const DEMOS = {
+  "1": {
+    question: "What are Meridian's 2024 Scope 1 emissions?",
+    steps: [
+      { type: "thinking", text: "Need Scope 1 for one portco, one year — single tool call." },
+      { type: "tool", call: 'get_portco_emissions(portco="meridian", year=2024, scope=1)',
+        ret: '{\n  "portco": "Meridian Business Solutions",\n  "sector": "BPO / Staffing",\n  "emissions": { "2024": { "scope1": 750.0 } },\n  "units": "tCO2e"\n}' },
+      { type: "answer", text: "Meridian Business Solutions emitted <b>750 tCO2e</b> of Scope 1 in 2024 — almost entirely natural gas for space heating across its 16 offices. That's about 29% of Meridian's 2,600 tCO2e total footprint; the remaining 1,850 tCO2e is Scope 2 (purchased electricity)." }
+    ]
+  },
+  "2": {
+    question: "Which 3 portcos are furthest behind their 2030 targets?",
+    steps: [
+      { type: "thinking", text: "Need to compare all 10 portcos. List them, then run gap_to_target on each." },
+      { type: "tool", call: "list_portcos()",
+        ret: '[10 portcos: meridian, sterling, novacare, trident, clearview,\n patriot, keystone, pinnacle, harvest, ridgeline]' },
+      { type: "thinking", text: "Now gap_to_target for each of 10 portcos…" },
+      { type: "tool", call: 'gap_to_target(portco="harvest")',
+        ret: '{ gap_pct: 31.4, on_track: false, verdict: "Materially off-track — 31.4% above 2030 target" }' },
+      { type: "tool", call: 'gap_to_target(portco="patriot")',
+        ret: '{ gap_pct: 24.8, on_track: false, verdict: "Materially off-track — 24.8% above 2030 target" }' },
+      { type: "tool", call: 'gap_to_target(portco="ridgeline")',
+        ret: '{ gap_pct: 19.2, on_track: false, verdict: "Materially off-track — 19.2% above 2030 target" }' },
+      { type: "tool", call: '[…7 more gap_to_target calls, all on-track or within 15%]', ret: '' },
+      { type: "answer", text: "Three portcos are materially off-track (>15% above their 2030 pathway):<br><br>" +
+        "<b>1. Harvest Ridge Foods</b> — 31.4% above target. Process-heat intensive (boilers, refrigeration); the biggest lever is a planned VPPA at Murfreesboro (2,100 tCO2e / $0 capex).<br>" +
+        "<b>2. Patriot Staffing</b> — 24.8% above target. Distributed branch-office footprint; no VPPA available at scale, so reductions come from many small LED + HVAC projects.<br>" +
+        "<b>3. Ridgeline Property</b> — 19.2% above. Managed portfolio means Scope 3 landlord emissions dominate; NYC BPS compliance is the forcing function." }
+    ]
+  },
+  "3": {
+    question: "What's the cheapest planned initiative for Sterling?",
+    steps: [
+      { type: "thinking", text: "Filter Sterling's initiatives to planned, then sort by capex." },
+      { type: "tool", call: 'list_initiatives(portco="sterling", status="planned")',
+        ret: '[\n  { id: 4, name: "VPPA / Green tariff — Akron rooftop",\n    est_reduction_tco2e: 2400, capex_k: 0 },\n  { id: 5, name: "Heat pump space heating",\n    est_reduction_tco2e: 520, capex_k: 850 },\n  { id: 6, name: "Electric induction heat treat",\n    est_reduction_tco2e: 640, capex_k: 1100 }\n]' },
+      { type: "answer", text: "<b>Sterling's cheapest planned initiative is the VPPA / Green tariff at the Akron rooftop — $0 capex, 2,400 tCO2e annual reduction.</b> That's the single biggest lever in Sterling's book: it alone would cover ~78% of the gap to the 2030 target. The two process-heat electrification projects (heat pump, induction) are far more capital-intensive at $850k and $1.1M respectively, though they're needed for the long tail." }
+    ]
+  },
+  "4": {
+    question: "If Sterling funds VPPA + heat pump, do they hit 2030?",
+    steps: [
+      { type: "thinking", text: "Simulate applying initiatives 4 and 5 and compare projected vs target." },
+      { type: "tool", call: 'simulate_reduction(portco="sterling", initiative_ids=[4, 5])',
+        ret: '{\n  "baseline_tco2e": 6880,\n  "applied_initiatives": [\n    { id: 4, name: "VPPA / Green tariff — Akron", reduction_tco2e: 2400, capex_k: 0 },\n    { id: 5, name: "Heat pump space heating", reduction_tco2e: 520, capex_k: 850 }\n  ],\n  "total_reduction_tco2e": 2920,\n  "total_capex_k_usd": 850,\n  "projected_tco2e": 3960,\n  "target_2030_tco2e": 4234,\n  "meets_target": true,\n  "gap_vs_target_tco2e": -274\n}' },
+      { type: "answer", text: "<b>Yes — Sterling hits 2030.</b> Applying the VPPA and heat pump together drops projected emissions from 6,880 tCO2e to <b>3,960 tCO2e</b>, which is 274 tCO2e below the 4,234 tCO2e target (a 6.5% buffer). Total capex: <b>$850k</b>, all concentrated in the heat pump project — the VPPA itself is zero capex. That means Sterling doesn't need the $1.1M induction heat-treat project to hit its SBTi commitment, though they may still want it for post-2030 pathway optionality." }
+    ]
+  }
+};
+
+const convoEl = document.getElementById('demo-convo');
+const promptBtns = document.querySelectorAll('.demo-prompt-btn');
+const resetBtn = document.getElementById('demo-reset');
+let activeTimer = null;
+
+function reset() {
+  if (activeTimer) { clearTimeout(activeTimer); activeTimer = null; }
+  convoEl.innerHTML = '<div class="demo-empty">Pick a question on the left.</div>';
+  promptBtns.forEach(b => b.classList.remove('active'));
+}
+
+function addMsg(role, html, extraClass = '') {
+  const empty = convoEl.querySelector('.demo-empty');
+  if (empty) empty.remove();
+  const div = document.createElement('div');
+  div.className = `msg msg-${role} ${extraClass}`;
+  const labels = { user: 'You', assistant: 'Claude', tool: 'MCP · northwood-carbon' };
+  div.innerHTML = `<div class="msg-role">${labels[role] || role}</div><div class="msg-body">${html}</div>`;
+  convoEl.appendChild(div);
+  convoEl.scrollTop = convoEl.scrollHeight;
+  return div;
+}
+
+function addThinking(text) {
+  const div = document.createElement('div');
+  div.className = 'msg msg-assistant';
+  div.innerHTML = `<div class="msg-role">Claude</div><div class="thinking"><span class="dot"></span><span class="dot"></span><span class="dot"></span>${text}</div>`;
+  convoEl.appendChild(div);
+  convoEl.scrollTop = convoEl.scrollHeight;
+  return div;
+}
+
+function runDemo(id) {
+  reset();
+  promptBtns.forEach(b => { if (b.dataset.demo === id) b.classList.add('active'); });
+  const demo = DEMOS[id];
+  addMsg('user', demo.question);
+
+  let i = 0;
+  function step() {
+    if (i >= demo.steps.length) { activeTimer = null; return; }
+    const s = demo.steps[i];
+    if (s.type === 'thinking') {
+      const el = addThinking(s.text);
+      activeTimer = setTimeout(() => { el.remove(); i++; step(); }, 900);
+    } else if (s.type === 'tool') {
+      const body = `<span class="tool-call-line">→ ${s.call}</span>` + (s.ret ? `\n<span class="tool-ret-line">${s.ret}</span>` : '');
+      addMsg('tool', body);
+      i++;
+      activeTimer = setTimeout(step, 700);
+    } else if (s.type === 'answer') {
+      addMsg('assistant', s.text);
+      i++;
+      activeTimer = setTimeout(step, 400);
+    }
+  }
+  step();
+}
+
+promptBtns.forEach(btn => {
+  btn.addEventListener('click', () => runDemo(btn.dataset.demo));
+});
+resetBtn.addEventListener('click', reset);
+</script>
+
+</body>
+</html>
