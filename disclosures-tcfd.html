@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Northwood — TCFD Disclosure FY2025</title>
+<style>
+  :root {
+    --bg: #0f1117; --surface: #1a1d27; --surface2: #232735; --surface3: #2a2e3f;
+    --border: #2e3345; --text: #e2e4ea; --text-muted: #8b8fa3; --text-dim: #5a5e72;
+    --accent: #4a7ba8; --accent-dim: rgba(74,123,168,0.12);
+    --white: #fff; --green: #4caf50; --yellow: #e8a84c; --orange: #e8724c;
+    --red: #e85d5d; --blue: #5b8fe8; --purple: #b07cf0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.7; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 40px 40px 80px; }
+
+  .doc-header { border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 32px; }
+  .doc-header h1 { font-size: 28px; font-weight: 700; color: var(--white); margin-bottom: 6px; letter-spacing: -0.3px; }
+  .doc-header .sub1 { font-size: 14px; color: var(--accent); font-weight: 600; margin-bottom: 14px; }
+  .doc-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 10px; font-size: 11px; }
+  .doc-meta div { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; }
+  .doc-meta .k { display: block; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.6px; font-size: 9px; font-weight: 700; margin-bottom: 2px; }
+  .doc-meta .v { color: var(--text); font-weight: 500; }
+
+  h2 { font-size: 22px; color: var(--white); margin: 36px 0 8px; font-weight: 700; border-bottom: 2px solid var(--accent); padding-bottom: 4px; display: inline-block; }
+  h3 { font-size: 16px; color: var(--white); margin: 22px 0 10px; font-weight: 700; }
+  h4 { font-size: 13px; color: var(--text); text-transform: uppercase; letter-spacing: 0.6px; margin: 18px 0 8px; font-weight: 700; }
+
+  p { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.75; }
+  p b, p strong { color: var(--text); font-weight: 600; }
+
+  ul, ol { margin: 8px 0 14px 22px; font-size: 14px; color: var(--text-muted); line-height: 1.8; }
+  li { margin-bottom: 4px; }
+  li b, li strong { color: var(--text); }
+
+  table { width: 100%; border-collapse: collapse; margin: 14px 0 22px; font-size: 13px; }
+  th { background: var(--surface2); color: var(--text-dim); font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.7px; padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+  th.r { text-align: right; }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--text-muted); vertical-align: top; }
+  td.r { text-align: right; font-variant-numeric: tabular-nums; }
+  td b, td strong { color: var(--text); }
+  tr:hover td { background: rgba(74,123,168,0.04); }
+  tr.total td { background: rgba(74,123,168,0.08); font-weight: 700; color: var(--text); }
+
+  .callout { background: rgba(232,168,76,0.05); border: 1px solid rgba(232,168,76,0.25); border-left: 3px solid var(--yellow); border-radius: 6px; padding: 14px 18px; margin: 16px 0; font-size: 13px; color: var(--text-muted); }
+  .callout b { color: var(--text); }
+
+  .section-nav { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-bottom: 24px; font-size: 12px; }
+  .section-nav h4 { margin-top: 0; font-size: 10px; color: var(--text-dim); letter-spacing: 0.6px; }
+  .section-nav ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 4px; }
+  .section-nav li { margin: 0; counter-increment: section; color: var(--text-muted); }
+  .section-nav li::before { content: counter(section) ". "; color: var(--accent); font-weight: 700; }
+  .section-nav ol { counter-reset: section; }
+
+  .footer-note { font-size: 11px; color: var(--text-dim); line-height: 1.7; margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .footer-note em { color: var(--text-muted); font-style: normal; }
+
+  code { background: var(--surface3); padding: 1px 6px; border-radius: 3px; color: var(--text); font-family: 'SF Mono',Monaco,monospace; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="doc-header">
+    <h1>Northwood Capital Partners — TCFD-Aligned Climate Disclosure</h1>
+    <div class="sub1">Fund I and Fund II Consolidated &middot; Fiscal Year 2025</div>
+    <div class="doc-meta">
+      <div><span class="k">Reporting Period</span><span class="v">Jan 1 – Dec 31, 2025</span></div>
+      <div><span class="k">Reporting Date</span><span class="v">Jan 31, 2026</span></div>
+      <div><span class="k">Published</span><span class="v">April 28, 2026</span></div>
+      <div><span class="k">Framework</span><span class="v">TCFD Recommendations + IFRS S2 Alignment</span></div>
+    </div>
+  </div>
+
+  <div class="section-nav">
+    <h4>Contents</h4>
+    <ol>
+      <li>About This Disclosure</li>
+      <li>Governance</li>
+      <li>Strategy</li>
+      <li>Risk Management</li>
+      <li>Metrics and Targets</li>
+      <li>Forward Agenda</li>
+      <li>Appendices</li>
+    </ol>
+  </div>
+
+  <h2>1. About This Disclosure</h2>
+  <p>This is Northwood Capital Partners' first TCFD-aligned climate disclosure. It covers the consolidated activity of Fund I ($650M, harvesting) and Fund II ($1.1B, actively deploying), including 10 active portfolio companies across Business Services, Healthcare Services, Industrial Technology, Environmental Services, Food &amp; Agriculture, IT Services, and Real Estate Services.</p>
+
+  <p><b>Organizational boundary.</b> Operational control approach, consistent with the GHG Protocol Corporate Standard. Northwood consolidates Scope 1 and Scope 2 emissions of portfolio companies in which the firm has operational control through buyout ownership. Realized investments (Atlas Compliance Group, ProServ Facilities Management) and pipeline deals not closed as of the reporting date are excluded.</p>
+
+  <p><b>Portfolio companies included.</b> Fund I: Meridian Business Solutions, NovaCare Health Partners, Sterling Precision Manufacturing, Trident IT Solutions. Fund II: Clearview Environmental Services, Patriot Staffing Solutions, Keystone Behavioral Health, Pinnacle Testing &amp; Inspection, Harvest Ridge Foods, Ridgeline Property Services.</p>
+
+  <p><b>Framework alignment.</b> All four TCFD pillars — Governance, Strategy, Risk Management, Metrics and Targets — addressed at the level of recommended disclosure. Where IFRS S2 (the TCFD successor under ISSB) adds datapoints, those are incorporated.</p>
+
+  <p><b>External assurance.</b> None obtained for this first-year disclosure. A readiness assessment for limited assurance is planned for the 2027 reporting cycle.</p>
+
+  <div class="callout"><b>First-year posture.</b> This disclosure reflects Northwood's starting position. Several pillars — particularly Governance and formal target commitments — are explicitly incomplete, with dated remediation plans rather than aspirational language. Subsequent annual disclosures will report progress against those commitments.</div>
+
+  <h2>2. Governance</h2>
+  <p>TCFD recommends disclosure of (a) board oversight of climate-related risks and opportunities, and (b) management's role.</p>
+
+  <h3>2.1 Board and Investment Committee Oversight</h3>
+  <p>Climate-related oversight sits with the Investment Committee of Northwood Capital Partners, composed of the Managing Partner and two investment partners. The Chief Operating Officer attends IC meetings as a non-voting member and holds operational responsibility for climate topics.</p>
+  <p>Climate has been a formal IC agenda item twice in the 12 months preceding this disclosure: once in connection with Fund I exit preparation of Meridian Business Solutions (February 2026), and once to approve engagement of an external sustainability consulting partner (March 2026). Outside those items, climate topics have been handled operationally by the COO with Managing Partner consultation.</p>
+  <p>Quarterly climate reporting to the full IC will begin in Q3 2026. No current IC member holds a formal climate credential. A climate-experienced operating partner is intended to join the IC at Fund III formation.</p>
+
+  <h3>2.2 Management Role</h3>
+  <p>Operational management of climate sits with the COO. The role is formally documented in the COO's job description, covering fund-level ESG reporting, portfolio company engagement, and climate risk management. The COO has delegated authority for climate-related operating decisions up to $250,000 in capital expenditure; above that threshold requires IC approval.</p>
+  <p>No portion of fund-level management compensation is currently tied to climate KPIs. Integration will be evaluated at the firm's next compensation committee review (Q3 2026). At the portfolio company level, three portcos — Sterling Precision Manufacturing, Clearview Environmental Services, and Harvest Ridge Foods — have partial compensation ties to energy efficiency or waste metrics, established at the respective portco board level.</p>
+  <p>External support is provided by Kith Consulting, engaged in March 2026 as the firm's dedicated sustainability and climate consulting partner.</p>
+
+  <h3>2.3 Acknowledged Gaps</h3>
+  <ol>
+    <li>No dedicated climate committee or formally scheduled climate agenda at the IC</li>
+    <li>No management compensation ties to climate KPIs at the fund level</li>
+    <li>No formally credentialed climate representation on the IC</li>
+  </ol>
+  <p>Each is addressed in the Forward Agenda (Section 6) with a target resolution date.</p>
+
+  <h2>3. Strategy</h2>
+  <p>TCFD recommends disclosure of (a) climate-related risks and opportunities over short/medium/long term, (b) the impact on businesses, strategy, and financial planning, and (c) the resilience of strategy under climate scenarios.</p>
+
+  <h3>3.1 Time Horizons</h3>
+  <ul>
+    <li><b>Short term:</b> Current reporting year (2025) through end of Fund II investment period (2027)</li>
+    <li><b>Medium term:</b> Remaining hold periods for active portcos (3–5 years)</li>
+    <li><b>Long term:</b> Through exit plus one reinvestment cycle (7–10 years; aligns with Fund III raise and initial deployment)</li>
+  </ul>
+  <p>Time horizons are calibrated to PE hold dynamics rather than generic long-run climate scenarios.</p>
+
+  <h3>3.2 Climate-Related Risks</h3>
+  <p><b>Physical risks</b> are assessed at the facility level across 138 portfolio company facilities using the WRI Aqueduct 4.0 (water stress) and Open-Meteo CMIP6 (heat stress) datasets. Scenarios modeled: SSP3-7.0 (central) and SSP5-8.5 (high). Time horizons: 2030 and 2035.</p>
+
+  <p>Three portcos account for 68% of portfolio enterprise-value-at-risk under SSP5-8.5 at 2035:</p>
+  <table>
+    <thead><tr><th>Portco</th><th class="r">EV-at-Risk (SSP5-8.5, 2035)</th><th>Primary Hazard</th></tr></thead>
+    <tbody>
+      <tr><td><b>Harvest Ridge Foods</b></td><td class="r">$24.0M</td><td>Heat stress at Nashville plant; water stress at multiple TN/KY facilities</td></tr>
+      <tr><td><b>Keystone Behavioral Health</b></td><td class="r">$13.9M</td><td>Heat stress across Mid-Atlantic clinic network</td></tr>
+      <tr><td><b>Sterling Precision Manufacturing</b></td><td class="r">Second tier</td><td>Heat stress at OH/PA manufacturing facilities</td></tr>
+    </tbody>
+  </table>
+  <p>Aggregated portfolio EV-at-risk under SSP5-8.5 at 2035 is approximately <b>$45–55M</b>, or 2.6–3.2% of total unrealized value ($1.52B). Under the central SSP3-7.0 scenario, the figure is approximately <b>$30–38M</b>.</p>
+
+  <p><b>Transition risks</b> are assessed through a five-vector framework tailored to US mid-market PE, rather than the generic TCFD transition categories:</p>
+  <ol>
+    <li><b>Customer ESG cascade</b> — Top customer SBTi or Scope 3 commitments cascading to supplier procurement requirements. Material at Sterling (A&amp;D prime contractor cascade — three RFPs already requesting supplier emissions data in Q4 2025) and Harvest Ridge (three CPG customers totaling $34M in revenue requesting Scope 3 supplier emissions, one mandatory by 2027).</li>
+    <li><b>Input and supply cost</b> — Exposure to commodities or inputs whose price or availability bends under transition. Material at Sterling (steel, process gas), Harvest Ridge (ag commodities), Pinnacle (field-equipment diesel).</li>
+    <li><b>Capex cycle and stranded asset risk</b> — Asset replacement decisions in a transition-uncertain environment. Material at Sterling (heat-treat furnace replacement), Clearview (fleet electrification timing), Pinnacle (equipment depot fleet).</li>
+    <li><b>Regulatory exposure</b> — State and international regulations landing in the hold period. CA SB 253/261 (disclosure), EU CBAM (Sterling if exports grow), state Building Performance Standards (Meridian, Trident real estate), F-gas phase-out, methane rules.</li>
+    <li><b>Exit and refinancing readiness</b> — Climate data and narrative as exit-prep requirement. Near-term material at Meridian (exit prep in progress).</li>
+  </ol>
+  <p>Federal US carbon pricing is <b>monitored but not modeled as material</b> through 2033 under plausible policy paths.</p>
+
+  <h3>3.3 Climate-Related Opportunities</h3>
+  <ul>
+    <li><b>Operating cost reduction through efficiency capex.</b> 90+ initiatives across 10 portcos. Top eight by capex efficiency total $2.7M in capex generating $804K/yr in recurring savings with an average 3.4-year payback.</li>
+    <li><b>Revenue growth from sustainability-positioned demand.</b> Most directly at Clearview Environmental Services (structural tailwinds from PFAS rule, infrastructure bill, methane regs) and Harvest Ridge Foods (supplier sustainability requirements creating both defensive and offensive positioning).</li>
+    <li><b>Exit multiple expansion.</b> Quantified emissions data and reduction trajectory form a component of the exit data room. Immediate application at Meridian (exit prep underway); compounds across all portcos through hold period.</li>
+    <li><b>Capital efficiency through green financing and tax incentives.</b> IRA Section 179D (Meridian, Trident office portfolios), 45L and 48C (Sterling manufacturing capex), sustainability-linked loans evaluated at Fund III level.</li>
+  </ul>
+
+  <h3>3.4 Impact on Strategy and Financial Planning</h3>
+  <p>Climate considerations have materially altered the following firm practices as of the reporting date:</p>
+  <ul>
+    <li><b>Investment diligence.</b> Climate screening added to the standard IC memo template in Q1 2025. Two deals reviewed in the 18 months preceding this disclosure were passed on in part due to climate exposure.</li>
+    <li><b>100-day operating plans.</b> Climate workstreams (facility energy audit, emissions baseline, renewable sourcing review) added to standard post-close operating plans for investments closed after April 2025.</li>
+    <li><b>Exit data room preparation.</b> Portfolio emissions data, reduction trajectory, and physical risk assessments are now standard components of the exit data room. Meridian is the first exit cycle where this is being executed in practice.</li>
+    <li><b>Capex approval.</b> Portco capex requests above $100K at high-exposure facilities (Harvest Ridge Nashville, Sterling manufacturing) now include a climate resilience and transition consideration section.</li>
+    <li><b>LP communication.</b> Climate content has appeared in the quarterly LP letter since Q2 2025 and in the annual LP meeting materials since 2024.</li>
+  </ul>
+
+  <h3>3.5 Scenario Analysis</h3>
+  <p><b>Physical scenarios.</b> SSP3-7.0 (central) and SSP5-8.5 (high), each at 2030 and 2035, applied to all 138 facilities using WRI Aqueduct 4.0 and Open-Meteo CMIP6 datasets. Portfolio findings:</p>
+  <table>
+    <thead><tr><th>Scenario</th><th>Horizon</th><th class="r">EV-at-Risk (range)</th><th class="r">% of unrealized value</th></tr></thead>
+    <tbody>
+      <tr><td>SSP3-7.0 (central)</td><td>2030</td><td class="r">$18–22M</td><td class="r">1.2–1.4%</td></tr>
+      <tr><td>SSP3-7.0 (central)</td><td>2035</td><td class="r">$30–38M</td><td class="r">2.0–2.5%</td></tr>
+      <tr><td>SSP5-8.5 (high)</td><td>2030</td><td class="r">$22–28M</td><td class="r">1.4–1.8%</td></tr>
+      <tr><td>SSP5-8.5 (high)</td><td>2035</td><td class="r">$45–55M</td><td class="r">3.0–3.6%</td></tr>
+    </tbody>
+  </table>
+  <p>Positive-NPV mitigation options exist for the top three exposed portcos. Approximately <b>$3.1M in facility-level capex protects an estimated $16.5M of enterprise value (5.3x ratio)</b>, based on initiative-level capex and payback analysis.</p>
+
+  <p><b>Transition scenarios.</b> A formal transition scenario pairing (e.g., NGFS Net Zero 2050 vs. NGFS Delayed Transition) was evaluated but not adopted as a modeled scenario. Under observed regulatory and market trajectories, the five-vector framework concludes: the two most material transition vectors for the current portfolio are (a) customer ESG cascade at Sterling and Harvest Ridge, and (b) exit readiness at Meridian. Both are near-term (2026–2028), making forward-looking scenario modeling a less useful tool than tracked current-trajectory indicators.</p>
+
+  <p><b>Resilience of strategy.</b> The portfolio's sector diversification (seven sectors across two funds) reduces concentration risk. The three highest-exposure portcos are also the three with the most clearly-costed mitigation pathways, so EV-at-risk is addressable. First-year disclosure judgment: the strategy is resilient in aggregate, with targeted interventions required at Harvest Ridge, Keystone, and Sterling.</p>
+
+  <h2>4. Risk Management</h2>
+  <p>TCFD recommends disclosure of (a) the process for identifying and assessing climate-related risks, (b) the process for managing climate-related risks, and (c) integration with enterprise risk management.</p>
+
+  <h3>4.1 Identification and Assessment</h3>
+  <p><b>Physical risk.</b> Facility-level screening runs across all portco facilities at acquisition and annually thereafter. Tools: WRI Aqueduct 4.0 for water-related hazards; Open-Meteo CMIP6 ensemble for heat stress. Hazard bands (low / medium / high / critical) map to enterprise value and EBITDA consequence estimates using portco-specific financial data.</p>
+  <p><b>Transition risk.</b> Five-vector assessment (customer ESG cascade, input and supply cost, capex cycle and stranded assets, regulatory exposure, exit and refinancing readiness). Each vector scored 1–5 per portco. Annual review at minimum; triggered ad hoc for material changes.</p>
+
+  <h3>4.2 Management</h3>
+  <p><b>Physical.</b> Portco-level mitigation options drawn from the firm's decarbonization and resilience lever library (90+ initiatives). Capex and payback are estimated for each mitigation. Top-exposure portcos (Harvest Ridge, Keystone, Sterling) have lever-level mitigation options identified; prioritization and capex approval sit with the portco board with Northwood as controlling shareholder.</p>
+  <p><b>Transition.</b> Monitoring for regulation (quarterly scan); portco-level procurement response for customer cascades; capex cycle reviews integrated into annual portco budget approval; exit data room climate preparation workstream added to all exit prep engagements.</p>
+
+  <h3>4.3 Integration with Investment Process</h3>
+  <p>Climate risk is a standard screen in the firm's investment diligence process. The IC memo template includes a climate section covering (i) facility-level physical hazard exposure, (ii) customer ESG cascade risk, (iii) input and supply chain climate exposure, and (iv) exit readiness for climate-related diligence. Two deals reviewed in the 18 months preceding this disclosure were passed on in part due to climate exposure.</p>
+  <p>Post-close, a climate workstream is included in the standard 100-day operating plan for investments closed after April 2025. Portfolio-wide risk review occurs at annual portco review meetings; material changes are escalated to the IC when above the COO's delegated authority threshold.</p>
+
+  <h2>5. Metrics and Targets</h2>
+  <p>TCFD recommends disclosure of (a) metrics used, (b) Scope 1, 2, and — if appropriate — Scope 3 emissions, and (c) targets and performance against them.</p>
+
+  <h3>5.1 Metrics</h3>
+  <table>
+    <thead><tr><th>Metric</th><th class="r">Value (FY2025)</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr class="total"><td><b>Total Scope 1 + 2</b></td><td class="r"><b>23,870 tCO2e</b></td><td>Operational control boundary; 138 facilities</td></tr>
+      <tr><td>Scope 1</td><td class="r">13,103 tCO2e</td><td>Stationary + mobile combustion + fugitives</td></tr>
+      <tr><td>Scope 2 (location-based)</td><td class="r">10,767 tCO2e</td><td>Per-state eGRID 2022 factors</td></tr>
+      <tr><td>Scope 2 (market-based)</td><td class="r">10,767 tCO2e</td><td>No fund-level RECs consolidated yet</td></tr>
+      <tr><td>Intensity — revenue</td><td class="r">13.9 tCO2e / $M</td><td>Portfolio-weighted</td></tr>
+      <tr><td>Intensity — headcount</td><td class="r">6.6 tCO2e / FTE</td><td>Portfolio-weighted</td></tr>
+      <tr><td>Data quality grade</td><td class="r">47% A / 13% B / 40% C</td><td>Portfolio-weighted by facility count</td></tr>
+      <tr><td>Facilities reporting</td><td class="r">138 of 138</td><td>Two pre-operational facilities excluded</td></tr>
+      <tr><td>EV-at-risk (SSP5-8.5, 2035)</td><td class="r">$45–55M</td><td>Aggregated portfolio</td></tr>
+      <tr><td>Top-5 portco emissions concentration</td><td class="r">77%</td><td>Harvest Ridge, Sterling, Clearview, NovaCare, Pinnacle</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Fund-Level Breakdown</h4>
+  <table>
+    <thead><tr><th>Fund</th><th class="r">S1+2 (tCO2e)</th><th class="r">Portcos</th><th class="r">Facilities</th><th class="r">Intensity (tCO2e/$M)</th></tr></thead>
+    <tbody>
+      <tr><td><b>Fund I</b></td><td class="r">10,076</td><td class="r">4</td><td class="r">57</td><td class="r">14.2</td></tr>
+      <tr><td><b>Fund II</b></td><td class="r">13,795</td><td class="r">6</td><td class="r">81</td><td class="r">13.7</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.2 Scope 3</h3>
+  <p>Scope 3 is reported at <b>screening level</b> for this first-year disclosure. Two categories are quantified; the remaining 13 are screened qualitatively. A total Scope 3 figure is not reported, as material categories remain unquantified.</p>
+  <p><b>Quantified:</b></p>
+  <ul>
+    <li><b>Category 1 (Purchased Goods and Services):</b> ~47,000 tCO2e, spend-based method using USEEIO v2.0 sector factors applied to annualized portco COGS.</li>
+    <li><b>Category 15 (Investments / Financed Emissions):</b> ~11,900 tCO2e. Calculated via PCAF Global GHG Accounting Standard Part A, attributing portco Scope 1+2 emissions to the fund using the equity-invested / enterprise-value attribution approach. Material disclosure of Cat 15 is standard for a PE fund and is prioritized for completion in the first reporting year.</li>
+  </ul>
+  <p><b>Screened qualitatively, flagged for 2027 quantification:</b> Cat 6 (Business Travel), Cat 7 (Employee Commuting), Cat 11 (Use of Sold Products — Clearview, Harvest Ridge, Sterling), Cat 12 (End-of-Life — Sterling, Pinnacle).</p>
+  <p><b>Screened, assessed non-material or not-yet-assessable:</b> Categories 2, 3, 4, 5, 8, 9, 10, 13, 14.</p>
+
+  <h3>5.3 Targets</h3>
+  <p><b>Northwood has not yet formally adopted a GHG reduction target.</b> Decarbonization pathways have been modeled against SBTi 1.5°C and WB2°C glide paths at the portfolio level. The Investment Committee is scheduled to consider formal target adoption at the Q3 2026 off-cycle IC meeting.</p>
+
+  <p>Current analytical anchors under IC consideration:</p>
+  <ul>
+    <li><b>Target type:</b> Intensity-based (tCO2e / $M revenue)</li>
+    <li><b>Scope coverage (near-term):</b> Scope 1 + 2; Scope 3 including financed emissions for a second target in 2027</li>
+    <li><b>Baseline year:</b> 2025 (first year with full facility-level data)</li>
+    <li><b>Near-term target year:</b> 2030</li>
+    <li><b>Near-term level under evaluation:</b> -42% intensity from 2025 baseline (SBTi 1.5°C-aligned per PE sector guidance)</li>
+    <li><b>Long-term ambition under evaluation:</b> Net zero Scope 1+2 intensity by 2050, subject to portfolio composition review every 5 years</li>
+    <li><b>SBTi validation:</b> Under evaluation; no commitment yet</li>
+  </ul>
+
+  <p>Target parameters may change following IC review. The Forward Agenda commits to publication of a formally adopted target in the 2027 disclosure cycle.</p>
+
+  <h3>5.4 Performance Against Targets</h3>
+  <p>Not applicable for this first-year disclosure. The 2025 data reported here establishes the baseline against which subsequent-year performance will be measured.</p>
+
+  <h2>6. Forward Agenda</h2>
+  <p>Concrete commitments for the 2026 reporting year (disclosed in the 2027 disclosure cycle):</p>
+  <table>
+    <thead><tr><th>Commitment</th><th class="r">Target Date</th></tr></thead>
+    <tbody>
+      <tr><td>Quarterly climate reporting to the full Investment Committee</td><td class="r">Q3 2026</td></tr>
+      <tr><td>Formal target adoption (scope, baseline year, target year, level)</td><td class="r">Q3 2026 IC decision</td></tr>
+      <tr><td>Evaluation of management compensation integration of climate KPIs</td><td class="r">Q3 2026 comp committee</td></tr>
+      <tr><td>Evaluation of internal carbon pricing</td><td class="r">Q3 2026 IC review</td></tr>
+      <tr><td>Fund II enrollment in EDCI (ESG Data Convergence Initiative)</td><td class="r">2026 reporting year</td></tr>
+      <tr><td>ILPA ESG Assessment Framework formal submission</td><td class="r">2027 cycle</td></tr>
+      <tr><td>Portfolio-wide insurance coverage review for climate risks</td><td class="r">Q3 2026</td></tr>
+      <tr><td>Scope 3 Cat 6, 7, 11, 12 quantification</td><td class="r">2026 reporting year</td></tr>
+      <tr><td>Renewable electricity % disaggregation at remaining 3 portcos</td><td class="r">2026 reporting year</td></tr>
+      <tr><td>Draft Climate and ESG Policy approval by IC</td><td class="r">Q4 2026</td></tr>
+    </tbody>
+  </table>
+  <p>Performance against these commitments will be disclosed in the 2027 reporting cycle.</p>
+
+  <h2>Appendix A: Methodology</h2>
+  <p><b>Emission factors.</b></p>
+  <ul>
+    <li>Scope 1: EPA Emission Factors for GHG Inventories, 2023 Hub edition. Natural gas 0.005306 tCO2e/therm; diesel 0.010180 tCO2e/gallon; gasoline 0.008887 tCO2e/gallon; propane 0.005740 tCO2e/gallon. Refrigerants R-22 (GWP 1,810) and R-410A (GWP 2,088) per IPCC AR6 100-year.</li>
+    <li>Scope 2 location-based: eGRID 2022 subregional factors by US state.</li>
+    <li>Scope 2 market-based: Equal to location-based. No fund-level RECs or PPAs consolidated as of reporting date.</li>
+    <li>Global Warming Potentials: IPCC AR6, 100-year horizon.</li>
+  </ul>
+
+  <p><b>Boundary.</b> Operational control per GHG Protocol Corporate Standard. Majority-owned portcos under operational control consolidated. Realized investments excluded. Portcos acquired within period included pro rata from acquisition date.</p>
+
+  <p><b>Scope 3 Cat 1:</b> Spend-based method. Portco COGS drawn from <code>northwood_capital.portco_financials</code>, annualized from January 2026 monthly data. USEEIO v2.0 sector factors by portco industry code.</p>
+
+  <p><b>Scope 3 Cat 15:</b> PCAF Global GHG Accounting Standard Part A. Attribution = Northwood equity-invested / (portco equity + portco debt) at entry × portco Scope 1+2. PCAF data quality score: 3.</p>
+
+  <p><b>Data quality.</b> Grade A (primary meter data): 47% of facilities (65 sites). Grade B (accounting exports, GL-derived): 13% (18 sites). Grade C (landlord-provided, estimate, fleet log, N/A): 40% (55 sites). Target is ≥70% Grade A by 2028.</p>
+
+  <h2>Appendix B: Scope 3 Screening Matrix</h2>
+  <p>Available in the firm's internal climate data system. Summary provided in Section 5.2. All 15 GHG Protocol categories reviewed; materiality flags and methodology notes maintained per-category.</p>
+
+  <h2>Appendix C: Evidence and Source Log</h2>
+  <p>Every quantitative claim in this disclosure is traceable to:</p>
+  <ul>
+    <li>Facility-level energy consumption records (utility bills, accounting exports, landlord-provided statements)</li>
+    <li>Portco financial data from the firm's Supabase-based portfolio management system</li>
+    <li>Facility-level physical hazard scores from WRI Aqueduct 4.0 and Open-Meteo CMIP6</li>
+    <li>Portco-level transition risk scoring from Kith Consulting's Week 4 deliverable</li>
+    <li>Qualitative inputs from the governance interview conducted April 22, 2026 and portco renewable-energy questionnaires issued the same date</li>
+  </ul>
+  <p>The complete evidence log is maintained internally and available to LPs on request.</p>
+
+  <div class="footer-note">
+    <em>Prepared by Kith Consulting under engagement with Northwood Capital Partners.<br>
+    This disclosure is Northwood's first TCFD-aligned publication. Annual updates are scheduled.<br>
+    Questions: Sarah Mitchell, Chief Operating Officer, Northwood Capital Partners.</em>
+  </div>
+
+</div>
+</body>
+</html>

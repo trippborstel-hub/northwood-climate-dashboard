@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Northwood — Disclosure Service Statement of Work</title>
+<style>
+  :root {
+    --bg: #0f1117; --surface: #1a1d27; --surface2: #232735; --surface3: #2a2e3f;
+    --border: #2e3345; --text: #e2e4ea; --text-muted: #8b8fa3; --text-dim: #5a5e72;
+    --accent: #4a7ba8; --accent-dim: rgba(74,123,168,0.12);
+    --white: #fff; --green: #4caf50; --yellow: #e8a84c; --orange: #e8724c;
+    --red: #e85d5d; --blue: #5b8fe8; --purple: #b07cf0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.7; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 40px 40px 80px; }
+
+  .doc-header { border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 32px; }
+  .doc-header h1 { font-size: 28px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
+  .doc-header .sub1 { font-size: 14px; color: var(--accent); font-weight: 600; margin-bottom: 14px; }
+
+  h2 { font-size: 20px; color: var(--white); margin: 32px 0 10px; font-weight: 700; border-bottom: 2px solid var(--accent); padding-bottom: 4px; display: inline-block; }
+  h3 { font-size: 15px; color: var(--white); margin: 20px 0 8px; font-weight: 700; }
+
+  p { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.75; }
+  p b, p strong { color: var(--text); }
+  ul, ol { margin: 8px 0 14px 22px; font-size: 14px; color: var(--text-muted); line-height: 1.8; }
+  li b { color: var(--text); }
+
+  table { width: 100%; border-collapse: collapse; margin: 14px 0 22px; font-size: 13px; }
+  th { background: var(--surface2); color: var(--text-dim); font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.7px; padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+  th.r { text-align: right; }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--text-muted); vertical-align: top; }
+  td.r { text-align: right; font-variant-numeric: tabular-nums; }
+  td b { color: var(--text); }
+  tr.total td { background: rgba(74,123,168,0.08); color: var(--text); font-weight: 700; }
+
+  .pricing-placeholder { background: rgba(232,168,76,0.06); border: 1px solid rgba(232,168,76,0.35); border-radius: 8px; padding: 18px 22px; margin: 20px 0; }
+  .pricing-placeholder h4 { font-size: 11px; font-weight: 700; color: var(--yellow); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; }
+  .pricing-placeholder p { margin-bottom: 6px; font-size: 13px; }
+  .pricing-placeholder p b { color: var(--white); }
+  .amt-tbd { color: var(--yellow); font-weight: 700; }
+
+  .sow-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin: 16px 0 24px; font-size: 12px; }
+  .sow-meta div { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; }
+  .sow-meta .k { display: block; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.6px; font-size: 9px; font-weight: 700; margin-bottom: 3px; }
+  .sow-meta .v { color: var(--text); font-weight: 500; }
+
+  .sig-block { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 36px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 12px; }
+  .sig-block .sigline { border-bottom: 1px solid var(--text-muted); height: 30px; margin-bottom: 6px; }
+  .sig-block .who { color: var(--text); font-weight: 600; }
+  .sig-block .role { color: var(--text-dim); }
+
+  .callout { background: rgba(74,123,168,0.06); border: 1px solid rgba(74,123,168,0.28); border-left: 3px solid var(--accent); border-radius: 6px; padding: 14px 18px; margin: 16px 0; font-size: 13px; color: var(--text-muted); }
+  .callout b { color: var(--text); }
+
+  .footer-note { font-size: 11px; color: var(--text-dim); margin-top: 30px; padding-top: 16px; border-top: 1px solid var(--border); line-height: 1.7; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="doc-header">
+    <h1>Statement of Work — Fund-Level Climate Disclosure Service</h1>
+    <div class="sub1">Kith Consulting to Northwood Capital Partners</div>
+    <div class="sow-meta">
+      <div><span class="k">Date</span><span class="v">April 24, 2026</span></div>
+      <div><span class="k">Engagement Lead</span><span class="v">Tripp Borstel, Kith Consulting</span></div>
+      <div><span class="k">Client Sponsor</span><span class="v">Sarah Mitchell, COO, Northwood Capital Partners</span></div>
+      <div><span class="k">Turnaround</span><span class="v">4 weeks from kickoff</span></div>
+    </div>
+  </div>
+
+  <h2>Scope</h2>
+  <p>Produce two fund-level climate disclosures for Northwood Capital Partners, covering Fund I and Fund II on a consolidated basis:</p>
+  <ol>
+    <li><b>TCFD-aligned disclosure</b> — four pillars (Governance, Strategy, Risk Management, Metrics &amp; Targets), written to the TCFD Recommendations and IFRS S2 where additive.</li>
+    <li><b>CSRD ESRS E1 disclosure</b> — nine E1 disclosure requirements under the voluntary preparatory posture appropriate for a US mid-market PE firm with EU supply-chain exposure through select portcos.</li>
+  </ol>
+  <p>Both disclosures share one underlying evidence base and are produced from one process.</p>
+
+  <h2>Reporting Parameters</h2>
+  <ul>
+    <li><b>Reporting period:</b> Fiscal year ending December 31, 2025 (LTM to January 31, 2026 where calendar-year data unavailable)</li>
+    <li><b>Reporting date / data cutoff:</b> January 31, 2026</li>
+    <li><b>Organizational boundary:</b> Operational control approach, fund-level rollup</li>
+    <li><b>Portcos in scope:</b> 10 active portfolio companies across Fund I and Fund II; realized investments excluded</li>
+    <li><b>Framework alignment:</b> TCFD Recommendations (2017, 2021 Annex), ESRS E1 (EC Delegated Act June 2023), IPCC AR6 GWPs, GHG Protocol Corporate Standard</li>
+  </ul>
+
+  <h2>Process — 4-Week Delivery</h2>
+  <table>
+    <thead><tr><th>Week</th><th>Steps</th><th>What happens</th></tr></thead>
+    <tbody>
+      <tr><td><b>Week 1</b></td><td>1–3: Regulatory Scan, Data Intake, Gap Assessment</td><td>Kith ingests existing Northwood climate data; flags gaps; scopes interview</td></tr>
+      <tr><td><b>Week 2</b></td><td>4: Interviews &amp; Questionnaires</td><td>60-minute governance interview with Sarah Mitchell; async questionnaire to portco CFOs on renewable energy</td></tr>
+      <tr><td><b>Week 3</b></td><td>5–6: Draft Generation + Human QA</td><td>First drafts delivered and reviewed; one revision cycle</td></tr>
+      <tr><td><b>Week 4</b></td><td>7: Final Packaging</td><td>Final TCFD and ESRS E1 disclosures; 1-page board summary</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Deliverables</h2>
+  <ol>
+    <li><b>TCFD Disclosure</b> — PDF and HTML (dashboard-ready), 15–25 pages</li>
+    <li><b>ESRS E1 Disclosure</b> — PDF and HTML, 30–50 pages</li>
+    <li><b>1-Page Board Summary</b> — Northwood IC / LP-facing synthesis</li>
+    <li><b>Gap-Fill Synthesis Memo</b> — structured findings from governance interview and portco questionnaires</li>
+    <li><b>Methodology Appendix</b> — emission factors, boundary rules, scope 3 methodology, data quality grades</li>
+    <li><b>Evidence Log</b> — traceability map from each disclosed figure back to source</li>
+  </ol>
+
+  <h2>Fee</h2>
+
+  <div class="pricing-placeholder">
+    <h4>⚠ Pricing — to be finalized</h4>
+    <p><b>Per the engagement discussion, final pricing will be reviewed at the end of the Week 6 build.</b> Current working values (internal) are shown below in placeholder form — these are the numbers used to size the service and stress-test the hours math, but final client pricing will be set after the end-of-engagement review.</p>
+  </div>
+
+  <table>
+    <thead><tr><th>Line Item</th><th class="r">Fee (working)</th></tr></thead>
+    <tbody>
+      <tr><td>Base fund-level TCFD + ESRS E1 disclosure</td><td class="r amt-tbd">$TBD</td></tr>
+      <tr><td>Scope 3 Category 15 financed emissions calculation (PCAF Part A)</td><td class="r amt-tbd">$TBD</td></tr>
+      <tr class="total"><td><b>Total fixed fee</b></td><td class="r amt-tbd"><b>$TBD</b></td></tr>
+    </tbody>
+  </table>
+
+  <p><b>Not included (available as add-ons):</b></p>
+  <ul>
+    <li>External assurance readiness</li>
+    <li>Annual update engagement for Year 2</li>
+    <li>Additional frameworks — ISSB S2, SEC Climate, state-level (CA SB 253/261)</li>
+    <li>Primary carbon data collection (N/A for Northwood — Weeks 2–3 already delivered)</li>
+    <li>Physical risk analysis (N/A for Northwood — Week 4 already delivered)</li>
+    <li>Transition risk analysis (N/A for Northwood — Week 4 already delivered)</li>
+  </ul>
+
+  <h2>Fee Structure</h2>
+  <p>Fixed-fee engagement. Kith carries delivery risk. No hourly billing. One invoice on signing (50%), one invoice on final delivery (50%).</p>
+
+  <h2>Assumptions</h2>
+  <p>This fee assumes:</p>
+  <ul>
+    <li>Northwood makes available the existing carbon inventory, physical risk, and transition risk outputs produced in Weeks 2–5 of the broader engagement (already in hand).</li>
+    <li>Sarah Mitchell is available for a 60-minute interview in Week 2.</li>
+    <li>Portco CFOs respond to a 15-minute renewable-energy questionnaire within 5 business days of receipt.</li>
+    <li>Northwood's IC approves any forward-looking target commitments disclosed in the Targets section. Kith does not commit targets on Northwood's behalf.</li>
+  </ul>
+  <p>If any assumption is not met, Kith flags the impact before proceeding. Scope changes are documented as amendments.</p>
+
+  <h2>What Kith Does Not Do Under This SOW</h2>
+  <ul>
+    <li>Provide assurance or audit services. We are not an assurance firm.</li>
+    <li>Submit the disclosures to regulators, LPs, or standard-setters. We produce them; Northwood owns submission.</li>
+    <li>Commit Northwood to targets, policies, or positions on its behalf. All commitments require IC sign-off.</li>
+    <li>Modify Northwood's underlying financial or emissions data. We report what Northwood provides.</li>
+  </ul>
+
+  <h2>Quality Commitment</h2>
+  <p>Every deliverable passes Kith's Human QA checklist before release. If a deliverable fails QA twice, Kith absorbs the additional review cycles at no cost to Northwood. The checklist covers source integrity, framework compliance, voice, and decision-usefulness.</p>
+
+  <h2>Turnaround</h2>
+  <p>Final disclosures delivered within <b>4 weeks</b> of engagement kickoff, assuming client response times above. If Northwood's response to interview / questionnaire requests exceeds 5 business days, timeline extends accordingly.</p>
+
+  <h2>Why this price (plain terms)</h2>
+  <div class="callout">
+    <p style="margin:0;">Big 4 firms charge $150–300K for comparable scope with 4–6 month turnaround. Boutique ESG firms charge $75–150K with 3–5 month turnaround. Kith's turnaround is 4 weeks. The price reflects (1) Kith's reference-file library and Claude Code-native workflow removing the manual drafting burden, (2) Weeks 2–5 of the broader engagement producing the data infrastructure — the compounding value of the AI-native model, and (3) human hours concentrated where they matter: governance interview, QA review, final narrative shaping.</p>
+    <p style="margin:8px 0 0;">The quality is protected by the reference files (no AI drift) and the Human QA step (no AI "novelty" leaks through).</p>
+  </div>
+
+  <div class="sig-block">
+    <div>
+      <div class="sigline"></div>
+      <div class="who">Sarah Mitchell</div>
+      <div class="role">Chief Operating Officer, Northwood Capital Partners</div>
+    </div>
+    <div>
+      <div class="sigline"></div>
+      <div class="who">Tripp Borstel</div>
+      <div class="role">Kith Consulting</div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    Statement of Work presented as the client-facing output of Week 6. Final pricing and signature block to be completed after pricing review.
+  </div>
+
+</div>
+</body>
+</html>

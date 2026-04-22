@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Northwood — Disclosures Overview</title>
+<style>
+  :root {
+    --bg: #0f1117; --surface: #1a1d27; --surface2: #232735; --surface3: #2a2e3f;
+    --border: #2e3345; --text: #e2e4ea; --text-muted: #8b8fa3; --text-dim: #5a5e72;
+    --accent: #4a7ba8; --accent-dim: rgba(74,123,168,0.12);
+    --white: #fff; --green: #4caf50; --yellow: #e8a84c; --orange: #e8724c;
+    --red: #e85d5d; --blue: #5b8fe8; --purple: #b07cf0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }
+  .container { max-width: 1320px; margin: 0 auto; padding: 40px 40px 80px; }
+
+  .page-header { margin-bottom: 28px; }
+  .page-title { font-size: 30px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
+  .page-title span { color: var(--accent); }
+  .page-subtitle { font-size: 14px; color: var(--text-muted); max-width: 920px; line-height: 1.6; }
+  .data-badge { display: inline-block; font-size: 11px; color: var(--yellow); background: rgba(232,168,76,0.1); border: 1px solid rgba(232,168,76,0.25); padding: 3px 10px; border-radius: 4px; margin-top: 12px; }
+
+  .metrics-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 24px 0 32px; }
+  .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; }
+  .metric-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-dim); margin-bottom: 6px; }
+  .metric-value { font-size: 26px; font-weight: 700; color: var(--white); }
+  .metric-value .unit { font-size: 12px; font-weight: 400; color: var(--text-muted); margin-left: 3px; }
+  .metric-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; line-height: 1.4; }
+
+  .section { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px 26px; margin-bottom: 24px; }
+  .section-title { font-size: 16px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+  .section-title .dim { color: var(--text-dim); font-weight: 400; font-size: 13px; margin-left: 8px; }
+  .section-lead { font-size: 13px; color: var(--text-muted); line-height: 1.65; margin-bottom: 18px; max-width: 980px; }
+  .section p { font-size: 13px; color: var(--text-muted); line-height: 1.7; margin-bottom: 10px; max-width: 980px; }
+  .section p b, .section p strong { color: var(--text); }
+
+  /* Process step cards */
+  .process-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 16px; }
+  .step-row { display: grid; grid-template-columns: 60px 1.4fr 2fr 140px 100px; gap: 18px; align-items: center; background: var(--surface2); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 14px 18px; }
+  .step-row.s1 { border-left-color: var(--blue); }
+  .step-row.s2 { border-left-color: var(--accent); }
+  .step-row.s3 { border-left-color: var(--purple); }
+  .step-row.s4 { border-left-color: var(--yellow); }
+  .step-row.s5 { border-left-color: var(--orange); }
+  .step-row.s6 { border-left-color: var(--red); }
+  .step-row.s7 { border-left-color: var(--green); }
+  .step-num { font-size: 28px; font-weight: 800; color: var(--white); text-align: center; }
+  .step-name { font-size: 14px; font-weight: 700; color: var(--white); }
+  .step-name .sub { display: block; font-size: 11px; font-weight: 400; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+  .step-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+  .step-hours { font-size: 11px; color: var(--text-dim); }
+  .step-hours .hrs { color: var(--text); font-weight: 700; }
+  .step-hours .ai { color: var(--blue); }
+  .step-hours .hum { color: var(--orange); }
+  .step-deliv { font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.4px; font-weight: 600; text-align: right; }
+
+  /* Principles cards */
+  .principle-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-top: 16px; }
+  .principle-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; border-top: 3px solid var(--accent); }
+  .principle-card h4 { font-size: 12px; font-weight: 700; color: var(--white); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .principle-card p { font-size: 12px; color: var(--text-muted); line-height: 1.55; margin: 0; }
+
+  /* Nav hints */
+  .hint-box { background: rgba(74,123,168,0.06); border: 1px solid rgba(74,123,168,0.28); border-radius: 8px; padding: 16px 20px; margin-top: 8px; }
+  .hint-box h4 { font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px; }
+  .hint-box ul { list-style: none; }
+  .hint-box li { font-size: 12px; color: var(--text-muted); line-height: 1.8; padding-left: 18px; position: relative; }
+  .hint-box li::before { content: "→"; color: var(--accent); position: absolute; left: 0; }
+  .hint-box li b { color: var(--text); }
+
+  @media (max-width: 900px) {
+    .step-row { grid-template-columns: 40px 1fr; }
+    .step-row .step-desc, .step-row .step-hours, .step-row .step-deliv { grid-column: 2; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="page-header">
+    <h1 class="page-title">Disclosures <span>— The Productized Service</span></h1>
+    <p class="page-subtitle">Week 6 turns five weeks of analytical work into a productized, fixed-price disclosure service. The forcing function is price: if we can sell this at a defensible price with a repeatable process, the service is real. If we cannot, the process needs more work.</p>
+    <div class="data-badge">Fund-level TCFD + CSRD ESRS E1 | 7-step repeatable process | 4-week turnaround</div>
+  </div>
+
+  <div class="metrics-row">
+    <div class="metric-card"><div class="metric-label">Frameworks</div><div class="metric-value">TCFD <span class="unit">+ ESRS E1</span></div><div class="metric-sub">Shared evidence base, two standards</div></div>
+    <div class="metric-card"><div class="metric-label">Process Steps</div><div class="metric-value">7</div><div class="metric-sub">Regulatory scan → Final packaging</div></div>
+    <div class="metric-card"><div class="metric-label">Reference Files</div><div class="metric-value">6</div><div class="metric-sub">Core IP; repeat across engagements</div></div>
+    <div class="metric-card"><div class="metric-label">Turnaround</div><div class="metric-value">4 <span class="unit">weeks</span></div><div class="metric-sub">vs. 4–6 months Big 4</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Why productize disclosures <span class="dim">the assignment, in plain terms</span></div>
+    <p>The disclosure market isn't standardized. Big 4 firms charge $150–300K over four-to-six months. Boutique ESG consultancies charge $75–150K. AI-first entrants sell software subscriptions that don't actually produce a publishable document. None of them sell a <b>repeatable fixed-price service with a guaranteed four-week turnaround</b>.</p>
+    <p>A Kith-style disclosure service fits in that gap. The value is not that we have better climate scientists — it's that we have a process that produces the same quality output every time, at a price LPs can justify and GPs can predict. The forcing function is pricing: committing to a fixed fee forces us to build a process that actually runs at the quoted cost.</p>
+    <p>This page shows the process. Subsequent pages show the reference files that make it repeatable, and the TCFD and ESRS E1 outputs produced for Northwood as the demonstration client.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">The 7-Step Process <span class="dim">every engagement runs these, in order</span></div>
+    <p class="section-lead">Each step has its own reference file (or files) that guide the AI. Steps 1–3 establish truth; step 4 resolves ambiguity; steps 5–7 produce the artifact. Hours split AI-assisted vs. human-only — step 6 (QA) is intentionally 100% human.</p>
+
+    <div class="process-grid">
+      <div class="step-row s1">
+        <div class="step-num">1</div>
+        <div class="step-name">Regulatory Scan<span class="sub">Step 1</span></div>
+        <div class="step-desc">Fix the framework state as of the reporting date. Confirm the firm's in-scope obligations (geography, fund size, LP demands, supply-chain exposure).</div>
+        <div class="step-hours"><span class="ai">AI 3h</span> · <span class="hum">Human 1h</span><br><span class="hrs">4 total</span></div>
+        <div class="step-deliv">Regulatory Memo</div>
+      </div>
+      <div class="step-row s2">
+        <div class="step-num">2</div>
+        <div class="step-name">Data Intake<span class="sub">Step 2</span></div>
+        <div class="step-desc">Ingest existing carbon, risk, governance, and financial data. Inventory what exists and grade each source (A: utility bill, B: accounting export, C: derived).</div>
+        <div class="step-hours"><span class="ai">AI 6h</span> · <span class="hum">Human 2h</span><br><span class="hrs">8 total</span></div>
+        <div class="step-deliv">Data Inventory</div>
+      </div>
+      <div class="step-row s3">
+        <div class="step-num">3</div>
+        <div class="step-name">Gap Assessment<span class="sub">Step 3</span></div>
+        <div class="step-desc">Map intake against framework datapoint requirements. Structured list of present, partial, and missing items. Target list for Step 4.</div>
+        <div class="step-hours"><span class="ai">AI 3h</span> · <span class="hum">Human 2h</span><br><span class="hrs">5 total</span></div>
+        <div class="step-deliv">Gap Report</div>
+      </div>
+      <div class="step-row s4">
+        <div class="step-num">4</div>
+        <div class="step-name">Interviews &amp; Questionnaires<span class="sub">Step 4</span></div>
+        <div class="step-desc">AI-led 60-minute governance interview plus async portco questionnaires. Output is a structured synthesis signed off by the client before any content enters the draft.</div>
+        <div class="step-hours"><span class="ai">AI 4h</span> · <span class="hum">Human 6h</span><br><span class="hrs">10 total</span></div>
+        <div class="step-deliv">Synthesis Memo</div>
+      </div>
+      <div class="step-row s5">
+        <div class="step-num">5</div>
+        <div class="step-name">Draft Generation<span class="sub">Step 5</span></div>
+        <div class="step-desc">AI produces first drafts against the reference-file library; senior consultant shapes, rewrites, and fact-checks. Highest-leverage AI step.</div>
+        <div class="step-hours"><span class="ai">AI 10h</span> · <span class="hum">Human 4h</span><br><span class="hrs">14 total</span></div>
+        <div class="step-deliv">First Drafts</div>
+      </div>
+      <div class="step-row s6">
+        <div class="step-num">6</div>
+        <div class="step-name">Human QA<span class="sub">Step 6 — entirely human</span></div>
+        <div class="step-desc">Senior reviewer runs the QA checklist: source integrity, framework compliance, voice, decision-usefulness, adversarial reading. No AI second opinion — this is where AI novelty gets validated.</div>
+        <div class="step-hours"><span class="hum">Human 8h</span><br><span class="hrs">8 total</span></div>
+        <div class="step-deliv">QA-Passed Drafts</div>
+      </div>
+      <div class="step-row s7">
+        <div class="step-num">7</div>
+        <div class="step-name">Final Packaging<span class="sub">Step 7</span></div>
+        <div class="step-desc">Publication-ready PDF + HTML. One-page board summary for the IC. Evidence log archived. Versioned audit trail.</div>
+        <div class="step-hours"><span class="ai">AI 3h</span> · <span class="hum">Human 2h</span><br><span class="hrs">5 total</span></div>
+        <div class="step-deliv">Final Disclosures</div>
+      </div>
+    </div>
+
+    <p style="margin-top: 18px;"><b>Total: 54 hours per engagement.</b> 29 AI-assisted; 25 human-only. The 25 human-only hours are the line-item that makes the fixed price defensible — concentrated in governance interviews, expert QA, and narrative shaping.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Three Principles That Make This Work</div>
+    <p class="section-lead">The Week 6 lecture flagged three hurdles for AI-first consulting: cognitive overload (too much AI output to QA), backend complexity, and the need for human experts to validate AI-generated novelty. Each principle below maps to one hurdle.</p>
+
+    <div class="principle-grid">
+      <div class="principle-card">
+        <h4>Reference Files Constrain Output</h4>
+        <p>Every drafting task reads specific reference files before producing output. Structure is fixed by datapoint, not open-ended. The AI can't write a 60-page TCFD disclosure because the pillar template caps it at 15–25 pages and names exactly what each section contains.</p>
+      </div>
+      <div class="principle-card">
+        <h4>Reference Files Are Living IP</h4>
+        <p>Six reference files — service overview, TCFD template, ESRS E1 datapoint map, interview script, QA checklist, voice guide — amortize across every future engagement. Generated iteratively with AI per Diego's guidance; judged by output quality, not content inspection.</p>
+      </div>
+      <div class="principle-card">
+        <h4>Human QA Is Non-Negotiable</h4>
+        <p>Step 6 is 100% human by design. 8 hours of senior reviewer time running a structured checklist. No AI "second opinion." The QA checklist has hard pass/fail gates per section; a failed section rejects the whole draft. The forcing function is that this cost is baked into the price.</p>
+      </div>
+      <div class="principle-card">
+        <h4>Page-Count Discipline</h4>
+        <p>TCFD disclosures: 15–25 pages. ESRS E1: 30–50 pages. Length is not a proxy for quality. Over-length is a signal of AI-overload leakage and triggers a QA rejection. Concision is mandatory — LPs read disclosures they can digest in under an hour.</p>
+      </div>
+      <div class="principle-card">
+        <h4>One Evidence Base, Two Views</h4>
+        <p>TCFD and ESRS E1 share all underlying data. Emissions figures match. Risk assessments match. Target statements match. What differs is presentation — TCFD is pillar-structured; ESRS E1 is datapoint-structured. One process produces both.</p>
+      </div>
+      <div class="principle-card">
+        <h4>Honest First-Year Posture</h4>
+        <p>First-year disclosures gain credibility through acknowledged limitations, not polish. "Not yet quantified" with a remediation date beats a dressed-up estimate. "No target adopted; IC decision Q3 2026" beats a committed-sounding non-commitment. The voice file enforces this.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">How to Navigate Week 6</div>
+    <div class="hint-box">
+      <h4>The four pages in this section</h4>
+      <ul>
+        <li><b>Reference Files</b> — The six files that make the service repeatable. The core IP. Read these to see how the AI is constrained.</li>
+        <li><b>TCFD Disclosure</b> — The TCFD output produced for Northwood. Full four-pillar disclosure with scenario analysis and forward agenda.</li>
+        <li><b>ESRS E1 Disclosure</b> — The CSRD ESRS E1 output. All nine disclosure requirements, datapoint-driven.</li>
+        <li><b>Statement of Work</b> — The client-facing fixed-price SOW. Pricing math shown in the internal working document.</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

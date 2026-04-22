@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Northwood — ESRS E1 Disclosure FY2025</title>
+<style>
+  :root {
+    --bg: #0f1117; --surface: #1a1d27; --surface2: #232735; --surface3: #2a2e3f;
+    --border: #2e3345; --text: #e2e4ea; --text-muted: #8b8fa3; --text-dim: #5a5e72;
+    --accent: #4a7ba8; --accent-dim: rgba(74,123,168,0.12);
+    --white: #fff; --green: #4caf50; --yellow: #e8a84c; --orange: #e8724c;
+    --red: #e85d5d; --blue: #5b8fe8; --purple: #b07cf0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.7; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 40px 40px 80px; }
+
+  .doc-header { border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 32px; }
+  .doc-header h1 { font-size: 28px; font-weight: 700; color: var(--white); margin-bottom: 6px; letter-spacing: -0.3px; }
+  .doc-header .sub1 { font-size: 14px; color: var(--accent); font-weight: 600; margin-bottom: 14px; }
+  .doc-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 10px; font-size: 11px; }
+  .doc-meta div { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; }
+  .doc-meta .k { display: block; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.6px; font-size: 9px; font-weight: 700; margin-bottom: 2px; }
+  .doc-meta .v { color: var(--text); font-weight: 500; }
+
+  h2 { font-size: 22px; color: var(--white); margin: 36px 0 8px; font-weight: 700; border-bottom: 2px solid var(--accent); padding-bottom: 4px; display: inline-block; }
+  h2 .dr { color: var(--accent); font-weight: 800; margin-right: 8px; }
+  h3 { font-size: 16px; color: var(--white); margin: 22px 0 10px; font-weight: 700; }
+  h4 { font-size: 13px; color: var(--text); text-transform: uppercase; letter-spacing: 0.6px; margin: 18px 0 8px; font-weight: 700; }
+
+  p { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.75; }
+  p b, p strong { color: var(--text); font-weight: 600; }
+
+  ul, ol { margin: 8px 0 14px 22px; font-size: 14px; color: var(--text-muted); line-height: 1.8; }
+  li { margin-bottom: 4px; }
+  li b, li strong { color: var(--text); }
+
+  table { width: 100%; border-collapse: collapse; margin: 14px 0 22px; font-size: 12px; }
+  th { background: var(--surface2); color: var(--text-dim); font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.7px; padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+  th.r { text-align: right; }
+  th.c { text-align: center; }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border); color: var(--text-muted); vertical-align: top; }
+  td.r { text-align: right; font-variant-numeric: tabular-nums; }
+  td.c { text-align: center; }
+  td b, td strong { color: var(--text); }
+  tr:hover td { background: rgba(74,123,168,0.04); }
+  tr.total td { background: rgba(74,123,168,0.08); font-weight: 700; color: var(--text); }
+
+  .status-chip { display: inline-block; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 2px 7px; border-radius: 3px; }
+  .status-chip.disclosed { background: rgba(76,175,80,0.18); color: #7ed581; }
+  .status-chip.partial { background: rgba(232,168,76,0.18); color: #f0bb5c; }
+  .status-chip.gap { background: rgba(232,114,76,0.18); color: #ff8c5c; }
+  .status-chip.na { background: rgba(138,143,163,0.15); color: var(--text-dim); }
+
+  .callout { background: rgba(232,168,76,0.05); border: 1px solid rgba(232,168,76,0.25); border-left: 3px solid var(--yellow); border-radius: 6px; padding: 14px 18px; margin: 16px 0; font-size: 13px; color: var(--text-muted); }
+  .callout b { color: var(--text); }
+  .callout.blue { background: rgba(91,143,232,0.05); border-color: rgba(91,143,232,0.25); border-left-color: var(--blue); }
+  .callout.blue b { color: var(--text); }
+
+  .dr-header { display: flex; justify-content: space-between; align-items: baseline; margin-top: 36px; margin-bottom: 8px; gap: 16px; }
+  .dr-header h2 { margin: 0; }
+
+  .section-nav { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-bottom: 24px; font-size: 12px; }
+  .section-nav h4 { margin-top: 0; font-size: 10px; color: var(--text-dim); letter-spacing: 0.6px; }
+  .section-nav ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 4px; }
+  .section-nav li { margin: 0; color: var(--text-muted); }
+  .section-nav li b { color: var(--text); margin-right: 6px; }
+
+  .footer-note { font-size: 11px; color: var(--text-dim); line-height: 1.7; margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .footer-note em { color: var(--text-muted); font-style: normal; }
+
+  code { background: var(--surface3); padding: 1px 6px; border-radius: 3px; color: var(--text); font-family: 'SF Mono',Monaco,monospace; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="doc-header">
+    <h1>Northwood Capital Partners — CSRD ESRS E1 Climate Change Disclosure</h1>
+    <div class="sub1">Fund I and Fund II Consolidated &middot; Fiscal Year 2025 &middot; Voluntary Preparatory Disclosure</div>
+    <div class="doc-meta">
+      <div><span class="k">Reporting Period</span><span class="v">Jan 1 – Dec 31, 2025</span></div>
+      <div><span class="k">Reporting Date</span><span class="v">Jan 31, 2026</span></div>
+      <div><span class="k">Published</span><span class="v">April 28, 2026</span></div>
+      <div><span class="k">Framework</span><span class="v">ESRS E1 (EFRAG / EC Delegated Act June 2023)</span></div>
+    </div>
+  </div>
+
+  <div class="section-nav">
+    <h4>Disclosure Requirements Covered</h4>
+    <ul>
+      <li><b>E1-1</b>Transition plan</li>
+      <li><b>E1-2</b>Policies</li>
+      <li><b>E1-3</b>Actions &amp; resources</li>
+      <li><b>E1-4</b>Targets</li>
+      <li><b>E1-5</b>Energy consumption &amp; mix</li>
+      <li><b>E1-6</b>Scopes 1 / 2 / 3 &amp; total</li>
+      <li><b>E1-7</b>Removals &amp; credits</li>
+      <li><b>E1-8</b>Internal carbon pricing</li>
+      <li><b>E1-9</b>Anticipated financial effects</li>
+    </ul>
+  </div>
+
+  <h2>Posture and Purpose</h2>
+  <p>Northwood is a US-domiciled mid-market private equity firm not currently in the mandatory scope of the CSRD. This disclosure is prepared on a <b>voluntary preparatory basis</b> to:</p>
+  <ol>
+    <li>Establish the reporting baseline in anticipation of potential future in-scope status through EU supply chain exposure at select portfolio companies</li>
+    <li>Respond to LP-side requests for ESRS-aligned climate data in DDQs and fundraising materials</li>
+    <li>Align disclosure rigor with European institutional peers</li>
+  </ol>
+  <p>First-year phase-in reliefs applicable to voluntary preparers have been used where disclosed datapoints are not yet available; each use is documented. Subsequent annual updates will progressively close these gaps.</p>
+
+  <h2>Double Materiality Context</h2>
+  <p>Climate change is assessed as material to Northwood Capital Partners under both materiality perspectives:</p>
+  <ul>
+    <li><b>Impact materiality.</b> Portfolio company operations generate greenhouse gas emissions with consequent contribution to climate change. Northwood exercises operational control over the portfolio through buyout ownership and is therefore accountable for facility-level emissions across the 138 reporting sites.</li>
+    <li><b>Financial materiality.</b> Physical and transition climate risks present material financial exposure across the portfolio, quantified in this disclosure under E1-9 at $45–55M of enterprise value under high-warming scenarios at 2035.</li>
+  </ul>
+  <p>A formal double materiality assessment covering the full ESRS topical set is scheduled for the 2026 reporting year.</p>
+
+  <div class="dr-header">
+    <h2><span class="dr">E1-1</span>Transition Plan for Climate Change Mitigation</h2>
+    <span class="status-chip partial">Partial — pathways modeled; not yet adopted</span>
+  </div>
+  <p>Decarbonization pathways for the portfolio have been modeled at two ambition levels: SBTi 1.5°C-aligned glide path (per SBTi Private Equity sector guidance) and well-below 2°C. The Investment Committee is scheduled to formally consider transition plan adoption at the Q3 2026 off-cycle IC meeting. Pending that decision, this disclosure describes the <b>analytical basis</b> for the plan under consideration but does not claim formal commitment.</p>
+
+  <table>
+    <thead><tr><th>Parameter</th><th>Current IC leaning</th></tr></thead>
+    <tbody>
+      <tr><td><b>Alignment ambition</b></td><td>1.5°C (SBTi-aligned, not SBTi-validated)</td></tr>
+      <tr><td><b>Target type</b></td><td>Intensity (tCO2e per $M portfolio revenue)</td></tr>
+      <tr><td><b>Scope (near-term)</b></td><td>Scope 1 + 2, operational control boundary</td></tr>
+      <tr><td><b>Scope (long-term)</b></td><td>Scope 1 + 2 + 3 (including financed emissions Cat 15)</td></tr>
+      <tr><td><b>Baseline year</b></td><td>2025 (this reporting year)</td></tr>
+      <tr><td><b>Baseline value (Scope 1+2)</b></td><td>23,870 tCO2e; intensity 13.9 tCO2e/$M</td></tr>
+      <tr><td><b>Near-term target year</b></td><td>2030</td></tr>
+      <tr><td><b>Near-term reduction</b></td><td>-42% intensity from 2025 baseline</td></tr>
+      <tr><td><b>Long-term ambition</b></td><td>Net zero Scope 1+2 intensity by 2050</td></tr>
+      <tr><td><b>SBTi validation</b></td><td>Under evaluation; no commitment yet</td></tr>
+    </tbody>
+  </table>
+
+  <p><b>Capex and opex aligned with the plan (current year):</b> $2.7M capex committed across eight initiative categories at the portfolio level, generating $804K/yr recurring savings with average 3.4-year payback. These initiatives are not yet formally classified as "plan-aligned" pending transition plan adoption; classification will be retroactive to the 2025 baseline year.</p>
+
+  <p><b>Locked-in GHG emissions.</b> Portco-level locked-in emissions from long-lived assets (Sterling heat-treat furnaces, Harvest Ridge boilers, Pinnacle fleet vehicles) estimated at approximately <b>45–60% of current Scope 1</b> over the next 10 years absent intervention. Replacement cycles fall within anticipated hold periods, providing scheduled decision points for electrification or efficiency upgrade.</p>
+
+  <p><b>Paris-aligned benchmark exclusion:</b> Not applicable (Northwood is not an EU-listed entity).</p>
+
+  <div class="dr-header">
+    <h2><span class="dr">E1-2</span>Policies Related to Climate Change Mitigation and Adaptation</h2>
+    <span class="status-chip gap">Gap — policy under development</span>
+  </div>
+  <p>Northwood does not currently hold a board-approved fund-level climate policy. A draft ESG and Climate Policy is under development and is scheduled for Investment Committee approval by <b>Q4 2026</b>.</p>
+  <p>The draft policy will cover:</p>
+  <ul>
+    <li>Climate considerations in investment sourcing and diligence</li>
+    <li>Portfolio company operational engagement expectations</li>
+    <li>Disclosure and LP reporting commitments</li>
+    <li>Framework alignment (GHG Protocol, TCFD, SBTi, ILPA ESG Assessment, EDCI)</li>
+    <li>Accountability and escalation mechanisms</li>
+  </ul>
+  <p><b>Informal climate language currently in use</b> appears in: (i) Fund II quarterly LP letters since Q2 2025, (ii) the 2025 LP annual meeting materials, and (iii) the standard IC memo template (climate screening section added Q1 2025).</p>
+  <p><b>External frameworks the firm aligns with informally:</b> GHG Protocol Corporate Standard, TCFD Recommendations, EDCI (target enrollment for 2026 reporting year).</p>
+  <p><b>Stakeholder consideration.</b> The policy-drafting process includes (a) LP input via DDQ patterns, (b) portco CFO input via questionnaire and operational reviews, and (c) external consultant input via Kith Consulting. No formal civil-society or community consultation has been conducted.</p>
+
+  <div class="dr-header">
+    <h2><span class="dr">E1-3</span>Actions and Resources in Relation to Climate Change Policies</h2>
+    <span class="status-chip disclosed">Disclosed — 90+ initiatives in portfolio library</span>
+  </div>
+  <p>The firm operates a portfolio-wide initiative library with 90+ decarbonization and climate-resilience actions mapped across the 10 active portcos. Each initiative includes: expected GHG impact (tCO2e), capex, opex, payback, NPV where calculated, and timing.</p>
+
+  <h4>Top Eight Near-Term Action Categories</h4>
+  <table>
+    <thead><tr><th>Action category</th><th class="r">Capex</th><th class="r">Annual opex impact</th><th class="r">Payback</th><th>Primary portcos</th></tr></thead>
+    <tbody>
+      <tr><td>LED retrofit (portfolio-wide contract)</td><td class="r">~$650K</td><td class="r">~$195K savings</td><td class="r">3.3 yr</td><td>All office/clinic portcos</td></tr>
+      <tr><td>EDCI enrollment + LP climate reporting automation</td><td class="r">~$50K</td><td class="r">LP asset</td><td class="r">N/A</td><td>Fund II</td></tr>
+      <tr><td>Clearview fleet optimization (route, anti-idling, EV)</td><td class="r">~$760K</td><td class="r">~$210K + 450 tCO2e</td><td class="r">3.6 yr</td><td>Clearview</td></tr>
+      <tr><td>100-day climate workstream (Keystone + Harvest Ridge)</td><td class="r">~$530K</td><td class="r">~$137K savings</td><td class="r">3.9 yr</td><td>Keystone, Harvest Ridge</td></tr>
+      <tr><td>Heat pump retrofits (process heat electrification)</td><td class="r">~$2.0M</td><td class="r">Mixed; NPV-positive</td><td class="r">7–10 yr</td><td>Sterling, Harvest Ridge</td></tr>
+      <tr><td>Physical resilience plans</td><td class="r">~$300K</td><td class="r">$329K EBITDA protected</td><td class="r">0.9 yr</td><td>Harvest Ridge, Sterling, Ridgeline</td></tr>
+      <tr><td>HVAC controls upgrade</td><td class="r">~$550K</td><td class="r">~$140K savings</td><td class="r">3.9 yr</td><td>Meridian, NovaCare, Trident</td></tr>
+      <tr><td>Refrigerant phase-out (R-22 → lower-GWP)</td><td class="r">~$180K</td><td class="r">Compliance</td><td class="r">N/A</td><td>Sterling Akron, Clearview</td></tr>
+    </tbody>
+  </table>
+
+  <p><b>Scope of actions:</b> Mitigation-weighted. Adaptation actions included for the three highest-physical-risk portcos.</p>
+  <p><b>Time horizons:</b> Short-term (2026 — capex already committed or IC-approved), medium-term (2027–2028), long-term (2029+ — primarily electrification capex with longer payback).</p>
+  <p><b>Resources for 2026:</b> $2.7M capex committed across top-8 categories. Consulting: Kith Consulting ongoing. Internal: COO (fractional), portco CFOs as energy audit participants.</p>
+
+  <div class="dr-header">
+    <h2><span class="dr">E1-4</span>Targets</h2>
+    <span class="status-chip gap">Gap — no targets adopted</span>
+  </div>
+  <p>Please see E1-1 for analytical parameters under IC consideration. Until formally adopted, the firm does not disclose targets in this standard's formal sense.</p>
+  <p><b>Commitment:</b> The firm commits to disclosure of formally adopted targets in the <b>2027 reporting cycle</b> (covering fiscal year 2026). The formal targets will include baseline year, baseline value, target year(s), scope coverage, methodology (SBTi or equivalent), and whether the targets are science-based.</p>
+  <p>No interim targets currently adopted.</p>
+
+  <div class="dr-header">
+    <h2><span class="dr">E1-5</span>Energy Consumption and Mix</h2>
+    <span class="status-chip disclosed">Disclosed</span>
+  </div>
+  <p>Energy consumption reported at fund level (operational control consolidation), covering all 138 portfolio company facilities.</p>
+
+  <table>
+    <thead><tr><th>Energy source</th><th class="r">FY2025 (MWh)</th><th class="r">% of total</th></tr></thead>
+    <tbody>
+      <tr><td>Purchased electricity</td><td class="r">29,100</td><td class="r">31%</td></tr>
+      <tr><td>Natural gas (stationary combustion)</td><td class="r">44,310</td><td class="r">48%</td></tr>
+      <tr><td>Diesel (mobile and stationary)</td><td class="r">11,780</td><td class="r">13%</td></tr>
+      <tr><td>Gasoline (mobile)</td><td class="r">7,703</td><td class="r">8%</td></tr>
+      <tr><td>Propane</td><td class="r">251</td><td class="r">&lt;1%</td></tr>
+      <tr class="total"><td><b>Total energy consumption</b></td><td class="r"><b>93,144 MWh</b></td><td class="r"><b>100%</b></td></tr>
+    </tbody>
+  </table>
+
+  <h4>Non-Renewable vs. Renewable Split</h4>
+  <table>
+    <thead><tr><th>Category</th><th class="r">MWh</th><th class="r">%</th></tr></thead>
+    <tbody>
+      <tr><td>Fossil fuel consumption</td><td class="r">64,044</td><td class="r">69%</td></tr>
+      <tr><td>Purchased electricity from non-renewable sources (est.)</td><td class="r">25,608</td><td class="r">27%</td></tr>
+      <tr><td>Purchased electricity from renewable sources (est.)</td><td class="r">3,492</td><td class="r">4%</td></tr>
+      <tr><td>Self-generated renewable</td><td class="r">0</td><td class="r">0%</td></tr>
+      <tr class="total"><td><b>Total</b></td><td class="r"><b>93,144</b></td><td class="r"><b>100%</b></td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout"><b>Renewable estimate methodology and limitations.</b> Based on direct disclosures from 7 of 10 portcos via portco CFO questionnaire issued April 22, 2026. Three portcos (Patriot Staffing Solutions, Pinnacle Testing &amp; Inspection, Harvest Ridge Foods) have not yet disaggregated renewable sourcing at the facility level; their electricity is treated as non-renewable in this calculation. Sterling Akron (green tariff, 100%), Meridian selected offices (~22% portco-weighted), and Trident colo providers (Equinix at ~95%, estimated 60% portco-weighted) are the primary renewable-sourced consumption.</div>
+
+  <h4>Energy Intensity</h4>
+  <table>
+    <thead><tr><th>Metric</th><th class="r">Value</th></tr></thead>
+    <tbody>
+      <tr><td>Total energy / $M revenue</td><td class="r">54.3 MWh / $M</td></tr>
+      <tr><td>Total energy / FTE</td><td class="r">25.7 MWh / FTE</td></tr>
+    </tbody>
+  </table>
+
+  <p><b>High-climate-impact sector identification.</b> One of 10 portcos — <b>Harvest Ridge Foods</b> — operates in an ESRS-defined high-climate-impact sector (Food and Beverage manufacturing). Harvest Ridge-specific energy intensity: 6,470 MWh / $152M revenue = 42.6 MWh/$M at the portco level.</p>
+
+  <div class="dr-header">
+    <h2><span class="dr">E1-6</span>Gross Scopes 1, 2, 3 and Total GHG Emissions</h2>
+    <span class="status-chip disclosed">Disclosed — S1+2 complete; S3 screening-level</span>
+  </div>
+
+  <h4>Scope 1 (tCO2e, gross)</h4>
+  <table>
+    <thead><tr><th>Source</th><th class="r">FY2025</th></tr></thead>
+    <tbody>
+      <tr><td>Stationary combustion (natural gas)</td><td class="r">8,024</td></tr>
+      <tr><td>Stationary combustion (diesel, propane)</td><td class="r">506</td></tr>
+      <tr><td>Mobile combustion (fleet diesel)</td><td class="r">2,663</td></tr>
+      <tr><td>Mobile combustion (fleet gasoline)</td><td class="r">1,788</td></tr>
+      <tr><td>Fugitive emissions (refrigerants R-22, R-410A)</td><td class="r">122</td></tr>
+      <tr class="total"><td><b>Total Scope 1</b></td><td class="r"><b>13,103</b></td></tr>
+    </tbody>
+  </table>
+
+  <h4>Scope 2 (tCO2e, gross)</h4>
+  <table>
+    <thead><tr><th>Scope 2 basis</th><th class="r">FY2025</th></tr></thead>
+    <tbody>
+      <tr><td>Location-based</td><td class="r">10,767</td></tr>
+      <tr><td>Market-based</td><td class="r">10,767</td></tr>
+    </tbody>
+  </table>
+  <p><b>Market-based equals location-based</b> for the current reporting period. No contractual instruments (RECs, green tariffs, PPAs) are consolidated at the fund level as of the reporting date, despite partial facility-level green tariff presence. Documentation and consolidation is scheduled for the 2026 reporting year.</p>
+
+  <h4>Scope 3 by Category (tCO2e, gross)</h4>
+  <table>
+    <thead><tr><th class="c">Cat</th><th>Category</th><th class="r">Value</th><th>Method</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td class="c"><b>1</b></td><td>Purchased Goods and Services</td><td class="r">~47,000</td><td>Spend-based</td><td>USEEIO v2.0, annualized portco COGS</td></tr>
+      <tr><td class="c">2</td><td>Capital Goods</td><td class="r">—</td><td>—</td><td>Screened; low-material</td></tr>
+      <tr><td class="c">3</td><td>Fuel and Energy Related</td><td class="r">—</td><td>—</td><td>To be quantified 2027</td></tr>
+      <tr><td class="c">4</td><td>Upstream Transport and Distribution</td><td class="r">—</td><td>—</td><td>To be quantified 2027</td></tr>
+      <tr><td class="c">5</td><td>Waste in Operations</td><td class="r">—</td><td>—</td><td>Data gaps flagged at 4 portcos</td></tr>
+      <tr><td class="c">6</td><td>Business Travel</td><td class="r">—</td><td>—</td><td>Prioritized for 2027 quantification</td></tr>
+      <tr><td class="c">7</td><td>Employee Commuting</td><td class="r">—</td><td>—</td><td>Prioritized for 2027 quantification</td></tr>
+      <tr><td class="c">8</td><td>Upstream Leased Assets</td><td class="r">N/A</td><td>—</td><td>Limited outside consolidated boundary</td></tr>
+      <tr><td class="c">9</td><td>Downstream Transport</td><td class="r">—</td><td>—</td><td>Material at Harvest Ridge; 2027</td></tr>
+      <tr><td class="c">10</td><td>Processing of Sold Products</td><td class="r">N/A</td><td>—</td><td>Most portcos in services</td></tr>
+      <tr><td class="c">11</td><td>Use of Sold Products</td><td class="r">—</td><td>—</td><td>Material at Clearview, Harvest Ridge, Sterling; 2028</td></tr>
+      <tr><td class="c">12</td><td>End-of-Life</td><td class="r">—</td><td>—</td><td>Material at Sterling, Pinnacle; 2028</td></tr>
+      <tr><td class="c">13</td><td>Downstream Leased Assets</td><td class="r">N/A</td><td>—</td><td>&mdash;</td></tr>
+      <tr><td class="c">14</td><td>Franchises</td><td class="r">N/A</td><td>—</td><td>No franchise operations</td></tr>
+      <tr><td class="c"><b>15</b></td><td>Investments (Financed Emissions)</td><td class="r">~11,900</td><td>PCAF Part A</td><td>Equity+debt attribution × portco S1+2</td></tr>
+    </tbody>
+  </table>
+
+  <p><b>A single "total Scope 3" figure is not reported</b>, as material categories remain unquantified. Cat 1 and Cat 15 quantified only; partial disclosure caveated.</p>
+
+  <h4>Total Emissions Summary</h4>
+  <table>
+    <thead><tr><th>Metric</th><th class="r">FY2025</th></tr></thead>
+    <tbody>
+      <tr><td>Total Scope 1</td><td class="r">13,103 tCO2e</td></tr>
+      <tr><td>Total Scope 2 (location-based)</td><td class="r">10,767 tCO2e</td></tr>
+      <tr><td>Total Scope 2 (market-based)</td><td class="r">10,767 tCO2e</td></tr>
+      <tr><td>Total Scope 3 (quantified categories only)</td><td class="r">~58,900 tCO2e</td></tr>
+      <tr class="total"><td><b>Total (S1 + S2 location-based + quantified S3)</b></td><td class="r"><b>~82,770 tCO2e</b></td></tr>
+    </tbody>
+  </table>
+
+  <h4>GHG Intensity</h4>
+  <table>
+    <thead><tr><th>Metric</th><th class="r">Value</th></tr></thead>
+    <tbody>
+      <tr><td>Scope 1 + 2 (location-based) / $M net revenue</td><td class="r">13.9 tCO2e / $M</td></tr>
+      <tr><td>Total (quantified) / $M net revenue</td><td class="r">48.3 tCO2e / $M</td></tr>
+    </tbody>
+  </table>
+  <p><b>Biogenic CO2 emissions:</b> Zero disclosed within the consolidated boundary.</p>
+  <p><b>Global Warming Potentials:</b> IPCC AR6, 100-year horizon, used throughout.</p>
+
+  <div class="dr-header">
+    <h2><span class="dr">E1-7</span>GHG Removals and Carbon Credits</h2>
+    <span class="status-chip na">N/A</span>
+  </div>
+  <p><b>GHG removals within Northwood's operational boundary:</b> Zero.</p>
+  <p><b>Carbon credits cancelled during the reporting period:</b> Zero. Northwood does not currently use carbon credits to offset emissions and has not cancelled any credits in FY2025.</p>
+  <p><b>Planned use of credits:</b> None committed. Any future use will be disclosed in line with the SBTi Corporate Net-Zero Standard hierarchy — credits as a supplement to abatement, not a substitute.</p>
+
+  <div class="dr-header">
+    <h2><span class="dr">E1-8</span>Internal Carbon Pricing</h2>
+    <span class="status-chip gap">Gap — not applied</span>
+  </div>
+  <p><b>Internal carbon pricing is not currently applied at Northwood Capital Partners.</b></p>
+  <p>Investment decisions and capex approvals do not apply a shadow carbon price. The firm monitors external carbon price exposure across the portfolio through the transition risk framework (see E1-9). Federal US carbon pricing is assessed as not material through 2033 under plausible policy paths; EU CBAM exposure is limited to Sterling Precision Manufacturing in a scenario of materially expanded EU exports.</p>
+  <p><b>Evaluation planned:</b> An internal carbon pricing assessment is scheduled alongside the Q3 2026 formal target adoption review.</p>
+
+  <div class="dr-header">
+    <h2><span class="dr">E1-9</span>Anticipated Financial Effects from Physical and Transition Risks and Opportunities</h2>
+    <span class="status-chip disclosed">Disclosed — ranges; further precision phased in</span>
+  </div>
+
+  <h3>Physical Risks — Quantified Financial Effect</h3>
+  <table>
+    <thead><tr><th>Scenario</th><th>Horizon</th><th class="r">EV-at-risk (range)</th><th class="r">% unrealized value</th></tr></thead>
+    <tbody>
+      <tr><td>SSP3-7.0 (central)</td><td>2030</td><td class="r">$18–22M</td><td class="r">1.2–1.4%</td></tr>
+      <tr><td>SSP3-7.0 (central)</td><td>2035</td><td class="r">$30–38M</td><td class="r">2.0–2.5%</td></tr>
+      <tr><td>SSP5-8.5 (high)</td><td>2030</td><td class="r">$22–28M</td><td class="r">1.4–1.8%</td></tr>
+      <tr><td>SSP5-8.5 (high)</td><td>2035</td><td class="r">$45–55M</td><td class="r">3.0–3.6%</td></tr>
+    </tbody>
+  </table>
+
+  <p><b>Driver concentration:</b> Three portcos account for ~68% of portfolio EV-at-risk under SSP5-8.5 at 2035: Harvest Ridge Foods ($24.0M), Keystone Behavioral Health ($13.9M), and Sterling Precision Manufacturing.</p>
+  <p><b>Mitigation capacity:</b> Approximately <b>$3.1M in facility-level capex protects an estimated $16.5M of enterprise value</b> — a 5.3x capex-to-value-protected ratio.</p>
+
+  <h3>Transition Risks — Quantified Financial Effect</h3>
+  <table>
+    <thead><tr><th>Vector</th><th class="r">EBITDA-at-risk (range)</th><th>Primary driver portcos</th></tr></thead>
+    <tbody>
+      <tr><td>Customer ESG cascade</td><td class="r">$8–14M</td><td>Sterling, Harvest Ridge</td></tr>
+      <tr><td>Input and supply cost</td><td class="r">$3–6M</td><td>Sterling (steel, gas), Harvest Ridge (ag)</td></tr>
+      <tr><td>Capex cycle / stranded assets</td><td class="r">$2–5M</td><td>Sterling heat-treat, Clearview fleet, Pinnacle</td></tr>
+      <tr><td>Regulatory</td><td class="r">$1–3M</td><td>Cross-portfolio watchlist</td></tr>
+      <tr><td>Exit &amp; refinancing readiness</td><td class="r">Deal-specific</td><td>Meridian (near-term)</td></tr>
+    </tbody>
+  </table>
+  <p>Aggregate portfolio transition EBITDA-at-risk (upper bound, 2033 horizon): approximately <b>$20M, or ~8% of current portfolio EBITDA of $261M</b>.</p>
+
+  <h3>Climate-Related Opportunities — Quantified Where Possible</h3>
+  <table>
+    <thead><tr><th>Opportunity</th><th class="r">Current-year effect</th><th>Driver portcos</th></tr></thead>
+    <tbody>
+      <tr><td>Operating cost reduction via efficiency capex</td><td class="r">$804K/yr recurring savings ($2.7M capex)</td><td>Portfolio-wide</td></tr>
+      <tr><td>Revenue growth from sustainability-positioned demand</td><td class="r">Qualitative (structural tailwinds)</td><td>Clearview, Harvest Ridge</td></tr>
+      <tr><td>Exit multiple expansion</td><td class="r">Deal-specific</td><td>Meridian, future exits</td></tr>
+      <tr><td>Capital efficiency via green financing / tax incentives</td><td class="r">IRA 179D, 45L, 48C estimate in progress</td><td>Sterling, Meridian, Trident</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Assets at Material Climate Risk</h3>
+  <table>
+    <thead><tr><th>Risk type</th><th class="r">Assets at material risk (USD range)</th><th class="r">% fund NAV</th></tr></thead>
+    <tbody>
+      <tr><td>Physical (SSP5-8.5, 2035, aggregated)</td><td class="r">$45–55M</td><td class="r">3.0–3.6%</td></tr>
+      <tr><td>Transition (aggregate, 2033 horizon)</td><td class="r">~$20M EBITDA-at-risk equivalent</td><td class="r">—</td></tr>
+    </tbody>
+  </table>
+  <p><b>Locked-in emissions from key assets:</b> Approximately 45–60% of current Scope 1 is locked into long-lived assets over the next 10 years absent intervention. Replacement cycles provide scheduled decision points for electrification and efficiency upgrade within hold periods.</p>
+
+  <h2>Appendix: Methodology and Boundary</h2>
+  <p><b>Reporting boundary.</b> Operational control approach per GHG Protocol Corporate Standard. Portfolio companies under Northwood buyout ownership are consolidated. Realized investments excluded. Portcos acquired within the reporting period are included pro rata from acquisition date. The Northwood GP office (Chicago, Illinois) is included at an estimated level (~25 tCO2e Scope 1+2, not broken out separately due to immaterial share of total).</p>
+  <p><b>Emission factors and GWPs.</b> EPA Emission Factors for GHG Inventories (2023 Hub edition) for Scope 1; eGRID 2022 subregional factors for Scope 2 location-based; IPCC AR6 100-year GWPs throughout.</p>
+  <p><b>Scope 3 Cat 1.</b> Spend-based method per GHG Protocol Scope 3 Technical Guidance. USEEIO v2.0 sector emission factors applied to portco COGS annualized from January 2026 monthly data (<code>northwood_capital.portco_financials</code>).</p>
+  <p><b>Scope 3 Cat 15.</b> PCAF Global GHG Accounting Standard Part A for business loans and unlisted equity. Attribution factor = (Northwood equity invested) / (portco equity + portco debt) at entry, applied to portco Scope 1+2 emissions. PCAF data quality score: 3.</p>
+  <p><b>Phase-in reliefs used.</b> As a voluntary preparer, Northwood has used the following reliefs permitted under ESRS 1 transitional provisions:</p>
+  <ul>
+    <li>Scope 3 Categories 2, 3, 4, 5, 6, 7, 9, 11, 12 quantification deferred with disclosed remediation dates</li>
+    <li>Financial effects disclosure in E1-9 presented as ranges rather than point estimates</li>
+    <li>Targets not quantified (E1-4) pending formal IC adoption in Q3 2026</li>
+  </ul>
+
+  <div class="callout blue"><b>Consistency with TCFD disclosure.</b> This ESRS E1 disclosure shares all quantitative data with Northwood's FY2025 TCFD-Aligned Climate Disclosure. Differences in presentation reflect the respective standards' structural requirements; underlying figures are identical.</div>
+
+  <div class="footer-note">
+    <em>Prepared by Kith Consulting under engagement with Northwood Capital Partners.<br>
+    Voluntary preparatory disclosure. Next update planned for the 2027 reporting cycle (covering fiscal year 2026).<br>
+    Questions: Sarah Mitchell, Chief Operating Officer, Northwood Capital Partners.</em>
+  </div>
+
+</div>
+</body>
+</html>

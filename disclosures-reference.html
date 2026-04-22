@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Northwood — Disclosure Reference Files</title>
+<style>
+  :root {
+    --bg: #0f1117; --surface: #1a1d27; --surface2: #232735; --surface3: #2a2e3f;
+    --border: #2e3345; --text: #e2e4ea; --text-muted: #8b8fa3; --text-dim: #5a5e72;
+    --accent: #4a7ba8; --accent-dim: rgba(74,123,168,0.12);
+    --white: #fff; --green: #4caf50; --yellow: #e8a84c; --orange: #e8724c;
+    --red: #e85d5d; --blue: #5b8fe8; --purple: #b07cf0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }
+  .container { max-width: 1320px; margin: 0 auto; padding: 40px 40px 80px; }
+
+  .page-header { margin-bottom: 28px; }
+  .page-title { font-size: 30px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
+  .page-title span { color: var(--accent); }
+  .page-subtitle { font-size: 14px; color: var(--text-muted); max-width: 920px; line-height: 1.6; }
+  .data-badge { display: inline-block; font-size: 11px; color: var(--yellow); background: rgba(232,168,76,0.1); border: 1px solid rgba(232,168,76,0.25); padding: 3px 10px; border-radius: 4px; margin-top: 12px; }
+
+  .section { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px 26px; margin-bottom: 24px; }
+  .section-title { font-size: 16px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+  .section-title .dim { color: var(--text-dim); font-weight: 400; font-size: 13px; margin-left: 8px; }
+  .section-lead { font-size: 13px; color: var(--text-muted); line-height: 1.65; margin-bottom: 18px; max-width: 980px; }
+  .section p { font-size: 13px; color: var(--text-muted); line-height: 1.7; margin-bottom: 10px; max-width: 980px; }
+  .section p b, .section p strong { color: var(--text); }
+
+  /* File cards */
+  .file-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+  .file-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 20px 22px; border-left: 3px solid var(--accent); }
+  .file-card.f0 { border-left-color: var(--blue); }
+  .file-card.f1 { border-left-color: var(--accent); }
+  .file-card.f2 { border-left-color: var(--purple); }
+  .file-card.f3 { border-left-color: var(--yellow); }
+  .file-card.f4 { border-left-color: var(--orange); }
+  .file-card.f5 { border-left-color: var(--green); }
+  .file-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; gap: 16px; flex-wrap: wrap; }
+  .file-name { font-size: 15px; font-weight: 700; color: var(--white); }
+  .file-name .num { color: var(--text-dim); font-weight: 400; margin-right: 8px; }
+  .file-tag { font-size: 10px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.6px; background: var(--accent-dim); padding: 3px 8px; border-radius: 4px; }
+  .file-purpose { font-size: 12px; color: var(--text-muted); line-height: 1.55; margin-bottom: 12px; }
+  .file-detail { font-size: 12px; color: var(--text-muted); line-height: 1.65; }
+  .file-detail b { color: var(--text); }
+  .file-detail ul { margin: 6px 0 0 18px; line-height: 1.8; }
+  .file-step { font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
+
+  /* How files work together */
+  .flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 16px; }
+  .flow-step { background: var(--surface3); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; }
+  .flow-step .s { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.6px; }
+  .flow-step .n { font-size: 13px; font-weight: 700; color: var(--white); margin: 3px 0; }
+  .flow-step .r { font-size: 10px; color: var(--accent); }
+
+  .principle-callout { background: rgba(176,124,240,0.06); border: 1px solid rgba(176,124,240,0.28); border-radius: 8px; padding: 16px 20px; margin-top: 8px; }
+  .principle-callout h4 { font-size: 12px; font-weight: 700; color: var(--purple); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px; }
+  .principle-callout p { font-size: 12px; color: var(--text-muted); line-height: 1.65; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="page-header">
+    <h1 class="page-title">Reference File Library <span>— the core IP</span></h1>
+    <p class="page-subtitle">Six reference files that make the disclosure service repeatable. Together they encode the framework requirements, the voice, the interview protocol, and the quality gates. They are the assets that amortize across every engagement — the reason the service is fixed-price instead of hourly.</p>
+    <div class="data-badge">6 files · ~280 KB total · Generated iteratively, judged by output quality</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Why reference files, not templates</div>
+    <p>Per Diego's Week 6 guidance: reference files balance over-specification (which stifles the AI's inference) and under-specification (which causes variability across runs). A template is too rigid — it produces identical boilerplate regardless of client. A loose prompt is too free — it produces a different disclosure every time.</p>
+    <p>These six files sit between those extremes. They name the structure, the datapoints, the voice, and the quality gates. They do <b>not</b> tell the AI what to say in any specific section. The content is inferred from the client's data; the reference files ensure it's inferred consistently and at publication quality.</p>
+    <p>The files are generated iteratively — draft, run against a test client, check output, refine. Their effectiveness is judged by the output, not by reading them. If the disclosures come out well, the files are working; if the output varies across runs, the files need tightening.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">The Six Files</div>
+    <div class="file-grid">
+
+      <div class="file-card f0">
+        <div class="file-head">
+          <div class="file-name"><span class="num">00</span>Service Overview</div>
+          <span class="file-tag">Orientation · Every Step</span>
+        </div>
+        <div class="file-purpose">The umbrella. Read first on every task. Orients the AI to what the service is, who the client is, the 7-step process, and what good vs. bad output looks like.</div>
+        <div class="file-detail">
+          <b>Key sections:</b>
+          <ul>
+            <li>What we produce (TCFD + ESRS E1 as sister outputs from one process)</li>
+            <li>The client persona (mid-market PE, $1–5B AUM, ESG owned by COO/CFO)</li>
+            <li>The 7-step process in one place</li>
+            <li>What good output looks like: evidence-backed, honest about gaps, financially literate, concise, decision-useful</li>
+            <li>Scope boundaries — organizational boundary, reporting period, exclusions</li>
+          </ul>
+        </div>
+        <div class="file-step">Referenced by every subsequent reference file</div>
+      </div>
+
+      <div class="file-card f1">
+        <div class="file-head">
+          <div class="file-name"><span class="num">01</span>TCFD Pillar Template</div>
+          <span class="file-tag">Step 5 · Drafting</span>
+        </div>
+        <div class="file-purpose">Structural guide for the four TCFD pillars at fund level. Caps length, names what each section must contain, provides "what to do if this pillar is thin" guidance for first-year disclosures.</div>
+        <div class="file-detail">
+          <b>What it specifies:</b>
+          <ul>
+            <li>Document structure (About → Governance → Strategy → Risk Mgmt → Metrics & Targets → Forward Agenda → Appendices)</li>
+            <li>Target page counts per section (15–25 pages total)</li>
+            <li>Required content in each TCFD recommended disclosure</li>
+            <li>Scenario analysis expectations (SSP3-7.0 + SSP5-8.5 at 2030/2035)</li>
+            <li>First-year honesty guidance (governance gaps, no committed target, etc.)</li>
+          </ul>
+        </div>
+        <div class="file-step">Referenced in Step 5 — Draft Generation (TCFD)</div>
+      </div>
+
+      <div class="file-card f2">
+        <div class="file-head">
+          <div class="file-name"><span class="num">02</span>ESRS E1 Datapoint Map</div>
+          <span class="file-tag">Step 5 · Drafting</span>
+        </div>
+        <div class="file-purpose">Datapoint-by-datapoint guide for the nine ESRS E1 disclosure requirements (E1-1 through E1-9). Unlike TCFD, ESRS is datapoint-driven — every DR has specific fields, and silence is non-compliance.</div>
+        <div class="file-detail">
+          <b>What it specifies:</b>
+          <ul>
+            <li>What EFRAG asks for in each of E1-1 through E1-9</li>
+            <li>Required datapoints per DR (checkbox style)</li>
+            <li>PCAF methodology for Cat 15 financed emissions (standard for PE)</li>
+            <li>Double-materiality context requirements from ESRS 2</li>
+            <li>Phase-in reliefs available to voluntary preparers</li>
+            <li>Consistency requirements with the TCFD disclosure</li>
+          </ul>
+        </div>
+        <div class="file-step">Referenced in Step 5 — Draft Generation (ESRS E1)</div>
+      </div>
+
+      <div class="file-card f3">
+        <div class="file-head">
+          <div class="file-name"><span class="num">03</span>Interview &amp; Questionnaire Script</div>
+          <span class="file-tag">Step 4 · Gap-Fill</span>
+        </div>
+        <div class="file-purpose">The script for the AI-led 60-minute governance interview plus async portco questionnaires. Ten gap areas, each with specific questions, follow-ups, and an output template.</div>
+        <div class="file-detail">
+          <b>What it specifies:</b>
+          <ul>
+            <li>Live vs. async protocol (governance topics live; portco data async)</li>
+            <li>Ten gap areas: board oversight, mgmt incentives, policy, targets, ICP, Scope 3, renewables, DD integration, LP cadence, resilience</li>
+            <li>Interview etiquette (one question at a time, paraphrase back, accept "no" answers)</li>
+            <li>Synthesis document template — sent to client for sign-off before drafting</li>
+            <li>Decisions-awaiting-client-sign-off section (no surprises in final review)</li>
+          </ul>
+        </div>
+        <div class="file-step">Referenced in Step 4 — Interviews & Questionnaires</div>
+      </div>
+
+      <div class="file-card f4">
+        <div class="file-head">
+          <div class="file-name"><span class="num">04</span>Human QA Checklist</div>
+          <span class="file-tag">Step 6 · Quality Gate</span>
+        </div>
+        <div class="file-purpose">The checklist a senior human reviewer runs before any disclosure is marked final. Seven sections of hard pass/fail gates. This is where AI-generated novelty gets validated — zero AI participation in this step.</div>
+        <div class="file-detail">
+          <b>What it specifies:</b>
+          <ul>
+            <li><b>A — Source Integrity:</b> every number traces to source; emission factor vintages stated</li>
+            <li><b>B — Framework Compliance:</b> all TCFD pillars / all 9 ESRS E1 DRs addressed</li>
+            <li><b>C — Honesty &amp; Credibility:</b> no unevidenced claims, no superlatives, gap-acknowledgment</li>
+            <li><b>D — Decision-Usefulness:</b> could a new IC member get up to speed in 30 min?</li>
+            <li><b>E — LP Readability:</b> can an LP DDQ coordinator answer from this?</li>
+            <li><b>F — Voice &amp; Style:</b> forbidden terms absent; concision</li>
+            <li><b>G — Adversarial Reading:</b> greenwashing risk, forward-looking caveats</li>
+          </ul>
+        </div>
+        <div class="file-step">Referenced in Step 6 — Human QA (the "novelty validation" step)</div>
+      </div>
+
+      <div class="file-card f5">
+        <div class="file-head">
+          <div class="file-name"><span class="num">05</span>Voice and Style</div>
+          <span class="file-tag">Step 5 &amp; 6 · Enforced</span>
+        </div>
+        <div class="file-purpose">How a Kith disclosure reads. Inherits from the Kith master voice guide. Adds disclosure-specific conventions: when "commit" is allowed, how to talk about targets, how to frame scenarios, forbidden phrases.</div>
+        <div class="file-detail">
+          <b>Key rules:</b>
+          <ul>
+            <li><b>"Commit"</b> only for formally board-approved decisions with a date</li>
+            <li><b>"Science-aligned"</b> not "SBTi-validated" unless actually validated</li>
+            <li><b>"Screening-level Scope 3"</b> when partial, not "Scope 3 inventory"</li>
+            <li>Forbidden phrases list (no "we believe," "industry-leading," "going forward," etc.)</li>
+            <li>Sentence-level rules (active voice, delete throat-clearing, one idea per sentence)</li>
+            <li>Headings declarative not thematic ("Scope 2: 10,767 tCO2e" beats "Our Emissions Footprint")</li>
+          </ul>
+        </div>
+        <div class="file-step">Referenced in Step 5 (drafting) and Step 6 (QA Section F)</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">How the Files Flow Through the Process</div>
+    <div class="flow">
+      <div class="flow-step"><div class="s">Step 1–3</div><div class="n">Scan, Intake, Gap</div><div class="r">File 00</div></div>
+      <div class="flow-step"><div class="s">Step 4</div><div class="n">Gap-Fill Interview</div><div class="r">Files 00, 03</div></div>
+      <div class="flow-step"><div class="s">Step 5</div><div class="n">Draft TCFD</div><div class="r">Files 00, 01, 05</div></div>
+      <div class="flow-step"><div class="s">Step 5</div><div class="n">Draft ESRS E1</div><div class="r">Files 00, 02, 05</div></div>
+      <div class="flow-step"><div class="s">Step 6</div><div class="n">Human QA</div><div class="r">Files 04, 05</div></div>
+      <div class="flow-step"><div class="s">Step 7</div><div class="n">Final Packaging</div><div class="r">File 00</div></div>
+    </div>
+    <p style="margin-top: 16px;">Files 00 (overview) and 05 (voice) are cross-cutting — read on every task. Files 01 and 02 are framework-specific. File 03 is gap-fill-specific. File 04 is QA-specific.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">The Iteration Loop</div>
+    <div class="principle-callout">
+      <h4>Diego's Week 6 guidance applied</h4>
+      <p><b>"I have never written a reference file manually. It's always a process of iteration. I judge the reference files by the output. It produces great output and keeps doing it — whatever's in there, it probably works very well."</b></p>
+      <p>These six files were generated iteratively with AI during the Week 6 build. Draft → run against Northwood's data → inspect output → identify where the output drifted from what a good disclosure looks like → refine the reference file → re-run. Not once in this process was a file hand-authored from a blank page.</p>
+      <p>When the output quality stabilizes across runs, the file is ready. When output varies meaningfully across runs on the same input, the file needs tightening. Effectiveness is measured in output quality, not file length or reader inspection.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Where the files live</div>
+    <p>Inside the working directory for this engagement, under <code style="background:var(--surface3);padding:2px 6px;border-radius:3px;color:var(--text);font-family:'SF Mono',Monaco,monospace;font-size:12px;">northwood/disclosures/reference-files/</code>. On production engagements they'd be copied from a master reference library, not recreated.</p>
+    <p>The production model: one master library in <code style="background:var(--surface3);padding:2px 6px;border-radius:3px;color:var(--text);font-family:'SF Mono',Monaco,monospace;font-size:12px;">_reference/kith-disclosure-service/</code>, copied into each engagement folder at kickoff. Improvements made during any engagement flow back to the master library after QA sign-off. This is the compounding-engagement model — every client makes the service better for the next client.</p>
+  </div>
+
+</div>
+</body>
+</html>
